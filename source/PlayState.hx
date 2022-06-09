@@ -995,19 +995,27 @@ class PlayState extends MusicBeatState
 			boyfriend.playAnim('idle');
 
 			var introAssets:Map<String, Array<String>> = new Map<String, Array<String>>();
-			introAssets.set('default', ['ready', "set", "go"]);
-			introAssets.set('school', ['weeb/pixelUI/ready-pixel', 'weeb/pixelUI/set-pixel', 'weeb/pixelUI/date-pixel']);
-			introAssets.set('schoolEvil', ['weeb/pixelUI/ready-pixel', 'weeb/pixelUI/set-pixel', 'weeb/pixelUI/date-pixel']);
+			var introLibrary:String = '';
+			var altSuffix:String = "";
+
+			switch(SONG.noteskin){
+				case 'pixel':
+					introAssets.set('default', ['weeb/pixelUI/ready-pixel', 'weeb/pixelUI/set-pixel', 'weeb/pixelUI/date-pixel']);
+					introLibrary = 'week6';
+					altSuffix = '-pixel';
+				default:
+					introAssets.set('default', ['ready', "set", "go"]);
+					introLibrary = 'shared';
+					altSuffix = '';
+			}
 
 			var introAlts:Array<String> = introAssets.get('default');
-			var altSuffix:String = "";
 
 			for (value in introAssets.keys())
 			{
 				if (value == curStage)
 				{
 					introAlts = introAssets.get(value);
-					altSuffix = '-pixel';
 				}
 			}
 
@@ -1015,13 +1023,13 @@ class PlayState extends MusicBeatState
 
 			{
 				case 0:
-					FlxG.sound.play(Paths.sound('intro3'), 0.6);
+					FlxG.sound.play(Paths.sound('intro3' + altSuffix), 0.6);
 				case 1:
-					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
+					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0], introLibrary));
 					ready.scrollFactor.set();
 					ready.updateHitbox();
 
-					if (curStage.startsWith('school'))
+					if (introLibrary == 'week6')
 						ready.setGraphicSize(Std.int(ready.width * daPixelZoom));
 
 					ready.screenCenter();
@@ -1033,12 +1041,12 @@ class PlayState extends MusicBeatState
 							ready.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('intro2'), 0.6);
+					FlxG.sound.play(Paths.sound('intro2' + altSuffix), 0.6);
 				case 2:
-					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
+					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1], introLibrary));
 					set.scrollFactor.set();
 
-					if (curStage.startsWith('school'))
+					if (introLibrary == 'week6')
 						set.setGraphicSize(Std.int(set.width * daPixelZoom));
 
 					set.screenCenter();
@@ -1050,12 +1058,12 @@ class PlayState extends MusicBeatState
 							set.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('intro1'), 0.6);
+					FlxG.sound.play(Paths.sound('intro1' + altSuffix), 0.6);
 				case 3:
-					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
+					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2], introLibrary));
 					go.scrollFactor.set();
 
-					if (curStage.startsWith('school'))
+					if (introLibrary == 'week6')
 						go.setGraphicSize(Std.int(go.width * daPixelZoom));
 
 					go.updateHitbox();
@@ -1069,7 +1077,7 @@ class PlayState extends MusicBeatState
 							go.destroy();
 						}
 					});
-					FlxG.sound.play(Paths.sound('introGo'), 0.6);
+					FlxG.sound.play(Paths.sound('introGo' + altSuffix), 0.6);
 				case 4:
 			}
 
