@@ -8,5 +8,6 @@ posYOffset:32
 posXOffset:8
 camYOffset:16
 camXOffset:-32
+multiplyGraphicSize:1
 
 custom-anim.example:example:x:y
