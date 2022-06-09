@@ -1,5 +1,6 @@
 package;
 
+import sys.io.File;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.animation.FlxBaseAnimation;
@@ -493,6 +494,95 @@ class Character extends FlxSprite
 				addOffset("singRIGHT-alt", -1, -24);
 				addOffset("singLEFT-alt", -30, 15);
 				addOffset("singDOWN-alt", -30, -27);
+
+				playAnim('idle');
+				
+			case 'customCharacter':
+				tex = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile("mods/images/" + PlayState.SONG.song.toLowerCase() + "/dad.png"), File.getContent("mods/images/" + PlayState.SONG.song.toLowerCase() + "/dad.xml"));
+				frames = tex;
+
+				var characterArray = [];
+
+				// offsets
+				var idleOffsetX:Int = 0; var idleOffsetY:Int = 0; var singUPOffsetX:Int = 0; var singUPOffsetY:Int = 0;
+				var singRIGHTOffsetX:Int = 0; var singRIGHTOffsetY:Int = 0; var singLEFTOffsetX:Int = 0; var singLEFTOffsetY:Int = 0;
+				var singDOWNOffsetX:Int = 0; var singDOWNOffsetY:Int = 0;
+
+				// animation
+				var idleAnim:String = ""; var singUPAnim:String = ""; var singRIGHTAnim:String = ""; var singLEFTAnim:String = "";
+				var singDOWNAnim:String = "";
+
+				var daList:Array<String> = File.getContent("mods/images/" + PlayState.SONG.song.toLowerCase() + "/character.txt").trim().split('\n');
+				
+				for (i in 0...daList.length){
+					daList[i] = daList[i].trim();
+				}
+
+				characterArray = daList;
+
+				for (char in characterArray){
+					var SplitChar = char.split(":");
+
+					// animations and offsets
+					if (SplitChar[0] == "anim.idle"){
+						idleAnim = SplitChar[1];
+						idleOffsetX = Std.parseInt(SplitChar[2]);
+						idleOffsetY = Std.parseInt(SplitChar[3]);
+					}
+					
+					if (SplitChar[0] == "anim.singUP"){
+						singUPAnim = SplitChar[1];
+						singUPOffsetX = Std.parseInt(SplitChar[2]);
+						singUPOffsetY = Std.parseInt(SplitChar[3]);
+					}
+
+					if (SplitChar[0] == "anim.singRIGHT"){
+						singRIGHTAnim = SplitChar[1];
+						singRIGHTOffsetX = Std.parseInt(SplitChar[2]);
+						singRIGHTOffsetY = Std.parseInt(SplitChar[3]);
+					}
+
+					if (SplitChar[0] == "anim.singLEFT"){
+						singLEFTAnim = SplitChar[1];
+						singLEFTOffsetX = Std.parseInt(SplitChar[2]);
+						singLEFTOffsetY = Std.parseInt(SplitChar[3]);
+					}
+
+					if (SplitChar[0] == "anim.singDOWN"){
+						singDOWNAnim = SplitChar[1];
+						singDOWNOffsetX = Std.parseInt(SplitChar[2]);
+						singDOWNOffsetY = Std.parseInt(SplitChar[3]);
+					}
+
+					if (SplitChar[0] == "multiplyGraphicSize"){
+						setGraphicSize(Std.int(width) * Std.parseInt(SplitChar[1]));
+					}
+
+					// get custom animations from SplitChar[0] that start with "custom-anim."
+					if (SplitChar[0].indexOf("custom-anim.") == 0){
+						animation.addByPrefix(SplitChar[0].substring(12), SplitChar[1], 24, false);
+						addOffset(SplitChar[0].substring(12), Std.parseInt(SplitChar[2]), Std.parseInt(SplitChar[3]));
+					}
+				}
+
+				animation.addByPrefix("idle", idleAnim, 24, false);
+				animation.addByPrefix("singUP", singUPAnim, 24, false);
+				animation.addByPrefix("singRIGHT", singRIGHTAnim, 24, false);
+				animation.addByPrefix("singLEFT", singLEFTAnim, 24, false);
+				animation.addByPrefix("singDOWN", singDOWNAnim, 24, false);
+
+				addOffset('idle', idleOffsetX, idleOffsetY);
+				addOffset('singUP', singUPOffsetX, singUPOffsetY);
+				addOffset('singRIGHT', singRIGHTOffsetX, singRIGHTOffsetY);
+				addOffset('singLEFT', singLEFTOffsetX, singLEFTOffsetY);
+				addOffset('singDOWN', singDOWNOffsetX, singDOWNOffsetY);
+
+				//trace everything
+				trace("idleAnim: " + idleAnim + " idleOffsetX: " + idleOffsetX + " idleOffsetY: " + idleOffsetY 
+				+ " singUPAnim: " + singUPAnim + " singUPOffsetX: " + singUPOffsetX + " singUPOffsetY: " + singUPOffsetY
+				+ " singRIGHTAnim: " + singRIGHTAnim + " singRIGHTOffsetX: " + singRIGHTOffsetX + " singRIGHTOffsetY: " + singRIGHTOffsetY
+				+ " singLEFTAnim: " + singLEFTAnim + " singLEFTOffsetX: " + singLEFTOffsetX + " singLEFTOffsetY: " + singLEFTOffsetY
+				+ " singDOWNAnim: " + singDOWNAnim + " singDOWNOffsetX: " + singDOWNOffsetX + " singDOWNOffsetY: " + singDOWNOffsetY);
 
 				playAnim('idle');
 		}

@@ -52,6 +52,7 @@ class ChartingState extends MusicBeatState
 	public static var lastSection:Int = 0;
 
 	var bpmTxt:FlxText;
+	var stepTxt:FlxText;
 
 	var strumLine:FlxSprite;
 	var curSong:String = 'Dadbattle';
@@ -151,6 +152,11 @@ class ChartingState extends MusicBeatState
 		bpmTxt = new FlxText(1000, 50, 0, "", 16);
 		bpmTxt.scrollFactor.set();
 		add(bpmTxt);
+
+		//da step text
+		stepTxt = new FlxText(1000, 100, 0, "", 16);
+		stepTxt.scrollFactor.set();
+		add(stepTxt);
 
 		strumLine = new FlxSprite(0, 50).makeGraphic(Std.int(FlxG.width / 2), 4);
 		add(strumLine);
@@ -512,6 +518,8 @@ class ChartingState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		stepTxt.text = "Step: " + curStep;
+
 		for (note in curRenderedNotes) {
 			if (FlxG.overlap(note, strumLine) && FlxG.sound.music.playing) {
 				if (enableHitsounds && note.alpha == 1) {

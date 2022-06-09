@@ -1,0 +1,12 @@
+anim.idle:BF idle dance:0:0
+anim.singLEFT:BF NOTE LEFT:0:0
+anim.singRIGHT:BF NOTE RIGHT:0:0
+anim.singUP:BF NOTE UP:0:0
+anim.singDOWN:BF NOTE DOWN:0:0
+custom-anim.dead:BF dies:0:0
+posYOffset:32
+posXOffset:8
+camYOffset:16
+camXOffset:-32
+
+custom-anim.example:example:x:y

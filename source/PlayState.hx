@@ -45,6 +45,10 @@ import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
 
+#if (windows || linux)
+import vlc.VideoHandler;
+#end
+
 using StringTools;
 
 class PlayState extends MusicBeatState
@@ -128,6 +132,7 @@ class PlayState extends MusicBeatState
 	public static var daPixelZoom:Float = 6;
 
 	var inCutscene:Bool = false;
+	var playedEndCutscene:Bool = false;
 
 	#if desktop
 	// Discord RPC variables
@@ -143,6 +148,7 @@ class PlayState extends MusicBeatState
 
 	var underlay:FlxSprite;
 
+	var characterArray = [];
 	var events = [];
 	var songScrollSpeed:Float = 1;
 
@@ -560,6 +566,16 @@ class PlayState extends MusicBeatState
 
 		dad = new Character(100, 100, SONG.player2);
 
+		if (SONG.player2 == 'customCharacter'){
+			var daList:Array<String> = File.getContent("mods/images/" + PlayState.SONG.song.toLowerCase() + "/character.txt").trim().split('\n');
+				
+			for (i in 0...daList.length){
+				daList[i] = daList[i].trim();
+			}
+
+			characterArray = daList;
+		}
+
 		var camPos:FlxPoint = new FlxPoint(dad.getGraphicMidpoint().x, dad.getGraphicMidpoint().y);
 
 		switch (SONG.player2)
@@ -598,6 +614,15 @@ class PlayState extends MusicBeatState
 				dad.x -= 150;
 				dad.y += 100;
 				camPos.set(dad.getGraphicMidpoint().x + 300, dad.getGraphicMidpoint().y);
+			case 'customCharacter':
+				for (char in characterArray){
+					var SplitChar = char.split(":");
+	
+					if (SplitChar[0] == 'posYOffset')
+						dad.y += Std.parseFloat(SplitChar[1]);
+					if (SplitChar[0] == 'camXOffset')
+						dad.x += Std.parseFloat(SplitChar[1]);
+				}
 		}
 
 		switch (SONG.player3){
@@ -841,6 +866,11 @@ class PlayState extends MusicBeatState
 					schoolIntro(doof);
 				case 'thorns':
 					schoolIntro(doof);
+
+				case 'example': //mp4 cutscene example
+							// File name here					 
+					playCutscene('example');
+
 				default:
 					startCountdown();
 			}
@@ -1555,6 +1585,15 @@ class PlayState extends MusicBeatState
 					case 'senpai-angry':
 						camFollow.y = dad.getMidpoint().y - 430;
 						camFollow.x = dad.getMidpoint().x - 100;
+					case 'customCharacter':		
+						for (char in characterArray){
+							var SplitChar = char.split(":");
+	
+							if (SplitChar[0] == 'camYOffset')
+								camFollow.y = dad.getMidpoint().y += Std.parseFloat(SplitChar[1]);
+							if (SplitChar[0] == 'camXOffset')
+								camFollow.x = dad.getMidpoint().x += Std.parseFloat(SplitChar[1]);
+						}
 				}
 
 				if (gfCam)
@@ -1823,7 +1862,16 @@ class PlayState extends MusicBeatState
 
 	function endSong():Void
 	{
-		canPause = false;
+		if (playedEndCutscene == false && isStoryMode == true){
+			switch (curSong.toLowerCase())
+			{
+				case 'pico':
+					playEndCutscene("cock");
+			}
+		}
+
+		if (inCutscene == false){
+			canPause = false;
 		FlxG.sound.music.volume = 0;
 		vocals.volume = 0;
 		if (SONG.validScore)
@@ -1902,6 +1950,8 @@ class PlayState extends MusicBeatState
 			trace('WENT BACK TO FREEPLAY??');
 			FlxG.switchState(new FreeplayState());
 		}
+		}
+		
 	}
 
 	var endingSong:Bool = false;
@@ -2005,7 +2055,7 @@ class PlayState extends MusicBeatState
 		var daLoop:Int = 0;
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
+			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2, pixelShitLibrary));
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
 			numScore.y += 80;
@@ -2214,18 +2264,22 @@ class PlayState extends MusicBeatState
 						if (rightR)
 							spr.animation.play('static');
 				}
-	
 				try {
-					if (spr.animation.curAnim.name == 'confirm' && storyWeek != 6)
+					if (spr.animation.curAnim.name == 'confirm')
 						{
-							spr.centerOffsets();
-							spr.offset.x -= 13;
-							spr.offset.y -= 13;
+							// Player NoteSkin Confirm Offsets
+							switch (SONG.noteskin){
+								default:
+									spr.centerOffsets();
+									spr.offset.x -= 13;
+									spr.offset.y -= 13;
+								case 'pixel':
+									// not needed
+							}
 						}
-						else
+						else{
 							spr.centerOffsets();
-				} catch (e) {
-					trace('FUCK! ${e.details}');
+						}
 				}
 			});
 		}
@@ -2386,6 +2440,51 @@ class PlayState extends MusicBeatState
 				//recycledNote.makeSplash(cpuStrums.members[nData].x, cpuStrums.members[nData].y, nData);
 				//noteSplashes.add(recycledNote);
 		}
+	
+	function playCutscene(name:String)
+	{
+		#if (windows || linux)
+		inCutscene = true;
+		trace(Paths.video(name));
+		var video:VideoHandler = new VideoHandler();
+		video.finishCallback = function()
+		{
+			startCountdown();
+		}
+		video.playVideo(Paths.video(name));
+		#else
+		startCountdown();
+		#end
+	}
+	
+	function playEndCutscene(name:String)
+	{
+		//Doesn't check if the song is ending sense it gets called to play WHILE the song is ending.
+		inCutscene = true;
+
+		//KILL THE MUSIC!!!
+		FlxG.sound.music.kill();
+		vocals.kill();
+
+		#if (windows || linux)
+		inCutscene = true;
+
+		var video:VideoHandler = new VideoHandler();
+		video.finishCallback = function()
+		{
+			inCutscene = false;
+			playedEndCutscene = true;
+			endSong();
+		}
+		video.playVideo(Paths.video(name));
+		#else
+		inCutscene = false;
+		playedEndCutscene = true;
+		endSong();
+		#end
+	}
+
+	
 
 	var fastCarCanDrive:Bool = true;
 

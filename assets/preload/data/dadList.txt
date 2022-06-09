@@ -10,3 +10,4 @@ monster-christmas
 senpai
 senpai-angry
 spirit
+customCharacter
