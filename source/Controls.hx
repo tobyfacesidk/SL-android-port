@@ -232,7 +232,7 @@ class Controls extends FlxActionSet
 		for (action in digitalActions)
 			byName[action.name] = action;
 
-		setKeyboardScheme(scheme, false);
+		setKeyboardScheme(false);
 	}
 	#else
 	public function new(name, scheme:KeyboardScheme = null)
@@ -487,41 +487,28 @@ class Controls extends FlxActionSet
 		}
 	}
 
-	public function setKeyboardScheme(scheme:KeyboardScheme, reset = true)
+	public function setKeyboardScheme(reset = true)
 	{
 		if (reset)
 			removeKeyboard();
 
-		keyboardScheme = scheme;
-
 		FlxG.save.bind('funkin', 'spunblue');
 
-		if(FlxG.save.data.UP == null){
-            FlxG.save.data.UP = "W";
-            trace("No UP");
-        }
-        if(FlxG.save.data.DOWN == null){
-            FlxG.save.data.DOWN = "S";
-            trace("No DOWN");
-        }
-        if(FlxG.save.data.LEFT == null){
-            FlxG.save.data.LEFT = "A";
-            trace("No LEFT");
-        }
-        if(FlxG.save.data.RIGHT == null){
-            FlxG.save.data.RIGHT = "D";
-            trace("No RIGHT");
-        }
-
-		inline bindKeys(Control.UP, [FlxKey.fromString(FlxG.save.data.UP), FlxKey.UP]);
-		inline bindKeys(Control.DOWN, [FlxKey.fromString(FlxG.save.data.DOWN), FlxKey.DOWN]);
-		inline bindKeys(Control.LEFT, [FlxKey.fromString(FlxG.save.data.LEFT), FlxKey.LEFT]);
-		inline bindKeys(Control.RIGHT, [FlxKey.fromString(FlxG.save.data.RIGHT), FlxKey.RIGHT]);
+		if (FlxG.save.data.left == null || FlxG.save.data.right == null || FlxG.save.data.up == null || FlxG.save.data.down == null){
+			FlxG.save.data.left = 'A';
+			FlxG.save.data.right = 'D';
+			FlxG.save.data.up = 'W';
+			FlxG.save.data.down = 'S';
+		}
+		
+		inline bindKeys(Control.UP, [FlxKey.fromString(FlxG.save.data.up), FlxKey.UP]);
+		inline bindKeys(Control.DOWN, [FlxKey.fromString(FlxG.save.data.down), FlxKey.DOWN]);
+		inline bindKeys(Control.LEFT, [FlxKey.fromString(FlxG.save.data.left), FlxKey.LEFT]);
+		inline bindKeys(Control.RIGHT, [FlxKey.fromString(FlxG.save.data.right), FlxKey.RIGHT]);
 		inline bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
 		inline bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
 		inline bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
 		inline bindKeys(Control.RESET, [R]);
-		inline bindKeys(Control.CHEAT, [INSERT]); // freeplay easteregg
 	}
 
 	function removeKeyboard()
@@ -681,7 +668,7 @@ class Controls extends FlxActionSet
 		switch (device)
 		{
 			case Keys:
-				setKeyboardScheme(None);
+				setKeyboardScheme();
 			case Gamepad(id):
 				removeGamepad(id);
 		}

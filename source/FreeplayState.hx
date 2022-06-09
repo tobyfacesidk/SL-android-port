@@ -70,7 +70,10 @@ class FreeplayState extends MusicBeatState
 		for (song in FileSystem.readDirectory("mods/data/")) {
 			var tempArray = song.split(':');
 
-			addSong(tempArray[0], 69420, "MOD"); //if the week is 69420, its a mod.
+			var poop = Highscore.formatSong(tempArray[0].toLowerCase(), curDifficulty);
+			var tempSongData = Song.loadFromModJson(poop, tempArray[0].toLowerCase());
+
+			addSong(tempArray[0], 69420, tempSongData.player2); //if the week is 69420, its a mod.
 		}
 
 		// LOAD MUSIC
@@ -89,15 +92,12 @@ class FreeplayState extends MusicBeatState
 			
 			/*
 			var tcolor:FlxColor = 0;
-
 			for (col in CoolUtil.coolTextFile(Paths.txt('healthcolors'))) {
 				var eugh = col.split(':');
-
 				if (songs[i].songCharacter.toLowerCase().startsWith(eugh[0])) {
 					tcolor = new FlxColor(Std.parseInt(eugh[1]));
 				}
 			}
-
 			songText.color = new FlxColor(tcolor);
 			*/
 
@@ -105,13 +105,11 @@ class FreeplayState extends MusicBeatState
 			songText.targetY = i;
 			grpSongs.add(songText);
 
-			if (songs[i].songCharacter.toLowerCase() != "mod"){
-				var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
-				icon.sprTracker = songText;
+			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
+			icon.sprTracker = songText;
 
-				iconArray.push(icon);
-				add(icon);
-			}
+			iconArray.push(icon);
+			add(icon);
 
 			var array = CoolUtil.coolTextFile(Paths.txt('healthcolors'));
 
@@ -154,17 +152,13 @@ class FreeplayState extends MusicBeatState
 		// JUST DOIN THIS SHIT FOR TESTING!!!
 		/* 
 			var md:String = Markdown.markdownToHtml(Assets.getText('CHANGELOG.md'));
-
 			var texFel:TextField = new TextField();
 			texFel.width = FlxG.width;
 			texFel.height = FlxG.height;
 			// texFel.
 			texFel.htmlText = md;
-
 			FlxG.stage.addChild(texFel);
-
 			// scoreText.textField.htmlText = md;
-
 			trace(md);
 		 */
 
@@ -264,19 +258,12 @@ class FreeplayState extends MusicBeatState
 				else{
 					PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
 				}
-
-				if (secret){
-					PlayState.secretMode = true;
-
-					FlxG.sound.play(Paths.sound('GF_1', 'shared'));
-					trace('Just because you heard the sound, doesn\'t mean you\'ve found the secret!');
-				}
 				
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
 	
 				PlayState.storyWeek = songs[curSelected].week;
-				trace('CUR WEEK' + PlayState.storyWeek + '\nSecret Mode: ' + PlayState.secretMode);
+				trace('CUR WEEK' + PlayState.storyWeek);
 				LoadingState.loadAndSwitchState(new PlayState());
 			}
 		}
@@ -305,7 +292,8 @@ class FreeplayState extends MusicBeatState
 
 	function loadScoreData(){
 		#if !switch
-		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
+		intendedScore = Highscore.getScore(songs[curSelected].songName.toLowerCase(), curDifficulty);
+		trace('score: ' + Highscore.getScore(songs[curSelected].songName.toLowerCase(), curDifficulty));
 		#end
 	}
 
@@ -387,7 +375,7 @@ class FreeplayState extends MusicBeatState
 					}
 				}
 				else{
-					tcolor = new FlxColor(FlxColor.LIME);
+					tcolor = new FlxColor(FlxColor.BLUE);
 				}
 			}
 		}

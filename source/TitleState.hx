@@ -46,6 +46,10 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
+		#if polymod
+		polymod.Polymod.init({modRoot: "mods", dirs: ['introMod']});
+		#end
+
 		PlayerSettings.init();
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
@@ -53,26 +57,17 @@ class TitleState extends MusicBeatState
 		// DEBUG BULLSHIT
 
 		super.create();
-		
+
+		NGio.noLogin(APIStuff.API);
+
+		#if ng
+		var ng:NGio = new NGio(APIStuff.API, APIStuff.EncKey);
+		trace('NEWGROUNDS LOL');
+		#end
+
 		FlxG.save.bind('funkin', 'spunblue');
 
 		Highscore.load();
-		
-
-		if (FlxG.save.data.epilepsyMode == null) {
-			FlxG.switchState(new EpilepsyState());
-		}
-
-		if (FlxG.save.data.frameRate != null) {
-			if (FlxG.save.data.frameRate > FlxG.drawFramerate){
-				FlxG.updateFramerate = FlxG.save.data.frameRate;
-				FlxG.drawFramerate = FlxG.save.data.frameRate;
-			}
-			else{
-				FlxG.drawFramerate = FlxG.save.data.frameRate;
-				FlxG.updateFramerate = FlxG.save.data.frameRate;
-			}
-		}
 
 		if (FlxG.save.data.weekUnlocked != null)
 		{
@@ -171,12 +166,7 @@ class TitleState extends MusicBeatState
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
 		titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24);
-		if (FlxG.save.data.epilepsyMode) {
-			titleText.animation.addByPrefix('press', "Press Enter to Begin", 24, false);
-		}
-		else {
-			titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
-		}
+		titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
 		titleText.antialiasing = true;
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
@@ -205,7 +195,7 @@ class TitleState extends MusicBeatState
 
 		credTextShit.visible = false;
 
-		ngSpr = new FlxSprite(0, FlxG.height * 0.55).loadGraphic(Paths.image('percentage_logo'));
+		ngSpr = new FlxSprite(0, FlxG.height * 0.52).loadGraphic(Paths.image('newgrounds_logo'));
 		add(ngSpr);
 		ngSpr.visible = false;
 		ngSpr.setGraphicSize(Std.int(ngSpr.width * 0.8));
@@ -278,57 +268,44 @@ class TitleState extends MusicBeatState
 			#end
 		}
 
-		#if debug
-		if (controls.CHEAT){
-			FlxG.save.erase();
-			FlxG.resetState();
-		}
-		#end
-
 		if (pressedEnter && !transitioning && skippedIntro)
 		{
+			#if !switch
+			NGio.unlockMedal(60960);
+
+			// If it's Friday according to da clock
+			if (Date.now().getDay() == 5)
+				NGio.unlockMedal(61034);
+			#end
+
 			titleText.animation.play('press');
 
-			if (!FlxG.save.data.epilepsyMode)
-			{
-				FlxG.camera.flash(FlxColor.WHITE, 1);
-			}
+			FlxG.camera.flash(FlxColor.WHITE, 1);
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 
 			transitioning = true;
 			// FlxG.sound.music.stop();
 
 			new FlxTimer().start(2, function(tmr:FlxTimer)
+			{
+				// Check if version is outdated
+
+				var version:String = "v" + Application.current.meta.get('version');
+
+				if (version.trim() != NGio.GAME_VER_NUMS.trim() && !OutdatedSubState.leftState)
 				{
-					// Get current version of Kade Engine
-					
-					var http = new haxe.Http("https://raw.githubusercontent.com/SpunBlue/Friday-Night-Funkin-Sublime-Engine/master/version.Update");
-					var returnedData:Array<String> = [];
-					
-					http.onData = function (data:String)
-					{
-						returnedData[0] = data.substring(0, data.indexOf(';'));
-						returnedData[1] = data.substring(data.indexOf('-'), data.length);
-						  if (!MainMenuState.gameVer.contains(returnedData[0].trim()) && !OutdatedSubState.leftState && MainMenuState.nightly == "")
-						{
-							trace('outdated lmao! ' + returnedData[0] + ' != ' + MainMenuState.gameVer);
-							OutdatedSubState.needVer = returnedData[0];
-							OutdatedSubState.currChanges = returnedData[1];
-							FlxG.switchState(new OutdatedSubState());
-						}
-						else
-						{
-							FlxG.switchState(new MainMenuState());
-						}
-					}
-					
-					http.onError = function (error) {
-					  trace('error: $error');
-					  FlxG.switchState(new MainMenuState()); // fail but we go anyway
-					}
-					
-					http.request();
-				});
+					FlxG.switchState(new OutdatedSubState());
+					trace('OLD VERSION!');
+					trace('old ver');
+					trace(version.trim());
+					trace('cur ver');
+					trace(NGio.GAME_VER_NUMS.trim());
+				}
+				else
+				{
+					FlxG.switchState(new MainMenuState());
+				}
+			});
 			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
 
@@ -387,10 +364,10 @@ class TitleState extends MusicBeatState
 		switch (curBeat)
 		{
 			case 1:
-				// createCoolText(['thepercentageguy']);
+				createCoolText(['ninjamuffin99', 'phantomArcade', 'kawaisprite', 'evilsk8er']);
 			// credTextShit.visible = true;
 			case 3:
-				createCoolText(['SpunBlue', 'presents']);
+				addMoreText('present');
 			// credTextShit.text += '\npresent...';
 			// credTextShit.addText();
 			case 4:
@@ -399,15 +376,14 @@ class TitleState extends MusicBeatState
 			// credTextShit.text = 'In association \nwith';
 			// credTextShit.screenCenter();
 			case 5:
-				createCoolText(['Newgrounds']);
+				createCoolText(['In association', 'with']);
 			case 7:
-				addMoreText('Holyshit');
-				// ngSpr.visible = true;
+				addMoreText('newgrounds');
+				ngSpr.visible = true;
 			// credTextShit.text += '\nNewgrounds';
 			case 8:
 				deleteCoolText();
 				ngSpr.visible = false;
-				// ngSpr.visible = false;
 			// credTextShit.visible = false;
 
 			// credTextShit.text = 'Shoutouts Tom Fulp';
@@ -424,13 +400,13 @@ class TitleState extends MusicBeatState
 			// credTextShit.text = "Friday";
 			// credTextShit.screenCenter();
 			case 13:
-				addMoreText('FNF');
+				addMoreText('Friday');
 			// credTextShit.visible = true;
 			case 14:
-				addMoreText('Sublime');
+				addMoreText('Night');
 			// credTextShit.text += '\nNight';
 			case 15:
-				addMoreText('Engine'); // credTextShit.text += '\nFunkin';
+				addMoreText('Funkin'); // credTextShit.text += '\nFunkin';
 
 			case 16:
 				skipIntro();
@@ -445,9 +421,7 @@ class TitleState extends MusicBeatState
 		{
 			remove(ngSpr);
 
-			if (!FlxG.save.data.epilepsyMode) {
-				FlxG.camera.flash(FlxColor.WHITE, 4);
-			}
+			FlxG.camera.flash(FlxColor.WHITE, 4);
 			remove(credGroup);
 			skippedIntro = true;
 		}
