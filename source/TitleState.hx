@@ -292,19 +292,32 @@ class TitleState extends MusicBeatState
 
 				var version:String = "v" + Application.current.meta.get('version');
 
-				if (version.trim() != NGio.GAME_VER_NUMS.trim() && !OutdatedSubState.leftState)
+				var http = new haxe.Http("https://raw.githubusercontent.com/SpunBlue/Friday-Night-Funkin-Sublime-Engine/master/version.Update");
+				var returnedData:Array<String> = [];
+				
+				http.onData = function (data:String)
 				{
-					FlxG.switchState(new OutdatedSubState());
-					trace('OLD VERSION!');
-					trace('old ver');
-					trace(version.trim());
-					trace('cur ver');
-					trace(NGio.GAME_VER_NUMS.trim());
+					returnedData[0] = data.substring(0, data.indexOf(';'));
+					returnedData[1] = data.substring(data.indexOf('-'), data.length);
+					  if (!version.contains(returnedData[0].trim()) && !OutdatedSubState.leftState)
+					{
+						trace('outdated lmao! ' + returnedData[0] + ' != ' + version);
+						OutdatedSubState.needVer = returnedData[0];
+						OutdatedSubState.currChanges = returnedData[1];
+						FlxG.switchState(new OutdatedSubState());
+					}
+					else
+					{
+						FlxG.switchState(new MainMenuState());
+					}
 				}
-				else
-				{
-					FlxG.switchState(new MainMenuState());
-				}
+
+				http.onError = function (error) {
+					trace('error: $error');
+					FlxG.switchState(new MainMenuState()); // fail but we go anyway
+				  }
+				  
+				  http.request();
 			});
 			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
