@@ -190,7 +190,7 @@ class OptionsMenu extends MusicBeatState {
 
                 options = ['Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}'
 				, 'Disable Distractions ${FlxG.save.data.noDistractions ? 'ON' : 'OFF'}',
-				'Epilepsy Mode ${FlxG.save.data.epilepsy ? 'ON' : 'OFF'}'];
+				'Epilepsy Mode ${FlxG.save.data.epilepsyMode ? 'ON' : 'OFF'}'];
 				ready = true;
 		}
 
@@ -200,7 +200,7 @@ class OptionsMenu extends MusicBeatState {
 			for (i in 0...options.length) {
 				text = new FlxText(0, lastOptionY, FlxG.width, options[i]);
 				text.setFormat("PhantomMuff 1.5", 72, FlxColor.WHITE, "center");
-                text.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0xFF000000, 4, 1);
+                text.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0xFF000000, 8, 1);
 				text.alpha = 0.6;
 				text.screenCenter(Y);
 				text.y += lastOptionY - (curSelected * text.height);
@@ -260,6 +260,8 @@ class OptionsMenu extends MusicBeatState {
 						FlxG.save.data.downScroll = !FlxG.save.data.downScroll;
 					case 'disable':
 						FlxG.save.data.noDistractions = !FlxG.save.data.noDistractions;
+					case 'epilepsy':
+						FlxG.save.data.epilepsyMode = !FlxG.save.data.epilepsyMode;
 				}
 
 				if (!dontAllowUpdate){
