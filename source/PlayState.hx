@@ -328,13 +328,7 @@ class PlayState extends MusicBeatState
 				bg.scrollFactor.set(0.1, 0.1);
 				add(bg);
 
-					var city:FlxSprite = new FlxSprite(-10).loadGraphic(Paths.image('philly/city', 'week3'));
-				city.scrollFactor.set(0.3, 0.3);
-				city.setGraphicSize(Std.int(city.width * 0.85));
-				city.updateHitbox();
-				add(city);
-
-				var city:FlxSprite = new FlxSprite(-10).loadGraphic(Paths.image('philly/city'));
+				var city:FlxSprite = new FlxSprite(-10).loadGraphic(Paths.image('philly/city', 'week3'));
 				city.scrollFactor.set(0.3, 0.3);
 				city.setGraphicSize(Std.int(city.width * 0.85));
 				city.updateHitbox();
@@ -348,7 +342,7 @@ class PlayState extends MusicBeatState
 				for (i in 0...5)
 				{
 					if (!FlxG.save.data.epilepsyMode){
-						var light:FlxSprite = new FlxSprite(city.x).loadGraphic(Paths.image('philly/win' + i));
+						var light:FlxSprite = new FlxSprite(city.x).loadGraphic(Paths.image('philly/win' + i, 'week3'));
 						light.scrollFactor.set(0.3, 0.3);
 						light.visible = false;
 						light.setGraphicSize(Std.int(light.width * 0.85));
@@ -648,6 +642,13 @@ class PlayState extends MusicBeatState
 
 		boyfriend = new Boyfriend(770, 450, SONG.player1);
 
+		switch (SONG.player1)
+		{
+			case 'bf-pixel':
+				boyfriend.x += 200;
+				boyfriend.y += 220;
+		}
+
 		// REPOSITIONING PER STAGE
 		switch (curStage)
 		{
@@ -675,9 +676,6 @@ class PlayState extends MusicBeatState
 				// evilTrail.changeGraphic()
 				add(evilTrail);
 				// evilTrail.scrollFactor.set(1.1, 1.1);
-
-				boyfriend.x += 200;
-				boyfriend.y += 220;
 		}
 
 		add(gf);

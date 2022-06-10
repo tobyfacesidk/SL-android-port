@@ -277,27 +277,19 @@ class TitleState extends MusicBeatState
 			#end
 		}
 
+
 		if (pressedEnter && !transitioning && skippedIntro)
-		{
-			#if !switch
-			NGio.unlockMedal(60960);
-
-			// If it's Friday according to da clock
-			if (Date.now().getDay() == 5)
-				NGio.unlockMedal(61034);
-			#end
-
-			titleText.animation.play('press');
-
-
-			if (!FlxG.save.data.epilepsyMode)
+			{
+				titleText.animation.play('press');
+	
+				if (!FlxG.save.data.epilepsyMode)
 				{
 					FlxG.camera.flash(FlxColor.WHITE, 1);
 				}
-			FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
-
-			transitioning = true;
-			// FlxG.sound.music.stop();
+				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+	
+				transitioning = true;
+				// FlxG.sound.music.stop();
 
 			new FlxTimer().start(2, function(tmr:FlxTimer)
 			{
@@ -390,10 +382,10 @@ class TitleState extends MusicBeatState
 		switch (curBeat)
 		{
 			case 1:
-				createCoolText(['ninjamuffin99', 'phantomArcade', 'kawaisprite', 'evilsk8er']);
+				// createCoolText(['thepercentageguy']);
 			// credTextShit.visible = true;
 			case 3:
-				addMoreText('present');
+				createCoolText(['SpunBlue', 'presents']);
 			// credTextShit.text += '\npresent...';
 			// credTextShit.addText();
 			case 4:
@@ -402,14 +394,15 @@ class TitleState extends MusicBeatState
 			// credTextShit.text = 'In association \nwith';
 			// credTextShit.screenCenter();
 			case 5:
-				createCoolText(['In association', 'with']);
+				createCoolText(['A Funkin\'']);
 			case 7:
-				addMoreText('newgrounds');
-				ngSpr.visible = true;
+				addMoreText('Engine');
+				// ngSpr.visible = true;
 			// credTextShit.text += '\nNewgrounds';
 			case 8:
 				deleteCoolText();
-				ngSpr.visible = false;
+				//ngSpr.visible = false;
+				// ngSpr.visible = false;
 			// credTextShit.visible = false;
 
 			// credTextShit.text = 'Shoutouts Tom Fulp';
@@ -426,13 +419,13 @@ class TitleState extends MusicBeatState
 			// credTextShit.text = "Friday";
 			// credTextShit.screenCenter();
 			case 13:
-				addMoreText('Friday');
+				addMoreText('FNF');
 			// credTextShit.visible = true;
 			case 14:
-				addMoreText('Night');
+				addMoreText('Sublime');
 			// credTextShit.text += '\nNight';
 			case 15:
-				addMoreText('Funkin'); // credTextShit.text += '\nFunkin';
+				addMoreText('Engine'); // credTextShit.text += '\nFunkin';
 
 			case 16:
 				skipIntro();
@@ -444,14 +437,14 @@ class TitleState extends MusicBeatState
 	function skipIntro():Void
 	{
 		if (!skippedIntro)
-			{
-				remove(ngSpr);
-	
-				if (!FlxG.save.data.epilepsyMode) {
-					FlxG.camera.flash(FlxColor.WHITE, 4);
-				}
-				remove(credGroup);
-				skippedIntro = true;
+		{
+			remove(ngSpr);
+
+			if (!FlxG.save.data.epilepsyMode) {
+				FlxG.camera.flash(FlxColor.WHITE, 4);
 			}
+			remove(credGroup);
+			skippedIntro = true;
+		}
 	}
 }
