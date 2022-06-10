@@ -334,18 +334,28 @@ class PlayState extends MusicBeatState
 				city.updateHitbox();
 				add(city);
 
-				phillyCityLights = new FlxTypedGroup<FlxSprite>();
-				add(phillyCityLights);
+				var city:FlxSprite = new FlxSprite(-10).loadGraphic(Paths.image('philly/city'));
+				city.scrollFactor.set(0.3, 0.3);
+				city.setGraphicSize(Std.int(city.width * 0.85));
+				city.updateHitbox();
+				add(city);
+
+				if (!FlxG.save.data.epilepsyMode){
+				  phillyCityLights = new FlxTypedGroup<FlxSprite>();
+				  add(phillyCityLights);
+				}
 
 				for (i in 0...5)
 				{
-						var light:FlxSprite = new FlxSprite(city.x).loadGraphic(Paths.image('philly/win' + i, 'week3'));
+					if (!FlxG.save.data.epilepsyMode){
+						var light:FlxSprite = new FlxSprite(city.x).loadGraphic(Paths.image('philly/win' + i));
 						light.scrollFactor.set(0.3, 0.3);
 						light.visible = false;
 						light.setGraphicSize(Std.int(light.width * 0.85));
 						light.updateHitbox();
 						light.antialiasing = true;
 						phillyCityLights.add(light);
+					}
 				}
 
 				var streetBehind:FlxSprite = new FlxSprite(-40, 50).loadGraphic(Paths.image('philly/behindTrain', 'week3'));
@@ -428,7 +438,8 @@ class PlayState extends MusicBeatState
 				upperBoppers.scrollFactor.set(0.33, 0.33);
 				upperBoppers.setGraphicSize(Std.int(upperBoppers.width * 0.85));
 				upperBoppers.updateHitbox();
-				add(upperBoppers);
+				if (!FlxG.save.data.noDistractions)
+					add(upperBoppers);
 
 				var bgEscalator:FlxSprite = new FlxSprite(-1100, -600).loadGraphic(Paths.image('christmas/bgEscalator', 'week5'));
 				bgEscalator.antialiasing = true;
@@ -450,7 +461,8 @@ class PlayState extends MusicBeatState
 					bottomBoppers.scrollFactor.set(0.9, 0.9);
 					bottomBoppers.setGraphicSize(Std.int(bottomBoppers.width * 1));
 				bottomBoppers.updateHitbox();
-				add(bottomBoppers);
+				if (!FlxG.save.data.noDistractions)
+					add(bottomBoppers);
 
 				var fgSnow:FlxSprite = new FlxSprite(-600, 700).loadGraphic(Paths.image('christmas/fgSnow', 'week5'));
 				fgSnow.active = false;
@@ -2723,26 +2735,28 @@ class PlayState extends MusicBeatState
 					trainCooldown += 1;
 
 				if (curBeat % 4 == 0)
-				{
-					phillyCityLights.forEach(function(light:FlxSprite)
 					{
-						light.visible = false;
-					});
+						if (!FlxG.save.data.epilepsyMode){
+							phillyCityLights.forEach(function(light:FlxSprite)
+								{
+									light.visible = false;
+								});
+			
+								curLight = FlxG.random.int(0, phillyCityLights.length - 1);
+			
+								phillyCityLights.members[curLight].visible = true;
+								// phillyCityLights.members[curLight].alpha = 1;
+						}
+					}
 
-					curLight = FlxG.random.int(0, phillyCityLights.length - 1);
-
-					phillyCityLights.members[curLight].visible = true;
-					// phillyCityLights.members[curLight].alpha = 1;
-				}
-
-				if (curBeat % 8 == 4 && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
+				if (curBeat % 8 == 4 && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8 && !FlxG.save.data.noDistractions)
 				{
 					trainCooldown = FlxG.random.int(-4, 0);
 					trainStart();
 				}
 		}
 
-		if (isHalloween && FlxG.random.bool(10) && curBeat > lightningStrikeBeat + lightningOffset)
+		if (isHalloween && FlxG.random.bool(10) && curBeat > lightningStrikeBeat + lightningOffset && !FlxG.save.data.noDistractions)
 		{
 			lightningStrikeShit();
 		}

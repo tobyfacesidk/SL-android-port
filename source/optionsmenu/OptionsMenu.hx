@@ -145,6 +145,10 @@ class OptionsMenu extends MusicBeatState {
 					detailText.text = "If enabled, The notes will scroll down.";
 				case 'lane':
 					detailText.text = "Puts a transparent underlay on the notes.";
+				case 'disable':
+					detailText.text = "If enabled, Distractions will be disabled.";
+				case 'epilepsy':
+					detailText.text = "If enabled, The game will not give you epilepsy... Probably.";
 			}
 
 			if (forceCheck)
@@ -178,12 +182,15 @@ class OptionsMenu extends MusicBeatState {
 			case 'gameplay':
 				inOptionSelector = false;
 
-                options = ["Keybinds", 'Ghost-tapping ${FlxG.save.data.ghostTap ? 'ON' : 'OFF'}', 'Downscroll ${FlxG.save.data.downScroll ? 'ON' : 'OFF'}'];
+                options = ["Keybinds", 'Ghost-tapping ${FlxG.save.data.ghostTap ? 'ON' : 'OFF'}'
+				, 'Downscroll ${FlxG.save.data.downScroll ? 'ON' : 'OFF'}'];
 				ready = true;
 			case 'graphics':
 				inOptionSelector = false;
 
-                options = ['Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}'];
+                options = ['Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}'
+				, 'Disable Distractions ${FlxG.save.data.noDistractions ? 'ON' : 'OFF'}',
+				'Epilepsy Mode ${FlxG.save.data.epilepsy ? 'ON' : 'OFF'}'];
 				ready = true;
 		}
 
@@ -251,6 +258,8 @@ class OptionsMenu extends MusicBeatState {
                         FlxG.save.data.laneUnderlay = !FlxG.save.data.laneUnderlay;
 					case 'downscroll':
 						FlxG.save.data.downScroll = !FlxG.save.data.downScroll;
+					case 'disable':
+						FlxG.save.data.noDistractions = !FlxG.save.data.noDistractions;
 				}
 
 				if (!dontAllowUpdate){

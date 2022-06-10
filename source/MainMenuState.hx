@@ -163,10 +163,29 @@ class MainMenuState extends MusicBeatState
 						}
 						else
 						{
-							FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
-							{
+							if (!FlxG.save.data.epilepsyMode) {
+								FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
+									{
+										var daChoice:String = optionShit[curSelected];
+		
+										switch (daChoice)
+										{
+											case 'story mode':
+												FlxG.switchState(new StoryMenuState());
+												trace("Story Menu Selected");
+											case 'freeplay':
+												FlxG.switchState(new FreeplayState());
+		
+												trace("Freeplay Menu Selected");
+		
+											case 'options':
+												FlxG.switchState(new optionsmenu.OptionsMenu());
+										}
+									});
+							}
+							else {
 								var daChoice:String = optionShit[curSelected];
-
+		
 								switch (daChoice)
 								{
 									case 'story mode':
@@ -180,7 +199,7 @@ class MainMenuState extends MusicBeatState
 									case 'options':
 										FlxG.switchState(new optionsmenu.OptionsMenu());
 								}
-							});
+							}
 						}
 					});
 				}

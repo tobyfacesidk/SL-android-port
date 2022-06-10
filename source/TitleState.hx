@@ -68,6 +68,7 @@ class TitleState extends MusicBeatState
 		FlxG.save.bind('funkin', 'spunblue');
 
 		Highscore.load();
+		
 
 		if (FlxG.save.data.weekUnlocked != null)
 		{
@@ -81,6 +82,10 @@ class TitleState extends MusicBeatState
 			// QUICK PATCH OOPS!
 			if (!StoryMenuState.weekUnlocked[0])
 				StoryMenuState.weekUnlocked[0] = true;
+		}
+
+		if (FlxG.save.data.epilepsyMode == null) {
+			FlxG.switchState(new EpilepsyState());
 		}
 
 		#if FREEPLAY
@@ -165,8 +170,12 @@ class TitleState extends MusicBeatState
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
-		titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24);
-		titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
+		if (FlxG.save.data.epilepsyMode) {
+			titleText.animation.addByPrefix('press', "Press Enter to Begin", 24, false);
+		}
+		else {
+			titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
+		}
 		titleText.antialiasing = true;
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
@@ -280,7 +289,11 @@ class TitleState extends MusicBeatState
 
 			titleText.animation.play('press');
 
-			FlxG.camera.flash(FlxColor.WHITE, 1);
+
+			if (!FlxG.save.data.epilepsyMode)
+				{
+					FlxG.camera.flash(FlxColor.WHITE, 1);
+				}
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 
 			transitioning = true;
@@ -431,12 +444,14 @@ class TitleState extends MusicBeatState
 	function skipIntro():Void
 	{
 		if (!skippedIntro)
-		{
-			remove(ngSpr);
-
-			FlxG.camera.flash(FlxColor.WHITE, 4);
-			remove(credGroup);
-			skippedIntro = true;
-		}
+			{
+				remove(ngSpr);
+	
+				if (!FlxG.save.data.epilepsyMode) {
+					FlxG.camera.flash(FlxColor.WHITE, 4);
+				}
+				remove(credGroup);
+				skippedIntro = true;
+			}
 	}
 }
