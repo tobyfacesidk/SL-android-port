@@ -102,6 +102,9 @@ class OptionsMenu extends MusicBeatState {
 			optionSelected();
 		}
 
+		if (controls.LEFT && curOptionSelected.toLowerCase() == 'gameplay')
+			FlxG.save.erase();
+
 		if (controls.BACK) {
 			if (!inOptionSelector)
 				optionSelected(true);
@@ -132,7 +135,16 @@ class OptionsMenu extends MusicBeatState {
 			}
 
 			switch(curOptionSelected.toLowerCase()){
-                // option details here
+				case "gameplay":
+					detailText.text = "Gameplay Settings";
+				case 'graphics':
+					detailText.text = "Graphics Settings";
+				case 'ghost-tapping':
+					detailText.text = "If enabled, You won't miss unless you don't hit a note.";
+				case 'downscroll':
+					detailText.text = "If enabled, The notes will scroll down.";
+				case 'lane':
+					detailText.text = "Puts a transparent underlay on the notes.";
 			}
 
 			if (forceCheck)
@@ -161,12 +173,12 @@ class OptionsMenu extends MusicBeatState {
 			default:
 				inOptionSelector = true;
 
-				options = ["Gameplay","Graphics","TOADD"];
+				options = ["Gameplay","Graphics"];
 				ready = true;
 			case 'gameplay':
 				inOptionSelector = false;
 
-                options = ["Keybinds", 'Ghost-tapping ${FlxG.save.data.ghostTap ? 'ON' : 'OFF'}'];
+                options = ["Keybinds", 'Ghost-tapping ${FlxG.save.data.ghostTap ? 'ON' : 'OFF'}', 'Downscroll ${FlxG.save.data.downScroll ? 'ON' : 'OFF'}'];
 				ready = true;
 			case 'graphics':
 				inOptionSelector = false;
@@ -237,6 +249,8 @@ class OptionsMenu extends MusicBeatState {
                         FlxG.save.data.ghostTap = !FlxG.save.data.ghostTap;
                     case 'lane':
                         FlxG.save.data.laneUnderlay = !FlxG.save.data.laneUnderlay;
+					case 'downscroll':
+						FlxG.save.data.downScroll = !FlxG.save.data.downScroll;
 				}
 
 				if (!dontAllowUpdate){

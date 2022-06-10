@@ -196,6 +196,11 @@ class Note extends FlxSprite
 				// prevNote.setGraphicSize();
 			}
 		}
+
+		if (FlxG.save.data.downScroll && isSustainNote){
+			flipY = true;
+			y += height;
+		}
 	}
 
 	override function update(elapsed:Float)
