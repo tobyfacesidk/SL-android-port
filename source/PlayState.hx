@@ -1499,8 +1499,7 @@ class PlayState extends MusicBeatState
 		rankTxt.text = 'Sick\'s • $sicks\nGood\'s • $goods\nBad\'s • $bads\nShit\'s • $shits';
 
 		//songBarTimeTxt.text = '${Math.floor((Conductor.songPosition / 1000) / 60)}:${Math.floor((Conductor.songPosition / 1000) % 60)}';
-		songBarTimeTxt.text = '${(Math.floor((Conductor.songPosition / 1000) / 60))}
-		:${(Math.floor((Conductor.songPosition / 1000) % 60) < 10 ? '0' : '') + Math.floor((Conductor.songPosition / 1000) % 60)}'.replace('\n', '');
+		songBarTimeTxt.text = '${(Math.floor((Conductor.songPosition / 1000) / 60))}:${(Math.floor((Conductor.songPosition / 1000) % 60) < 10 ? '0' : '') + Math.floor((Conductor.songPosition / 1000) % 60)}'.replace('\n', '');
 		
 		//trace(songBarTimeTxt.text + ' | ' + Conductor.songPosition);
 
