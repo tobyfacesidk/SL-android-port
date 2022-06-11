@@ -187,6 +187,8 @@ class PlayState extends MusicBeatState
 				dialogue = CoolUtil.coolTextFile(Paths.txt('roses/rosesDialogue'));
 			case 'thorns':
 				dialogue = CoolUtil.coolTextFile(Paths.txt('thorns/thornsDialogue'));
+			case 'tutorial':
+				dialogue = [":gf:Holy shit you're hot as funk" , ':bf:Holy shit you\'re also hot as funk', ':gf:... Wanna Funk?'];
 		}
 
 		#if desktop
@@ -903,7 +905,9 @@ class PlayState extends MusicBeatState
 				case 'example': //mp4 cutscene example
 							// File name here					 
 					playCutscene('example');
-
+				
+				case 'tutorial':
+					schoolIntro(doof);
 				default:
 					startCountdown();
 			}
@@ -1495,7 +1499,7 @@ class PlayState extends MusicBeatState
 		rankTxt.text = 'Sick\'s • $sicks\nGood\'s • $goods\nBad\'s • $bads\nShit\'s • $shits';
 
 		//songBarTimeTxt.text = '${Math.floor((Conductor.songPosition / 1000) / 60)}:${Math.floor((Conductor.songPosition / 1000) % 60)}';
-		songBarTimeTxt.text = '${(Math.floor((Conductor.songPosition / 1000) / 60) < 10 ? '0' : '') + Math.floor((Conductor.songPosition / 1000) / 60)}
+		songBarTimeTxt.text = '${(Math.floor((Conductor.songPosition / 1000) / 60))}
 		:${(Math.floor((Conductor.songPosition / 1000) % 60) < 10 ? '0' : '') + Math.floor((Conductor.songPosition / 1000) % 60)}'.replace('\n', '');
 		
 		//trace(songBarTimeTxt.text + ' | ' + Conductor.songPosition);

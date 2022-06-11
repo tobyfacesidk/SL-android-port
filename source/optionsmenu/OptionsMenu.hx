@@ -200,7 +200,7 @@ class OptionsMenu extends MusicBeatState {
 			for (i in 0...options.length) {
 				text = new FlxText(0, lastOptionY, FlxG.width, options[i]);
 				text.setFormat("PhantomMuff 1.5", 72, FlxColor.WHITE, "center");
-                text.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0xFF000000, 8, 1);
+                text.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0xFF000000, 5, 1);
 				text.alpha = 0.6;
 				text.screenCenter(Y);
 				text.y += lastOptionY - (curSelected * text.height);
