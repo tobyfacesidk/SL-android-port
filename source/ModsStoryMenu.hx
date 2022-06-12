@@ -20,6 +20,7 @@ class ModsStoryMenu extends MusicBeatState{
 
     var option:FlxText;
     var songTextList:FlxText;
+    var highScoreText:FlxText;
     
     var difficultyText:FlxText;
 
@@ -73,6 +74,15 @@ class ModsStoryMenu extends MusicBeatState{
         difficultyText.antialiasing = true;
         add(difficultyText);
 
+        // high score text on the black bar top right
+        highScoreText = new FlxText(0, 0, FlxG.width, "High Score: 0");
+        highScoreText.setFormat("PhantomMuff 1.5", Std.int(FlxG.height * 0.03), 0xffffffff, "right");
+        highScoreText.setPosition(FlxG.width - highScoreText.width, 32);
+        highScoreText.scrollFactor.x = 0;
+        highScoreText.scrollFactor.y = 0;
+        highScoreText.antialiasing = true;
+        add(highScoreText);
+
         camFollow = new FlxSprite(0, 0).makeGraphic(Std.int(optionGroup.members[0].width), Std.int(optionGroup.members[0].height), 0xAAFF0000);
 		FlxG.camera.follow(camFollow, null, 0.06);
     }
@@ -119,6 +129,8 @@ class ModsStoryMenu extends MusicBeatState{
         var weekNumber:Int = Std.parseInt(songList[0]);
 
         intendedScore = Highscore.getWeekScore(weekNumber, curDifficulty);
+        highScoreText.text = "High Score: " + intendedScore;
+        trace('highscore: ' + intendedScore + ' week: ' + weekNumber + ' difficulty: ' + curDifficulty);
     }
 
     override function update(elapsed)
@@ -174,7 +186,7 @@ class ModsStoryMenu extends MusicBeatState{
 
 
         if (controls.BACK){
-            FlxG.switchState(new MainMenuState());
+            FlxG.switchState(new StorySelectionState());
         }
 
         if (controls.ACCEPT && !loadingWeek){
