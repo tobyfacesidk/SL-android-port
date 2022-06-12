@@ -42,7 +42,7 @@ class HealthIcon extends FlxSprite
 			scrollFactor.set();
 		}
 		else{
-			loadGraphic("mods/images/characters/" + char + "/icons.png", true, 150, 150);
+			loadGraphic(openfl.display.BitmapData.fromFile("mods/images/characters/" + char + "/icons.png"), true, 150, 150);
 
 			antialiasing = true;
 
