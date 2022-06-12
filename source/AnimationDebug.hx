@@ -1,5 +1,6 @@
 package;
 
+import sys.ssl.Key;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -24,6 +25,9 @@ class AnimationDebug extends FlxState
 	var isDad:Bool = true;
 	var daAnim:String = 'spooky';
 	var camFollow:FlxObject;
+
+	var tempExit:Bool = false;
+	var exitText:FlxText;
 
 	public function new(daAnim:String = 'spooky')
 	{
@@ -78,6 +82,12 @@ class AnimationDebug extends FlxState
 		add(camFollow);
 
 		FlxG.camera.follow(camFollow);
+
+		exitText = new FlxText(0, 0, FlxG.width, "Are you sure you want to exit? This does not save your progress. Press BACK to exit.");
+		exitText.setFormat(null, 16, FlxColor.RED, "center");
+		exitText.scrollFactor.set(0, 0);
+		exitText.visible = false;
+		add(exitText);
 
 		super.create();
 	}
@@ -191,5 +201,13 @@ class AnimationDebug extends FlxState
 		}
 
 		super.update(elapsed);
+
+		if (FlxG.keys.anyJustPressed([ESCAPE, BACKSPACE]) && !tempExit){
+			tempExit = true;
+			exitText.visible = true;
+		}
+		else if (FlxG.keys.anyJustPressed([ESCAPE, BACKSPACE]) && tempExit){
+			FlxG.switchState(new MainMenuState());
+		}
 	}
 }

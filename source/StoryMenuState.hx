@@ -1,5 +1,7 @@
 package;
 
+import sys.io.File;
+import sys.FileSystem;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -31,6 +33,7 @@ class StoryMenuState extends MusicBeatState
 		['Cocoa', 'Eggnog', 'Winter-Horrorland'],
 		['Senpai', 'Roses', 'Thorns']
 	];
+
 	var curDifficulty:Int = 1;
 
 	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true, true, true, true];
@@ -55,6 +58,8 @@ class StoryMenuState extends MusicBeatState
 		"hating simulator ft. moawling",
 		"TANKMAN"
 	];
+
+	//var week = [];
 
 	var txtWeekTitle:FlxText;
 
@@ -133,13 +138,7 @@ class StoryMenuState extends MusicBeatState
 			// Needs an offset thingie
 			if (!weekUnlocked[i])
 			{
-				var lock:FlxSprite = new FlxSprite(weekThing.width + 10 + weekThing.x);
-				lock.frames = ui_tex;
-				lock.animation.addByPrefix('lock', 'lock');
-				lock.animation.play('lock');
-				lock.ID = i;
-				lock.antialiasing = true;
-				grpLocks.add(lock);
+				weekUnlocked[i]; // close enough
 			}
 		}
 
@@ -283,7 +282,7 @@ class StoryMenuState extends MusicBeatState
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			movedBack = true;
-			FlxG.switchState(new MainMenuState());
+			FlxG.switchState(new StorySelectionState());
 		}
 
 		super.update(elapsed);

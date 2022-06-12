@@ -1255,7 +1255,7 @@ class PlayState extends MusicBeatState
 					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
 					sustainNote.scrollFactor.set();
 					unspawnNotes.push(sustainNote);
-
+					// noteplacement offset
 					sustainNote.mustPress = gottaHitNote;
 
 					if (sustainNote.mustPress)
@@ -1263,7 +1263,7 @@ class PlayState extends MusicBeatState
 						sustainNote.x += 702 - 48;
 					}
 					else{
-						sustainNote.x += 136 - 48;
+						sustainNote.x += 134 - 48;
 					}
 				}
 
@@ -1274,7 +1274,7 @@ class PlayState extends MusicBeatState
 					swagNote.x += 690 - 38;
 				}
 				else {
-					swagNote.x += 136 - 48;
+					swagNote.x += 134 - 48;
 				}
 			}
 			daBeats += 1;
@@ -1614,10 +1614,8 @@ class PlayState extends MusicBeatState
 		/* if (FlxG.keys.justPressed.NINE)
 			FlxG.switchState(new Charting()); */
 
-		#if debug
 		if (FlxG.keys.justPressed.EIGHT)
 			FlxG.switchState(new AnimationDebug(SONG.player2));
-		#end
 
 		if (startingSong)
 		{
@@ -1669,28 +1667,30 @@ class PlayState extends MusicBeatState
 				// camFollow.setPosition(lucky.getMidpoint().x - 120, lucky.getMidpoint().y + 210);
 
 				// dad camera offsets??!??/1/1
-				switch (dad.curCharacter)
-				{
-					case 'mom':
-						camFollow.y = dad.getMidpoint().y;
-					case 'senpai':
-						camFollow.y = dad.getMidpoint().y - 430;
-						camFollow.x = dad.getMidpoint().x - 100;
-					case 'senpai-angry':
-						camFollow.y = dad.getMidpoint().y - 430;
-						camFollow.x = dad.getMidpoint().x - 100;
-					default:
-						if (dadCharacterArray != []){
-							for (char in dadCharacterArray){
-								var SplitChar = char.split(":");
-		
-								if (SplitChar[0] == 'camYOffset')
-									camFollow.y = dad.getMidpoint().y += Std.parseFloat(SplitChar[1]);
-								if (SplitChar[0] == 'camXOffset')
-									camFollow.x = dad.getMidpoint().x += Std.parseFloat(SplitChar[1]);
+				if (SONG.player2 != 'none' || !PlayState.SONG.notes[Std.int(curStep / 16)].gfSection){
+					switch (dad.curCharacter)
+					{
+						case 'mom':
+							camFollow.y = dad.getMidpoint().y;
+						case 'senpai':
+							camFollow.y = dad.getMidpoint().y - 430;
+							camFollow.x = dad.getMidpoint().x - 100;
+						case 'senpai-angry':
+							camFollow.y = dad.getMidpoint().y - 430;
+							camFollow.x = dad.getMidpoint().x - 100;
+						default:
+							if (dadCharacterArray != []){
+								for (char in dadCharacterArray){
+									var SplitChar = char.split(":");
+			
+									if (SplitChar[0] == 'camYOffset')
+										camFollow.y = dad.getMidpoint().y += Std.parseFloat(SplitChar[1]);
+									if (SplitChar[0] == 'camXOffset')
+										camFollow.x = dad.getMidpoint().x += Std.parseFloat(SplitChar[1]);
+								}
 							}
-						}
-						
+							
+					}
 				}
 
 				if (gfCam)
@@ -1998,7 +1998,6 @@ class PlayState extends MusicBeatState
 		}
 
 		camHUD.fade(FlxColor.TRANSPARENT, 0.5, false, null, true);
-		isMod = false;
 
 		if (isStoryMode)
 		{
@@ -2013,7 +2012,12 @@ class PlayState extends MusicBeatState
 				transIn = FlxTransitionableState.defaultTransIn;
 				transOut = FlxTransitionableState.defaultTransOut;
 
-				FlxG.switchState(new StoryMenuState());
+				if (!isMod)
+					FlxG.switchState(new StoryMenuState());
+				else{
+					FlxG.switchState(new ModsStoryMenu());
+					isMod = false;
+				}
 
 				// if ()
 				StoryMenuState.weekUnlocked[Std.int(Math.min(storyWeek + 1, StoryMenuState.weekUnlocked.length - 1))] = true;
@@ -2055,7 +2059,20 @@ class PlayState extends MusicBeatState
 				FlxTransitionableState.skipNextTransOut = true;
 				prevCamFollow = camFollow;
 
-				PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + difficulty, PlayState.storyPlaylist[0]);
+				if (!isMod){
+					PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + difficulty, PlayState.storyPlaylist[0]);
+				}
+				else{
+					var modSong:String = PlayState.storyPlaylist[0].toLowerCase();
+
+					if (modSong == "" || modSong == null){
+						trace("OH SHIT THERES NO SONG... ATTEMPTING TO SET IT AGAIN");
+						modSong = PlayState.storyPlaylist[0].toLowerCase();
+					}
+
+					PlayState.SONG = Song.loadFromModJson(modSong + "/" + modSong + difficulty);
+				}
+
 				FlxG.sound.music.stop();
 
 				LoadingState.loadAndSwitchState(new PlayState());
@@ -2063,6 +2080,7 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
+			isMod = false;
 			trace('WENT BACK TO FREEPLAY??');
 			FlxG.switchState(new FreeplayState());
 		}
@@ -2539,7 +2557,38 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
+	function updateCharacter(isBF:Bool = false){
+		if (!isBF){
+			if (FileSystem.exists("mods/images/characters/" + dad.curCharacter + "/character.txt")){
+				var daList:Array<String> = File.getContent("mods/images/characters/" + dad.curCharacter + "/character.txt").trim().split('\n');
+					
+				for (i in 0...daList.length){
+					daList[i] = daList[i].trim();
+				}
 	
+				dadCharacterArray = daList;
+			}
+			else{
+				trace('dad is not modded');
+			}
+		}
+		else{
+			if (FileSystem.exists("mods/images/characters/" + boyfriend.curCharacter + "/character.txt")){
+				var daList:Array<String> = File.getContent("mods/images/characters/" + boyfriend.curCharacter + "/character.txt").trim().split('\n');
+					
+				for (i in 0...daList.length){
+					daList[i] = daList[i].trim();
+				}
+	
+				bfCharacterArray = daList;
+			}
+			else{
+				trace('bf is not modded');
+			}
+		}
+
+		trace('bf: ' + boyfriend.curCharacter + "\ndad:" + dad.curCharacter);
+	}
 
 	var fastCarCanDrive:Bool = true;
 
@@ -2661,6 +2710,16 @@ class PlayState extends MusicBeatState
 					case 'playanimation.girlfriend':
 						gf.playAnim(tempStep[2], true);
 						trace("GIRLFRIEND ANIM " + tempStep[2]);
+					case 'replace.dad':
+						remove(dad);
+						dad = new Character(dad.x += Std.parseFloat(tempStep[3]),dad.y += Std.parseFloat(tempStep[4]), tempStep[2]);
+						updateCharacter(false);
+						add(dad);
+					case 'replace.boyfriend':
+						remove(boyfriend);
+						boyfriend = new Boyfriend(boyfriend.x += Std.parseFloat(tempStep[3]),boyfriend.y += Std.parseFloat(tempStep[4]), tempStep[2]);
+						updateCharacter(true);
+						add(boyfriend);
 				}
 			}
 		}

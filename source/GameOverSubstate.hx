@@ -1,5 +1,6 @@
 package;
 
+import flixel.text.FlxText;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSubState;
@@ -12,33 +13,48 @@ class GameOverSubstate extends MusicBeatSubstate
 	var bf:Boyfriend;
 	var camFollow:FlxObject;
 
+	var allowBF:Bool = true;
+
 	var stageSuffix:String = "";
 
 	public function new(x:Float, y:Float)
 	{
-		var daStage = PlayState.curStage;
+		//var daStage = PlayState.curStage;
 		var daBf:String = '';
-		switch (daStage)
+
+		switch (PlayState.SONG.player1)
 		{
-			case 'school':
+			case 'bf-pixel':
 				stageSuffix = '-pixel';
 				daBf = 'bf-pixel-dead';
-			case 'schoolEvil':
-				stageSuffix = '-pixel';
-				daBf = 'bf-pixel-dead';
-			default:
+			case 'bf-car':
 				daBf = 'bf';
+			case 'bf':
+				daBf = 'bf';
+			case 'bf-christmas':
+				daBf = 'bf';
+			default:
+				allowBF = false;
 		}
 
 		super();
 
 		Conductor.songPosition = 0;
 
-		bf = new Boyfriend(x, y, daBf);
-		add(bf);
-
-		camFollow = new FlxObject(bf.getGraphicMidpoint().x, bf.getGraphicMidpoint().y, 1, 1);
-		add(camFollow);
+		if (allowBF){
+			bf = new Boyfriend(x, y, daBf);
+			add(bf);
+	
+			camFollow = new FlxObject(bf.getGraphicMidpoint().x, bf.getGraphicMidpoint().y, 1, 1);
+			add(camFollow);
+		}
+		else{
+			var gameoverTxt = new FlxText(0, 0, FlxG.width, "GAME OVER");
+			gameoverTxt.setFormat(null, 40, 0xffffffff, "center");
+			gameoverTxt.x = FlxG.width / 2 - gameoverTxt.width / 2;
+			gameoverTxt.y = FlxG.height / 2 - gameoverTxt.height / 2;
+			add(gameoverTxt);
+		}
 
 		FlxG.sound.play(Paths.sound('fnf_loss_sfx' + stageSuffix));
 		Conductor.changeBPM(100);
@@ -47,8 +63,8 @@ class GameOverSubstate extends MusicBeatSubstate
 		// FlxG.camera.focusOn(FlxPoint.get(FlxG.width / 2, FlxG.height / 2));
 		FlxG.camera.scroll.set();
 		FlxG.camera.target = null;
-
-		bf.playAnim('firstDeath');
+		if (allowBF)
+			bf.playAnim('firstDeath');
 	}
 
 	override function update(elapsed:Float)
@@ -64,19 +80,24 @@ class GameOverSubstate extends MusicBeatSubstate
 		{
 			FlxG.sound.music.stop();
 
+			PlayState.isMod = false;
+
 			if (PlayState.isStoryMode)
 				FlxG.switchState(new StoryMenuState());
 			else
 				FlxG.switchState(new FreeplayState());
 		}
 
-		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.curFrame == 12)
+		if (allowBF && bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.curFrame == 12)
 		{
 			FlxG.camera.follow(camFollow, LOCKON, 0.01);
 		}
 
-		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.finished)
+		if (allowBF && bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.finished)
 		{
+			FlxG.sound.playMusic(Paths.music('gameOver' + stageSuffix));
+		}
+		else if (!allowBF){
 			FlxG.sound.playMusic(Paths.music('gameOver' + stageSuffix));
 		}
 
@@ -100,7 +121,8 @@ class GameOverSubstate extends MusicBeatSubstate
 		if (!isEnding)
 		{
 			isEnding = true;
-			bf.playAnim('deathConfirm', true);
+			if (allowBF)
+				bf.playAnim('deathConfirm', true);
 			FlxG.sound.music.stop();
 			FlxG.sound.play(Paths.music('gameOverEnd' + stageSuffix));
 			new FlxTimer().start(0.7, function(tmr:FlxTimer)

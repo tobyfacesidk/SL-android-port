@@ -1,1 +1,6 @@
 150:setSongSpeed:2.8
+
+20:replace.dad:dad:20:40
+40:replace.boyfriend:bf-examplechar:10:10
+200:replace.boyfriend:bf:-10:-10
+300:replace.dad:bf-examplechar:-20:-40

@@ -173,7 +173,7 @@ class Note extends FlxSprite
 				default:
 					x -= width / 2;
 				case 'pixel':
-					x += 15;
+					x += 10;
 			}
 
 			if (prevNote.isSustainNote)

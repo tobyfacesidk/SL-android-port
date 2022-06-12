@@ -502,14 +502,8 @@ class Character extends FlxSprite
 				var pathVar;
 				var daPlayer;
 
-				if (isPlayer){
-					pathVar = "mods/images/characters/" + PlayState.SONG.player1.toLowerCase();
-					daPlayer = PlayState.SONG.player1.toLowerCase();
-				}
-				else{
-					pathVar = "mods/images/characters/" + PlayState.SONG.player2.toLowerCase();
-					daPlayer = PlayState.SONG.player2.toLowerCase();
-				}
+				pathVar = "mods/images/characters/" + curCharacter.toLowerCase();
+				daPlayer = curCharacter.toLowerCase();
 
 				if (FileSystem.exists(pathVar + "/character.txt")){
 					tex = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile(pathVar + "/" + daPlayer + ".png"), File.getContent(pathVar + "/" + daPlayer + ".xml"));
