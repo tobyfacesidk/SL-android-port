@@ -148,7 +148,9 @@ class PlayState extends MusicBeatState
 
 	var underlay:FlxSprite;
 
-	var characterArray = [];
+	var dadCharacterArray = [];
+	var bfCharacterArray = [];
+
 	var events = [];
 	var songScrollSpeed:Float = 1;
 
@@ -403,7 +405,7 @@ class PlayState extends MusicBeatState
 
 				// overlayShit.shader = shaderBullshit;
 
-				var limoTex = Paths.getSparrowAtlas('limo/limoDrive');
+				var limoTex = Paths.getSparrowAtlas('limo/limoDrive', 'week4');
 
 				limo = new FlxSprite(-120, 550);
 				limo.frames = limoTex;
@@ -577,14 +579,30 @@ class PlayState extends MusicBeatState
 
 		dad = new Character(100, 100, SONG.player2);
 
-		if (SONG.player2 == 'customCharacter'){
-			var daList:Array<String> = File.getContent("mods/images/" + PlayState.SONG.song.toLowerCase() + "/character.txt").trim().split('\n');
+		if (FileSystem.exists("mods/images/characters/" + SONG.player2 + "/character.txt")){
+			var daList:Array<String> = File.getContent("mods/images/characters/" + SONG.player2 + "/character.txt").trim().split('\n');
 				
 			for (i in 0...daList.length){
 				daList[i] = daList[i].trim();
 			}
 
-			characterArray = daList;
+			dadCharacterArray = daList;
+		}
+		else{
+			trace('dad is not modded');
+		}
+
+		if (FileSystem.exists("mods/images/characters/" + SONG.player1 + "/character.txt")){
+			var daList:Array<String> = File.getContent("mods/images/characters/" + SONG.player1 + "/character.txt").trim().split('\n');
+				
+			for (i in 0...daList.length){
+				daList[i] = daList[i].trim();
+			}
+
+			bfCharacterArray = daList;
+		}
+		else{
+			trace('bf is not modded');
 		}
 
 		var camPos:FlxPoint = new FlxPoint(dad.getGraphicMidpoint().x, dad.getGraphicMidpoint().y);
@@ -625,13 +643,15 @@ class PlayState extends MusicBeatState
 				dad.x -= 150;
 				dad.y += 100;
 				camPos.set(dad.getGraphicMidpoint().x + 300, dad.getGraphicMidpoint().y);
-			case 'customCharacter':
-				for (char in characterArray){
+			default:
+				for (char in dadCharacterArray){
 					var SplitChar = char.split(":");
+
+					//trace('setting dad pos');
 	
-					if (SplitChar[0] == 'posYOffset')
+					if (SplitChar[0] == 'posYOffset-DAD')
 						dad.y += Std.parseFloat(SplitChar[1]);
-					if (SplitChar[0] == 'camXOffset')
+					if (SplitChar[0] == 'posXOffset-DAD')
 						dad.x += Std.parseFloat(SplitChar[1]);
 				}
 		}
@@ -649,6 +669,17 @@ class PlayState extends MusicBeatState
 			case 'bf-pixel':
 				boyfriend.x += 200;
 				boyfriend.y += 220;
+			default:
+				for (char in bfCharacterArray){
+					var SplitChar = char.split(":");
+
+					//trace('setting bf pos');
+	
+					if (SplitChar[0] == 'posYOffset-BF')
+						boyfriend.y += Std.parseFloat(SplitChar[1]);
+					if (SplitChar[0] == 'posXOffset-BF')
+						boyfriend.x += Std.parseFloat(SplitChar[1]);
+				}
 		}
 
 		// REPOSITIONING PER STAGE
@@ -827,16 +858,20 @@ class PlayState extends MusicBeatState
 		scoreTxt = new FlxText(0, healthBarBG.y + 46, FlxG.width, "", 24);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER);
 		scoreTxt.scrollFactor.set();
-		if (SONG.noteskin.toLowerCase() != 'pixel')
+		if (SONG.noteskin.toLowerCase() != 'pixel'){
 			scoreTxt.setFormat("PhantomMuff 1.5", 16, FlxColor.WHITE, CENTER);
+			scoreTxt.antialiasing = true;
+		}
 		scoreTxt.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0xFF000000, 2, 1);
 		add(scoreTxt);
 
 		rankTxt = new FlxText(16, 640 - 96, 512, "Sick's - 0\nGood's - 0\nBad's - 0\nShit's - 0", 24);
 		rankTxt.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, LEFT);
 		rankTxt.scrollFactor.set();
-		if (SONG.noteskin.toLowerCase() != 'pixel')
+		if (SONG.noteskin.toLowerCase() != 'pixel'){
 			rankTxt.setFormat("PhantomMuff 1.5", 24, FlxColor.WHITE, LEFT);
+			rankTxt.antialiasing = true;
+		}
 		rankTxt.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0xFF000000, 2, 1);
 		add(rankTxt);
 		
@@ -1496,7 +1531,7 @@ class PlayState extends MusicBeatState
 		super.update(elapsed);
 
 		scoreTxt.text = 'Score: $songScore • Misses: $misses • Accuracy: ${calculateRating()} • Combo: $combo';
-		rankTxt.text = 'Sick\'s • $sicks\nGood\'s • $goods\nBad\'s • $bads\nShit\'s • $shits';
+		rankTxt.text = 'Sicks • $sicks\nGoods • $goods\nBads • $bads\nShits • $shits';
 
 		//songBarTimeTxt.text = '${Math.floor((Conductor.songPosition / 1000) / 60)}:${Math.floor((Conductor.songPosition / 1000) % 60)}';
 		songBarTimeTxt.text = '${(Math.floor((Conductor.songPosition / 1000) / 60))}:${(Math.floor((Conductor.songPosition / 1000) % 60) < 10 ? '0' : '') + Math.floor((Conductor.songPosition / 1000) % 60)}'.replace('\n', '');
@@ -1644,15 +1679,18 @@ class PlayState extends MusicBeatState
 					case 'senpai-angry':
 						camFollow.y = dad.getMidpoint().y - 430;
 						camFollow.x = dad.getMidpoint().x - 100;
-					case 'customCharacter':		
-						for (char in characterArray){
-							var SplitChar = char.split(":");
-	
-							if (SplitChar[0] == 'camYOffset')
-								camFollow.y = dad.getMidpoint().y += Std.parseFloat(SplitChar[1]);
-							if (SplitChar[0] == 'camXOffset')
-								camFollow.x = dad.getMidpoint().x += Std.parseFloat(SplitChar[1]);
+					default:
+						if (dadCharacterArray != []){
+							for (char in dadCharacterArray){
+								var SplitChar = char.split(":");
+		
+								if (SplitChar[0] == 'camYOffset')
+									camFollow.y = dad.getMidpoint().y += Std.parseFloat(SplitChar[1]);
+								if (SplitChar[0] == 'camXOffset')
+									camFollow.x = dad.getMidpoint().x += Std.parseFloat(SplitChar[1]);
+							}
 						}
+						
 				}
 
 				if (gfCam)
@@ -1685,6 +1723,17 @@ class PlayState extends MusicBeatState
 					case 'schoolEvil':
 						camFollow.x = boyfriend.getMidpoint().x - 200;
 						camFollow.y = boyfriend.getMidpoint().y - 200;
+					default:
+						if (bfCharacterArray != []){
+							for (char in bfCharacterArray){
+								var SplitChar = char.split(":");
+		
+								if (SplitChar[0] == 'camYOffset')
+									camFollow.y = boyfriend.getMidpoint().y += Std.parseFloat(SplitChar[1]);
+								if (SplitChar[0] == 'camXOffset')
+									camFollow.x = boyfriend.getMidpoint().x += Std.parseFloat(SplitChar[1]);
+							}
+						}
 				}
 
 				if (SONG.song.toLowerCase() == 'tutorial')

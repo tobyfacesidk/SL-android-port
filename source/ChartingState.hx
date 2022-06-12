@@ -1,5 +1,7 @@
 package;
 
+import sys.FileSystem;
+import sys.io.File;
 import Conductor.BPMChangeEvent;
 import Section.SwagSection;
 import Song.SwagSong;
@@ -238,8 +240,28 @@ class ChartingState extends MusicBeatState
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 
+		#if desktop
+		var tempCharacterList:String = File.getContent(Paths.txt('dadList')) + 
+		File.getContent(Paths.txt('bfList'));
+
+		for (char in FileSystem.readDirectory("mods/images/characters/")){
+			tempCharacterList += char.replace('[', '').replace(']', '') + "\n";
+		}
+
+		var characterList = tempCharacterList.trim().split('\n');
+
+		for (i in 0...characterList.length)
+		{
+			characterList[i] = characterList[i].trim();
+		}
+
+		var dadCharacters:Array<String> = characterList;
+		var bfCharacters:Array<String> = characterList;
+		#else
 		var dadCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('dadList'));
 		var bfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('bfList'));
+		#end
+
 		var gfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfList'));
 		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var noteskins:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteskinList'));

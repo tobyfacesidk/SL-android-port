@@ -149,6 +149,8 @@ class OptionsMenu extends MusicBeatState {
 					detailText.text = "If enabled, Distractions will be disabled.";
 				case 'epilepsy':
 					detailText.text = "If enabled, The game will not give you epilepsy... Probably.";
+				case 'keybinds':
+					detailText.text = "Set your Keybinds for your dirty keyboard... Seriously clean it up.";
 			}
 
 			if (forceCheck)

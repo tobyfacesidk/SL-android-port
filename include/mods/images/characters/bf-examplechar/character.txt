@@ -1,0 +1,27 @@
+anim.idle:BF idle dance:-5:0
+anim.singLEFT:BF NOTE LEFT0:12:-6
+anim.singRIGHT:BF NOTE RIGHT0:-38:-7
+anim.singUP:BF NOTE UP0:-29:27
+anim.singDOWN:BF NOTE DOWN0:-10:-50
+
+custom-anim.singUPmiss:BF NOTE UP MISS:-29:27
+custom-anim.singDOWNmiss:BF NOTE DOWN MISS:-11:-19
+custom-anim.singLEFTmiss:BF NOTE LEFT MISS:12:24
+custom-anim.singRIGHTmiss:BF NOTE RIGHT MISS:-30:21
+
+posYOffset-DAD:364
+posXOffset-DAD:32
+
+posYOffset-BF:0
+posXOffset-BF:0
+
+camYOffset:16
+camXOffset:-32
+
+multiplyGraphicSize:1
+flipX:true
+
+custom-anim.animation name here:xml anim here:offset x:offset y
+
+NOTES !!! - You CANNOT share Character files for both the Dad and the BF i only did this for testing and as a Template,
+It's not that it doesn't work, There's just some issues with the Animation Offsets so its best to seperate it.
