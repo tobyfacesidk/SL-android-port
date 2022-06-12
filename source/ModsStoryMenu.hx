@@ -75,7 +75,7 @@ class ModsStoryMenu extends MusicBeatState{
         add(difficultyText);
 
         // high score text on the black bar top right
-        highScoreText = new FlxText(0, 0, FlxG.width, "High Score: 0");
+        highScoreText = new FlxText(0, 0, FlxG.width, "");
         highScoreText.setFormat("PhantomMuff 1.5", Std.int(FlxG.height * 0.03), 0xffffffff, "right");
         highScoreText.setPosition(FlxG.width - highScoreText.width, 32);
         highScoreText.scrollFactor.x = 0;
@@ -141,6 +141,10 @@ class ModsStoryMenu extends MusicBeatState{
 		if (optionGroup.members[curSelected] != null) {
 			camFollow.y = optionGroup.members[curSelected].y - camFollow.height / 2;
 		}
+
+        if (highScoreText.text == "" && optionsArray.length > 0){
+            getHighscore();
+        }
 
         if (controls.UP_P){
             curSelected--;

@@ -191,6 +191,18 @@ class PlayState extends MusicBeatState
 				dialogue = CoolUtil.coolTextFile(Paths.txt('thorns/thornsDialogue'));
 			case 'tutorial':
 				dialogue = [":gf:Holy shit you're hot as funk" , ':bf:Holy shit you\'re also hot as funk', ':gf:... Wanna Funk?'];
+			default:
+				if (isMod){
+					var daList:Array<String> = File.getContent('mods/data/' + SONG.song.toLowerCase() + '/dialogue.txt').trim().split('\n');
+
+					for (i in 0...daList.length)
+					{
+						daList[i] = daList[i].trim();
+					}
+
+					dialogue = daList;
+					trace("Dialogue: " + dialogue);
+				}
 		}
 
 		#if desktop
@@ -944,7 +956,11 @@ class PlayState extends MusicBeatState
 				case 'tutorial':
 					schoolIntro(doof);
 				default:
-					startCountdown();
+					if (!isMod)
+						startCountdown();
+					else if (isMod && dialogue != [] || isMod && dialogue != null){
+						schoolIntro(doof);
+					}
 			}
 		}
 		else

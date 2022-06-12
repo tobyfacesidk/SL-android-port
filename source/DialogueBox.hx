@@ -1,5 +1,6 @@
 package;
 
+import sys.io.File;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
@@ -289,6 +290,11 @@ class DialogueBox extends FlxSpriteGroup
 		}
 		
 		super.update(elapsed);
+
+		if (portraitRight.visible && box.flipX) // no idea if this will work
+			box.flipX = false;
+		else if (!portraitRight.visible && !box.flipX)
+			box.flipX = true;
 	}
 
 	var isEnding:Bool = false;
@@ -308,14 +314,32 @@ class DialogueBox extends FlxSpriteGroup
 		switch (curCharacter)
 		{
 			case 'player2':
-				portraitRight.visible = false;
-				portraitLeft.visible = false;
-				if (!portraitLeft.visible)
-				{
-					//Use this for hardcoded only, Only works if sprite doesn't get changed by other character portraits. For example gf.
-					swagDialogue.color = FlxColor.BLACK;
-					portraitLeft.visible = true;
-					portraitLeft.animation.play('enter');
+				if (!PlayState.isMod){
+					portraitRight.visible = false;
+					portraitLeft.visible = false;
+					if (!portraitLeft.visible)
+					{
+						swagDialogue.color = FlxColor.BLACK;
+						portraitLeft.visible = true;
+						portraitLeft.animation.play('enter');
+					}
+				}
+				else{
+					portraitRight.visible = false;
+					portraitLeft.visible = false;
+					if (!portraitLeft.visible)
+					{
+						swagDialogue.color = FlxColor.BLACK;
+	
+						portraitLeft.frames = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile("mods/images/characters/"
+						+ PlayState.SONG.player2 + "/portrait/portrait.png"), File.getContent("mods/images/characters/"
+						+ PlayState.SONG.player2 + "/portrait/portrait.xml"));
+						portraitLeft.animation.addByPrefix('enter', 'Portrait Enter', 24, false);
+						portraitLeft.screenCenter(X);
+	
+						portraitLeft.visible = true;
+						portraitLeft.animation.play('enter');
+					}
 				}
 			case 'dad':
 				portraitRight.visible = false;

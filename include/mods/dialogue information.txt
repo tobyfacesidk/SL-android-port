@@ -1,0 +1,2 @@
+All dialogue text files must be named "dialogue.txt" and must be in the Song's folder. Also if you want to use your custom Portrait use ":player2:"! Only works on
+modded songs though.
