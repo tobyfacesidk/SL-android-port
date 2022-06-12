@@ -154,6 +154,8 @@ class PlayState extends MusicBeatState
 	var events = [];
 	var songScrollSpeed:Float = 1;
 
+	var hasDialogue:Bool = false;
+
 	override public function create()
 	{
 		if (FlxG.sound.music != null)
@@ -202,6 +204,7 @@ class PlayState extends MusicBeatState
 
 					dialogue = daList;
 					trace("Dialogue: " + dialogue);
+					hasDialogue = true;
 				}
 		}
 
@@ -958,7 +961,7 @@ class PlayState extends MusicBeatState
 				default:
 					if (!isMod)
 						startCountdown();
-					else if (isMod && dialogue != [] || isMod && dialogue != null){
+					else if (isMod && hasDialogue){
 						schoolIntro(doof);
 					}
 			}
