@@ -959,7 +959,7 @@ class PlayState extends MusicBeatState
 				case 'tutorial':
 					schoolIntro(doof);
 				default:
-					if (!isMod)
+					if (!isMod || !isMod && !hasDialogue)
 						startCountdown();
 					else if (isMod && hasDialogue){
 						schoolIntro(doof);
