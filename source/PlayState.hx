@@ -192,7 +192,7 @@ class PlayState extends MusicBeatState
 			case 'tutorial':
 				dialogue = [":gf:Holy shit you're hot as funk" , ':bf:Holy shit you\'re also hot as funk', ':gf:... Wanna Funk?'];
 			default:
-				if (isMod){
+				if (isMod && FileSystem.exists('mods/data/' + SONG.song.toLowerCase() + '/dialogue.txt')){
 					var daList:Array<String> = File.getContent('mods/data/' + SONG.song.toLowerCase() + '/dialogue.txt').trim().split('\n');
 
 					for (i in 0...daList.length)
