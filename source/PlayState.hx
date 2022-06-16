@@ -2001,7 +2001,7 @@ class PlayState extends MusicBeatState
 			switch (curSong.toLowerCase())
 			{
 				case 'pico':
-					playEndCutscene("cock");
+					//playEndCutscene("cock");
 			}
 		}
 
