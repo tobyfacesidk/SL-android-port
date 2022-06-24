@@ -45,10 +45,6 @@ import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
 
-#if (windows || linux)
-import vlc.VideoHandler;
-#end
-
 using StringTools;
 
 class PlayState extends MusicBeatState
@@ -2001,7 +1997,7 @@ class PlayState extends MusicBeatState
 			switch (curSong.toLowerCase())
 			{
 				case 'pico':
-					//playEndCutscene("cock");
+					playEndCutscene("cock");
 			}
 		}
 
