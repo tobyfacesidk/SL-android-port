@@ -563,7 +563,7 @@ class Character extends FlxSprite
 						}
 
 						if (SplitChar[0] == "multiplyGraphicSize"){
-							setGraphicSize(Std.int(width) * Std.parseInt(SplitChar[1]));
+							setGraphicSize(Std.int(width * Std.parseFloat(SplitChar[1])));
 						}
 
 						if (SplitChar[0] == "flipX"){
@@ -653,10 +653,10 @@ class Character extends FlxSprite
 	{
 		if (!curCharacter.startsWith('bf'))
 		{
-			if (animation.curAnim.name.startsWith('sing'))
+			/*if (animation.curAnim.name.startsWith('sing'))
 			{
 				holdTimer += elapsed;
-			}
+			}*/
 
 			var dadVar:Float = 4;
 
