@@ -29,6 +29,12 @@ jobs:
         with:
           haxe-version: 4.1.5
       
+      - name: Set up cutscene support proper for Linux
+        run: |
+          sudo apt-get install libvlc-dev
+          sudo apt-get install libvlccore-dev
+          audo apt-get install vlc-bin
+
       - name: Install haxelib
         run: |
           haxelib setup ~/haxelib
@@ -124,7 +130,6 @@ jobs:
          haxelib install flixel-ui
          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
          haxelib install hxcpp-debug-server
-         haxelib git hxCodec https://github.com/polybiusproxy/hxCodec
          haxelib install hscript
          haxelib list
 
