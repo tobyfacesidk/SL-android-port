@@ -497,6 +497,9 @@ class Character extends FlxSprite
 				addOffset("singDOWN-alt", -30, -27);
 
 				playAnim('idle');
+			
+			case 'none':
+				// lol
 				
 			default:
 				var pathVar;
@@ -651,20 +654,20 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if (!curCharacter.startsWith('bf'))
+		if (!isPlayer)
 		{
-			/*if (animation.curAnim.name.startsWith('sing'))
+			if (animation.curAnim.name.startsWith('sing'))
 			{
 				holdTimer += elapsed;
-			}*/
+			}
 
-			var dadVar:Float = 4;
-
-			if (curCharacter == 'dad')
-				dadVar = 6.1;
-			if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001)
+			if (holdTimer >= Conductor.stepCrochet * 4 * 0.001)
 			{
-				dance();
+				if (animation.curAnim.name.startsWith('sing'))
+				{
+					dance();
+				}
+
 				holdTimer = 0;
 			}
 		}
