@@ -1,0 +1,7 @@
+anim.idle:Pico Idle Dance
+anim.singLEFT:Pico Note Right0:65:9
+anim.singRIGHT:Pico NOTE LEFT0:-68:-7
+anim.singUP:pico Up note0:-29:27
+anim.singDOWN:Pico Down Note0:200:-70
+
+flipX:true

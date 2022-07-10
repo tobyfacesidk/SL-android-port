@@ -592,32 +592,7 @@ class PlayState extends MusicBeatState
 		gf.scrollFactor.set(0.95, 0.95);
 
 		dad = new Character(100, 100, SONG.player2);
-
-		if (FileSystem.exists("mods/images/characters/" + SONG.player2 + "/character.txt")){
-			var daList:Array<String> = File.getContent("mods/images/characters/" + SONG.player2 + "/character.txt").trim().split('\n');
-				
-			for (i in 0...daList.length){
-				daList[i] = daList[i].trim();
-			}
-
-			dadCharacterArray = daList;
-		}
-		else{
-			trace('dad is not modded');
-		}
-
-		if (FileSystem.exists("mods/images/characters/" + SONG.player1 + "/character.txt")){
-			var daList:Array<String> = File.getContent("mods/images/characters/" + SONG.player1 + "/character.txt").trim().split('\n');
-				
-			for (i in 0...daList.length){
-				daList[i] = daList[i].trim();
-			}
-
-			bfCharacterArray = daList;
-		}
-		else{
-			trace('bf is not modded');
-		}
+		updateCharacter(false);
 
 		var camPos:FlxPoint = new FlxPoint(dad.getGraphicMidpoint().x, dad.getGraphicMidpoint().y);
 
@@ -638,8 +613,6 @@ class PlayState extends MusicBeatState
 				dad.y += 100;
 			case 'monster-christmas':
 				dad.y += 130;
-			case 'dad':
-				camPos.x += 400;
 			case 'pico':
 				camPos.x += 600;
 				dad.y += 300;
@@ -677,6 +650,7 @@ class PlayState extends MusicBeatState
 		}
 
 		boyfriend = new Boyfriend(770, 450, SONG.player1);
+		updateCharacter(true);
 
 		switch (SONG.player1)
 		{
@@ -1729,16 +1703,13 @@ class PlayState extends MusicBeatState
 			{
 				camFollow.setPosition(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
 
-				switch (curStage)
+				switch (boyfriend.curCharacter)
 				{
-					case 'limo':
+					case 'bf-car':
 						camFollow.x = boyfriend.getMidpoint().x - 300;
-					case 'mall':
+					case 'bf-christmas':
 						camFollow.y = boyfriend.getMidpoint().y - 200;
-					case 'school':
-						camFollow.x = boyfriend.getMidpoint().x - 200;
-						camFollow.y = boyfriend.getMidpoint().y - 200;
-					case 'schoolEvil':
+					case 'bf-pixel':
 						camFollow.x = boyfriend.getMidpoint().x - 200;
 						camFollow.y = boyfriend.getMidpoint().y - 200;
 					default:
@@ -2568,8 +2539,13 @@ class PlayState extends MusicBeatState
 
 	function updateCharacter(isBF:Bool = false){
 		if (!isBF){
-			if (FileSystem.exists("mods/images/characters/" + dad.curCharacter + "/character.txt")){
-				var daList:Array<String> = File.getContent("mods/images/characters/" + dad.curCharacter + "/character.txt").trim().split('\n');
+			if (dad.isTxt){
+				var daList:Array<String>;
+
+				if (dad.isMod)
+					daList = File.getContent("mods/images/characters/" + dad.curCharacter + "/character.txt").trim().split('\n');
+				else
+					daList = Paths.character(dad.curCharacter).trim().split('\n');
 					
 				for (i in 0...daList.length){
 					daList[i] = daList[i].trim();
@@ -2577,13 +2553,21 @@ class PlayState extends MusicBeatState
 	
 				dadCharacterArray = daList;
 			}
-			else{
-				trace('dad is not modded');
-			}
+			else
+				trace('dad is not hardcoded or modded');
+
+			trace("dad:" + dad.curCharacter);
 		}
 		else{
-			if (FileSystem.exists("mods/images/characters/" + boyfriend.curCharacter + "/character.txt")){
-				var daList:Array<String> = File.getContent("mods/images/characters/" + boyfriend.curCharacter + "/character.txt").trim().split('\n');
+			//same thing but for the boyfriend
+
+			if (boyfriend.isTxt){
+				var daList:Array<String>;
+
+				if (boyfriend.isMod)
+					daList = File.getContent("mods/images/characters/" + boyfriend.curCharacter + "/character.txt").trim().split('\n');
+				else
+					daList = Paths.character(boyfriend.curCharacter).trim().split('\n');
 					
 				for (i in 0...daList.length){
 					daList[i] = daList[i].trim();
@@ -2591,12 +2575,11 @@ class PlayState extends MusicBeatState
 	
 				bfCharacterArray = daList;
 			}
-			else{
-				trace('bf is not modded');
-			}
-		}
+			else
+				trace('bf is not hardcoded or modded');
 
-		trace('bf: ' + boyfriend.curCharacter + "\ndad:" + dad.curCharacter);
+			trace('bf: ' + boyfriend.curCharacter);
+		}
 	}
 
 	var fastCarCanDrive:Bool = true;
@@ -2792,8 +2775,9 @@ class PlayState extends MusicBeatState
 			boyfriend.playAnim('idle');
 		}
 
-		if (dad.animation.curAnim.name.startsWith("idle") || !dad.animation.curAnim.name.startsWith("idle") && 
-		!dad.animation.curAnim.name.startsWith("sing") && dad.animation.curAnim.finished)
+		if (dad.curCharacter != 'none' && dad.animation.curAnim.name.startsWith("idle") ||
+			dad.curCharacter != 'none' && !dad.animation.curAnim.name.startsWith("idle") &&
+			!dad.animation.curAnim.name.startsWith("sing") && dad.animation.curAnim.finished)
 		{
 			dad.dance();
 		}

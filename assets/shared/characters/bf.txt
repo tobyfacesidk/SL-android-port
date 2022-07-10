@@ -1,0 +1,18 @@
+anim.idle:BF idle dance:-5:0
+anim.singLEFT:BF NOTE LEFT0:12:-6
+anim.singRIGHT:BF NOTE RIGHT0:-38:-7
+anim.singUP:BF NOTE UP0:-29:27
+anim.singDOWN:BF NOTE DOWN0:-10:-50
+custom-anim.singUPmiss:BF NOTE UP MISS:-29:27
+custom-anim.singDOWNmiss:BF NOTE DOWN MISS:-11:-19
+custom-anim.singLEFTmiss:BF NOTE LEFT MISS:12:24
+custom-anim.singRIGHTmiss:BF NOTE RIGHT MISS:-30:21
+
+custom-anim.hey:BF HEY:7:4
+custom-anim.scared:BF idle shaking:-4:0
+
+custom-anim.firstDeath:BF dies:37:11
+custom-anim.deathLoop:BF Dead Loop:37:5
+custom-anim.deathConfirm:BF Dead confirm:37:69
+
+flipX:true

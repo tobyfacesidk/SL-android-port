@@ -1,0 +1,7 @@
+anim.idle:Dad idle dance
+anim.singLEFT:Dad Sing Note LEFT:-10:10
+anim.singRIGHT:Dad Sing Note RIGHT:0:27
+anim.singUP:Dad Sing Note UP:-6:50
+anim.singDOWN:Dad Sing Note DOWN:0:-30
+
+camXOffset:400
