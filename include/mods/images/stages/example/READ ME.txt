@@ -1,0 +1,5 @@
+This is NOT an actual stage and should not be used.
+MAKE SURE TO SET ALPHA TO 1 OR IT WILL BE INVISIBLE!!!
+
+EXAMPLE: image path (do not put .png or .xml):x pos:y pos:scrollfactor x:scrollfactor y:alpha:type (xml or png):animation name (only use if xml)
+^^ you can have an unlimited amount of these... people will probably make mods that crash peoples computers on purpose by spamming these but.. whatever lol

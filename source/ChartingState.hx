@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxCamera;
 import sys.FileSystem;
 import sys.io.File;
 import flixel.addons.ui.FlxUIText;
@@ -90,6 +91,12 @@ class ChartingState extends MusicBeatState
 	var enableHitsounds = false;
 	var hitSound:FlxSound;
 
+	private var dad:Character;
+	private var boyfriend:Boyfriend;
+
+	var dadSide:FlxSprite;
+	var bfSide:FlxSprite;
+
 	override function create()
 	{
 		hitSound = new FlxSound();
@@ -97,8 +104,49 @@ class ChartingState extends MusicBeatState
 
 		curSection = lastSection;
 
-		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * 16);
+		// add background
+		var bg:FlxSprite = new FlxSprite(0).loadGraphic(Paths.image('menuBG'));
+		bg.scrollFactor.x = 0;
+		bg.scrollFactor.y = 0;
+		bg.antialiasing = true;
+		bg.alpha = 0.6;
+		add(bg);
+
+		boyfriend = new Boyfriend(0, 0, 'bf');
+
+		dad = new Character(0, 0, 'dad', true);
+		dad.flipX = false;
+
+		dad.setGraphicSize(Std.int(dad.width * 0.6));
+		boyfriend.setGraphicSize(Std.int(boyfriend.width * 0.6));
+
+		dad.x -= 64;
+		dad.y += 32;
+
+		boyfriend.x += 912;
+		boyfriend.y += 326;
+
+		dad.scrollFactor.x = 0;
+		dad.scrollFactor.y = 0;
+		boyfriend.scrollFactor.x = 0;
+		boyfriend.scrollFactor.y = 0;
+
+		add(dad);
+		add(boyfriend);
+
+		boyfriend.playAnim('idle');
+		dad.playAnim('idle');
+
+		gridBG = FlxGridOverlay.create(GRID_SIZE * 4, GRID_SIZE * 4, GRID_SIZE * 8, GRID_SIZE * 16);
 		add(gridBG);
+
+		dadSide = new FlxSprite(0, 0).makeGraphic(GRID_SIZE * 4, GRID_SIZE * 16, 0xFFFF00EA);
+		dadSide.alpha = 0.3;
+		add(dadSide);
+
+		bfSide = new FlxSprite(0, 0).makeGraphic(GRID_SIZE * 4, GRID_SIZE * 16, 0xFF69AEF0);
+		bfSide.alpha = 0.3;
+		add(bfSide);
 
 		leftIcon = new HealthIcon('bf');
 		rightIcon = new HealthIcon('dad');
@@ -246,7 +294,7 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.value = _song.speed;
 		stepperSpeed.name = 'song_speed';
 
-		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 65, 0.1, 1, 1.0, 5000.0, 1);
+		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 65, 1, 1, 1, 5000);
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 
@@ -267,13 +315,29 @@ class ChartingState extends MusicBeatState
 
 		var dadCharacters:Array<String> = characterList;
 		var bfCharacters:Array<String> = characterList;
+
+		var tempStageList:String = File.getContent(Paths.txt('stageList'));
+
+		for (stage in FileSystem.readDirectory("mods/images/stages/")){
+			if (!FileSystem.exists("mods/images/stages/" + stage + "/do not use"))
+				tempStageList += stage.replace('[', '').replace(']', '') + "\n";
+		}
+
+		var daStageList = tempStageList.trim().split('\n');
+
+		for (i in 0...daStageList.length)
+		{
+			daStageList[i] = daStageList[i].trim();
+		}
+
+		var stagelist:Array<String> = daStageList;
 		#else
 		var dadCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('dadList'));
 		var bfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('bfList'));
+		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		#end
 
 		var gfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfList'));
-		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var noteskins:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteskinList'));
 
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(bfCharacters, true), function(character:String)
@@ -581,11 +645,11 @@ class ChartingState extends MusicBeatState
 	{
 		curStep = recalculateSteps();
 
-		// bad feature
-		/*if (FlxG.keys.justPressed.ALT && UI_box.selected_tab == 0)
+		// bad feature but it will stay for now
+		if (FlxG.keys.justPressed.ALT && UI_box.selected_tab == 0)
 		{
 			writingNotes = !writingNotes;
-		}*/
+		}
 
 		if (writingNotes)
 			writingNotesText.text = "WRITING NOTES";
@@ -681,18 +745,101 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
+		if (curStep % 4 == 0 && FlxG.sound.music.playing)
+			daBeatHit();
+
+		if (check_mustHitSection.checked && dadSide.x != 160){
+			dadSide.x = 160;
+			bfSide.x = 0;
+		}
+		else if (!check_mustHitSection.checked && dadSide.x != 0){
+			dadSide.x = 0;
+			bfSide.x = 160;
+		}
+		
 		for (note in curRenderedNotes) {
-			if (FlxG.overlap(note, strumLine) && FlxG.sound.music.playing) {
+			if (strumLine.overlaps(note)){
+
 				if (enableHitsounds && note.alpha == 1) {
 					hitSound.play(true);
-					note.alpha = 0.2;
 					trace("played hit");
 				}
+
+				if (FlxG.sound.music.playing){
+					if (note.alpha == 1 && note.overlaps(dadSide)){
+						dad.holdTimer = 0;
+	
+						if (note.sustainLength > 0)
+							dad.holdTimer -= note.sustainLength % 0.5;
+	
+						switch (note.noteData)
+						{
+							case 0:
+								dad.playAnim('singLEFT', true);
+							case 1:
+								dad.playAnim('singDOWN', true);
+							case 2:
+								dad.playAnim('singUP', true);
+							case 3:
+								dad.playAnim('singRIGHT', true);
+						}
+					}
+		
+					if (note.alpha == 1 && note.overlaps(bfSide)){
+						boyfriend.holdTimer = 0;
+	
+						if (note.sustainLength > 0)
+							boyfriend.holdTimer -= note.sustainLength % 2;
+	
+						switch (note.noteData)
+						{
+							case 0:
+								boyfriend.playAnim('singLEFT', true);
+							case 1:
+								boyfriend.playAnim('singDOWN', true);
+							case 2:
+								boyfriend.playAnim('singUP', true);
+							case 3:
+								boyfriend.playAnim('singRIGHT', true);
+						}
+					}
+				}
+
+				note.alpha = 0.2;
 			}
-			else {
+			else{
 				note.alpha = 1;
-				// playedHit = false;
 			}
+		}
+		
+		if (dad.animation.curAnim.name.startsWith('sing'))
+		{
+			dad.holdTimer += elapsed;
+		}
+
+		if (boyfriend.animation.curAnim.name.startsWith('sing'))
+		{
+			boyfriend.holdTimer += elapsed;
+		}
+
+		if (boyfriend.holdTimer >= Conductor.stepCrochet * 4 * 0.001)
+		{
+			if (boyfriend.animation.curAnim.name.startsWith('sing'))
+			{
+				boyfriend.playAnim('idle');
+			}
+
+			boyfriend.holdTimer = 0;
+		}
+
+		if(dad.holdTimer >= Conductor.stepCrochet * 4 * 0.001)
+		{
+			if (dad.animation.curAnim.name.startsWith('sing'))
+			{
+				dad.playAnim('idle');
+			}
+	
+			dad.holdTimer = 0;
 		}
 
 		if (FlxG.mouse.x > gridBG.x
@@ -1287,5 +1434,17 @@ class ChartingState extends MusicBeatState
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
 		_file = null;
 		FlxG.log.error("Problem saving Level data");
+	}
+
+	override function stepHit(){
+		super.stepHit();
+	}
+
+	function daBeatHit(){
+		if (!boyfriend.animation.curAnim.name.startsWith('sing'))
+			boyfriend.animation.play('idle');
+
+		if (!dad.animation.curAnim.name.startsWith('sing'))
+			dad.animation.play('idle');
 	}
 }
