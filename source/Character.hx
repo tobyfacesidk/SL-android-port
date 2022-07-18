@@ -100,6 +100,45 @@ class Character extends FlxSprite
 			trace('Not Loaded, Loading the Hardcoded version of ' + curCharacter);
 
 			switch (curCharacter){
+				case 'chart-dad':
+					tex = Paths.getSparrowAtlas('characters/dad');
+					frames = tex;
+					animation.addByPrefix('idle', 'Dad idle dance', 24);
+					animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
+					animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
+					animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
+					animation.addByPrefix('singLEFT', 'Dad Sing Note LEFT', 24);
+
+					setGraphicSize(Std.int(width * 0.6));
+	
+					addOffset('idle', -10);
+					addOffset("singUP", -16, 33);
+					addOffset("singRIGHT", -10, 17);
+					addOffset("singLEFT", -16, 8);
+					addOffset("singDOWN", -10, -17);
+	
+					playAnim('idle');
+
+				case 'chart-bf':
+					var tex = Paths.getSparrowAtlas('characters/bf');
+					frames = tex;
+					animation.addByPrefix('idle', 'BF idle dance', 24, false);
+					animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
+					animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
+					animation.addByPrefix('singRIGHT', 'BF NOTE RIGHT0', 24, false);
+					animation.addByPrefix('singDOWN', 'BF NOTE DOWN0', 24, false);
+
+					setGraphicSize(Std.int(width * 0.6));
+					flipX = true;
+
+					addOffset('idle', -5);
+					addOffset("singUP", -30, 18);
+					addOffset("singRIGHT", -28, -7);
+					addOffset("singLEFT", 1, -5);
+					addOffset("singDOWN", -10, -33);
+
+					playAnim('idle');
+
 				case 'gf':
 					tex = Paths.getSparrowAtlas('GF_assets');
 					frames = tex;

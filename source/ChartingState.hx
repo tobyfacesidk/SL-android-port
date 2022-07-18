@@ -112,13 +112,10 @@ class ChartingState extends MusicBeatState
 		bg.alpha = 0.6;
 		add(bg);
 
-		boyfriend = new Boyfriend(0, 0, 'bf');
+		boyfriend = new Boyfriend(0, 0, 'chart-bf');
 
-		dad = new Character(0, 0, 'dad', true);
+		dad = new Character(0, 0, 'chart-dad', true);
 		dad.flipX = false;
-
-		dad.setGraphicSize(Std.int(dad.width * 0.6));
-		boyfriend.setGraphicSize(Std.int(boyfriend.width * 0.6));
 
 		dad.x -= 64;
 		dad.y += 32;
