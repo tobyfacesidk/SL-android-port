@@ -145,6 +145,7 @@ class PlayState extends MusicBeatState
 	var underlay:FlxSprite;
 
 	var dadCharacterArray = [];
+	var gfCharacterArray = [];
 	var bfCharacterArray = [];
 
 	var isCustomStage:Bool = false;
@@ -635,6 +636,49 @@ class PlayState extends MusicBeatState
 		trace('gf: ' + SONG.player3);
 		gf.scrollFactor.set(0.95, 0.95);
 
+		if (gf.isTxt){
+			var daList:Array<String>;
+
+			if (!gf.isMod){
+				daList = Paths.character(gf.curCharacter).trim().split('\n');
+					
+				for (i in 0...daList.length){
+					daList[i] = daList[i].trim();
+				}
+	
+				gfCharacterArray = daList;
+			}
+			else{
+				daList = File.getContent("mods/images/characters/" + gf.curCharacter + "/character.txt").trim().split('\n');
+
+				for (i in 0...daList.length){
+					daList[i] = daList[i].trim();
+				}
+	
+				gfCharacterArray = daList;
+			}
+		}
+
+		// still gotta add offsets for the gf
+		switch (SONG.player3){
+			case 'gf-pixel':
+				gf.x += 180;
+				gf.y += 300;
+			default:
+				if (gf.isTxt){
+					for (char in gfCharacterArray){
+						var SplitChar = char.split(":");
+			
+						if (SplitChar[0] == 'posYOffset-GF')
+							gf.y += Std.parseFloat(SplitChar[1]);
+						if (SplitChar[0] == 'posXOffset-GF')
+							gf.x += Std.parseFloat(SplitChar[1]);
+	
+						trace('gf: ' + SplitChar[0] + ' ' + SplitChar[1]);
+					}
+				}
+		}
+
 		dad = new Character(100, 100, SONG.player2);
 		updateCharacter(false);
 
@@ -685,12 +729,6 @@ class PlayState extends MusicBeatState
 					if (SplitChar[0] == 'posXOffset-DAD')
 						dad.x += Std.parseFloat(SplitChar[1]);
 				}
-		}
-
-		switch (SONG.player3){
-			case 'gf-pixel':
-				gf.x += 180;
-				gf.y += 300;
 		}
 
 		boyfriend = new Boyfriend(770, 450, SONG.player1);
@@ -759,6 +797,14 @@ class PlayState extends MusicBeatState
 
 				if (SplitLines[0] == 'yOffset-DAD'){
 					dad.y += Std.parseFloat(SplitLines[1]);
+				}
+
+				if (SplitLines[0] == 'xOffset-GF'){
+					gf.x += Std.parseFloat(SplitLines[1]);
+				}
+
+				if (SplitLines[0] == 'yOffset-GF'){
+					gf.y += Std.parseFloat(SplitLines[1]);
 				}
 			}
 		}
@@ -1722,8 +1768,10 @@ class PlayState extends MusicBeatState
 
 				if (SONG.player2 != 'none' || !PlayState.SONG.notes[Std.int(curStep / 16)].gfSection)
 					camFollow.setPosition(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
-				else
+				else if (SONG.player2 == 'none' || PlayState.SONG.notes[Std.int(curStep / 16)].gfSection)
 					gfCam = true;
+				else
+					camFollow.setPosition(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
 				// camFollow.setPosition(lucky.getMidpoint().x - 120, lucky.getMidpoint().y + 210);
 
 				// dad camera offsets??!??/1/1

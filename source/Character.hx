@@ -449,6 +449,27 @@ class Character extends FlxSprite
 			var SplitChar = char.split(":");
 
 			// animations and offsets
+			if (SplitChar[0] == "danceLeft"){
+				var animArray = SplitChar[2].split(",");
+				var animIntArray:Array<Int> = [];
+				for (val in animArray){
+					animIntArray.push(Std.parseInt(val));
+				}
+
+				animation.addByIndices('danceLeft', SplitChar[1], animIntArray, "", 24, false);
+			}
+
+			// animations and offsets
+			if (SplitChar[0] == "danceRight"){
+				var animArray = SplitChar[2].split(",");
+				var animIntArray:Array<Int> = [];
+				for (val in animArray){
+					animIntArray.push(Std.parseInt(val));
+				}
+
+				animation.addByIndices('danceRight', SplitChar[1], animIntArray, "", 24, false);
+			}
+
 			if (SplitChar[0] == "anim.idle"){
 				idleAnim = SplitChar[1];
 				idleOffsetX = Std.parseInt(SplitChar[2]);
@@ -542,10 +563,10 @@ class Character extends FlxSprite
 	{
 		if (!debugMode)
 		{
-			switch (curCharacter)
+			// why the fuck did ninjamuffin not code it like this??
+			if (animation.exists('danceLeft') && animation.exists('danceRight'))
 			{
-				case 'gf':
-					if (!animation.curAnim.name.startsWith('hair'))
+				if (!animation.curAnim.name.startsWith('hair'))
 					{
 						danced = !danced;
 
@@ -554,48 +575,9 @@ class Character extends FlxSprite
 						else
 							playAnim('danceLeft');
 					}
-
-				case 'gf-christmas':
-					if (!animation.curAnim.name.startsWith('hair'))
-					{
-						danced = !danced;
-
-						if (danced)
-							playAnim('danceRight');
-						else
-							playAnim('danceLeft');
-					}
-
-				case 'gf-car':
-					if (!animation.curAnim.name.startsWith('hair'))
-					{
-						danced = !danced;
-
-						if (danced)
-							playAnim('danceRight');
-						else
-							playAnim('danceLeft');
-					}
-				case 'gf-pixel':
-					if (!animation.curAnim.name.startsWith('hair'))
-					{
-						danced = !danced;
-
-						if (danced)
-							playAnim('danceRight');
-						else
-							playAnim('danceLeft');
-					}
-
-				case 'spooky':
-					danced = !danced;
-
-					if (danced)
-						playAnim('danceRight');
-					else
-						playAnim('danceLeft');
-				default:
-					playAnim('idle');
+			}
+			else{
+				playAnim('idle');
 			}
 		}
 	}

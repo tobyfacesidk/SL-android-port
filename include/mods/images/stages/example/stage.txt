@@ -6,5 +6,8 @@ camZoom:0.9
 xOffset-BF:0
 yOffset-BF:0
 
+xOffset-GF:0
+yOffset-GF:0
+
 xOffset-DAD:0
 yOffset-DAD:0

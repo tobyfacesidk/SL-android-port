@@ -297,7 +297,8 @@ class ChartingState extends MusicBeatState
 
 		#if desktop
 		var tempCharacterList:String = File.getContent(Paths.txt('dadList')) + 
-		File.getContent(Paths.txt('bfList'));
+		File.getContent(Paths.txt('bfList')) +
+		File.getContent(Paths.txt('gfList')) + '\n';
 
 		for (char in FileSystem.readDirectory("mods/images/characters/")){
 			tempCharacterList += char.replace('[', '').replace(']', '') + "\n";
@@ -312,6 +313,7 @@ class ChartingState extends MusicBeatState
 
 		var dadCharacters:Array<String> = characterList;
 		var bfCharacters:Array<String> = characterList;
+		var gfCharacters:Array<String> = characterList;
 
 		var tempStageList:String = File.getContent(Paths.txt('stageList'));
 
@@ -331,10 +333,10 @@ class ChartingState extends MusicBeatState
 		#else
 		var dadCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('dadList'));
 		var bfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('bfList'));
-		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
+		var gfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfList'));
 		#end
 
-		var gfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfList'));
+		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var noteskins:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteskinList'));
 
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(bfCharacters, true), function(character:String)
