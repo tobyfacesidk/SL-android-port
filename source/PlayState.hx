@@ -636,28 +636,7 @@ class PlayState extends MusicBeatState
 		trace('gf: ' + SONG.player3);
 		gf.scrollFactor.set(0.95, 0.95);
 
-		if (gf.isTxt){
-			var daList:Array<String>;
-
-			if (!gf.isMod){
-				daList = Paths.character(gf.curCharacter).trim().split('\n');
-					
-				for (i in 0...daList.length){
-					daList[i] = daList[i].trim();
-				}
-	
-				gfCharacterArray = daList;
-			}
-			else{
-				daList = File.getContent("mods/images/characters/" + gf.curCharacter + "/character.txt").trim().split('\n');
-
-				for (i in 0...daList.length){
-					daList[i] = daList[i].trim();
-				}
-	
-				gfCharacterArray = daList;
-			}
-		}
+		updateGirlfriend(SONG.player3);
 
 		// still gotta add offsets for the gf
 		switch (SONG.player3){
@@ -816,10 +795,10 @@ class PlayState extends MusicBeatState
 		if (curStage == 'limo')
 			add(limo);
 
+		add(boyfriend);
+
 		if (SONG.player2.toLowerCase() != 'none')
 			add(dad);
-
-		add(boyfriend);
 
 		var doof:DialogueBox = new DialogueBox(false, dialogue);
 		// doof.x += 70;
@@ -2828,7 +2807,37 @@ class PlayState extends MusicBeatState
 						boyfriend = new Boyfriend(boyfriend.x += Std.parseFloat(tempStep[3]),boyfriend.y += Std.parseFloat(tempStep[4]), tempStep[2]);
 						updateCharacter(true);
 						add(boyfriend);
+					case 'replace.girlfriend':
+						remove(gf);
+						gf = new Character(gf.x += Std.parseFloat(tempStep[3]),gf.y += Std.parseFloat(tempStep[4]), tempStep[2]);
+						updateGirlfriend(tempStep[2]);
+						add(gf);
 				}
+			}
+		}
+	}
+
+	function updateGirlfriend(type:String){
+		if (gf.isTxt){
+			var daList:Array<String>;
+
+			if (!gf.isMod){
+				daList = Paths.character(type).trim().split('\n');
+					
+				for (i in 0...daList.length){
+					daList[i] = daList[i].trim();
+				}
+	
+				gfCharacterArray = daList;
+			}
+			else{
+				daList = File.getContent("mods/images/characters/" + type + "/character.txt").trim().split('\n');
+
+				for (i in 0...daList.length){
+					daList[i] = daList[i].trim();
+				}
+	
+				gfCharacterArray = daList;
 			}
 		}
 	}
@@ -2881,7 +2890,8 @@ class PlayState extends MusicBeatState
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
 
-		if (curBeat % gfSpeed == 0 && !gf.animation.name.startsWith('sing'))
+		if (curBeat % gfSpeed == 0 && gf.animation.curAnim.name.startsWith("dance") || !gf.animation.curAnim.name.startsWith("dance") &&
+			!gf.animation.curAnim.name.startsWith("sing") && gf.animation.curAnim.finished)
 		{
 			gf.dance();
 		}
