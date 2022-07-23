@@ -1,5 +1,5 @@
 # format: character:0xAARRGGBB
-bf:0xFF23F0FF
+bf:0xFF31B0D1
 dad:0xFFAF66CE
 gf:0xFFA5004D
 spooky:0xFFD57E00
