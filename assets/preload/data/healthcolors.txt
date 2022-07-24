@@ -1,11 +1,11 @@
 # format: character:0xAARRGGBB
-bf:0xFF23F0FF
-dad:0xFF821A47
-gf:0xFFB7050E
-spooky:0xFFFF793F
-pico:0xFF46FF2D
-mom:0xFFFF5964
-parents-christmas:0xFFFF7795
-monster:0xFFFFE016
-senpai:0xFFFFA647
-spirit:0xFF9B0200
+bf:0xFF31B0D1
+dad:0xFFAF66CE
+gf:0xFFA5004D
+spooky:0xFFD57E00
+pico:0xFF6B7E32
+mom:0xFFD8558E
+parents-christmas:0xFFAF66CE
+monster:0xFFF3FF6E
+senpai:0xFFFFAA6F
+spirit:0xFFFF3C6E
