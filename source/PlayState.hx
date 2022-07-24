@@ -78,6 +78,8 @@ class PlayState extends MusicBeatState
 	private var strumLineNotes:FlxTypedGroup<FlxSprite>;
 	private var playerStrums:FlxTypedGroup<FlxSprite>;
 
+	var specialNoteXOffset:Int = 0;
+
 	private var camZooming:Bool = false;
 	private var curSong:String = "";
 
@@ -176,6 +178,12 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.save.data.downScroll == null)
 			FlxG.save.data.downScroll = false;
+
+		if (FlxG.save.data.middleScroll == null)
+			FlxG.save.data.middleScroll = false;
+
+		if (FlxG.save.data.middleScroll == true)
+			specialNoteXOffset = -279;
 
 		if (SONG == null)
 			SONG = Song.loadFromJson('tutorial');
@@ -808,7 +816,12 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -5000;
 
-		underlay = new FlxSprite(0, 0, Paths.image('underlay', 'shared'));
+		var underlayName:String = 'underlay';
+
+		if (FlxG.save.data.middleScroll)
+			underlayName = 'underlayMiddle';
+
+		underlay = new FlxSprite(0, 0, Paths.image(underlayName, 'shared'));
 		underlay.scrollFactor.set();
 		underlay.alpha = 0.4;
 		if (FlxG.save.data.downScroll)
@@ -1135,8 +1148,18 @@ class PlayState extends MusicBeatState
 	{
 		inCutscene = false;
 
-		generateStaticArrows(0);
+		if (!FlxG.save.data.middleScroll)
+			generateStaticArrows(0);
+
 		generateStaticArrows(1);
+
+		// middle scroll offset
+		if (FlxG.save.data.middleScroll){
+			for (strumArrow in playerStrums){
+				if (strumArrow != null)
+					strumArrow.x += specialNoteXOffset;
+			}
+		}
 
 		talking = false;
 		startedCountdown = true;
@@ -1345,10 +1368,13 @@ class PlayState extends MusicBeatState
 
 					if (sustainNote.mustPress)
 					{
-						sustainNote.x += 702 - 48;
+						sustainNote.x += (702 - 48) + specialNoteXOffset;
 					}
 					else{
-						sustainNote.x += 134 - 48;
+						sustainNote.x += (134 - 48) + specialNoteXOffset;
+
+						if (FlxG.save.data.middleScroll == true)
+							sustainNote.alpha = 0;
 					}
 				}
 
@@ -1356,10 +1382,13 @@ class PlayState extends MusicBeatState
 
 				if (swagNote.mustPress)
 				{
-					swagNote.x += 690 - 38;
+					swagNote.x += (690 - 38) + specialNoteXOffset;
 				}
 				else {
-					swagNote.x += 134 - 48;
+					swagNote.x += (134 - 48) + specialNoteXOffset;
+
+					if (FlxG.save.data.middleScroll == true)
+						swagNote.alpha = 0;
 				}
 			}
 			daBeats += 1;

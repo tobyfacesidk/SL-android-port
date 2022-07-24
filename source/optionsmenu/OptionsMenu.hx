@@ -150,8 +150,8 @@ class OptionsMenu extends MusicBeatState {
 					detailText.text = "If enabled, The game will not give you epilepsy... Probably.";
 				case 'keybinds':
 					detailText.text = "Set your Keybinds for your dirty keyboard... Seriously clean it up.";
-				case 'volume':
-					detailText.text = "Set the volume of the game.";
+				case 'middlescroll':
+					detailText.text = "Centers the Strumline.";
 			}
 
 			if (forceCheck)
@@ -186,7 +186,8 @@ class OptionsMenu extends MusicBeatState {
 				inOptionSelector = false;
 
                 options = ["Keybinds", 'Ghost-tapping ${FlxG.save.data.ghostTap ? 'ON' : 'OFF'}'
-				, 'Downscroll ${FlxG.save.data.downScroll ? 'ON' : 'OFF'}'];
+				, 'Downscroll ${FlxG.save.data.downScroll ? 'ON' : 'OFF'}',
+				'Middlescroll ${FlxG.save.data.middleScroll ? 'ON' : 'OFF'}'];
 				ready = true;
 			case 'graphics':
 				inOptionSelector = false;
@@ -265,6 +266,8 @@ class OptionsMenu extends MusicBeatState {
 						FlxG.save.data.noDistractions = !FlxG.save.data.noDistractions;
 					case 'epilepsy':
 						FlxG.save.data.epilepsyMode = !FlxG.save.data.epilepsyMode;
+					case 'middlescroll':
+						FlxG.save.data.middleScroll = !FlxG.save.data.middleScroll;
 				}
 
 				if (!dontAllowUpdate){
