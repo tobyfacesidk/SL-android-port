@@ -2890,10 +2890,12 @@ class PlayState extends MusicBeatState
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
 
-		if (curBeat % gfSpeed == 0 && gf.animation.curAnim.name.startsWith("dance") || !gf.animation.curAnim.name.startsWith("dance") &&
-			!gf.animation.curAnim.name.startsWith("sing") && gf.animation.curAnim.finished)
-		{
-			gf.dance();
+		if (gf.curCharacter.toLowerCase() != 'none'){
+			if (curBeat % gfSpeed == 0 && gf.animation.curAnim.name.startsWith("dance") || !gf.animation.curAnim.name.startsWith("dance") &&
+				!gf.animation.curAnim.name.startsWith("sing") && gf.animation.curAnim.finished || gf.animation.curAnim.name.startsWith('scared') && curBeat % gfSpeed == 0)
+			{
+				gf.dance();
+			}
 		}
 
 		if (!boyfriend.animation.curAnim.name.startsWith("sing") || !boyfriend.animation.curAnim.name.startsWith("idle") &&

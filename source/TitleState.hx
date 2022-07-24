@@ -67,8 +67,7 @@ class TitleState extends MusicBeatState
 
 		FlxG.save.bind('funkin', 'spunblue');
 
-		Highscore.load();
-		
+		Highscore.load();		
 
 		if (FlxG.save.data.weekUnlocked != null)
 		{

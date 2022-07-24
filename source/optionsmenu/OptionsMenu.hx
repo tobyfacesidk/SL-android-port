@@ -116,7 +116,6 @@ class OptionsMenu extends MusicBeatState {
 
 		for (i in 0...optionGroup.members.length) {
 			if (optionGroup.members[i] != null){
-                // special stuff here
 			}
 		}
 		
@@ -151,6 +150,8 @@ class OptionsMenu extends MusicBeatState {
 					detailText.text = "If enabled, The game will not give you epilepsy... Probably.";
 				case 'keybinds':
 					detailText.text = "Set your Keybinds for your dirty keyboard... Seriously clean it up.";
+				case 'volume':
+					detailText.text = "Set the volume of the game.";
 			}
 
 			if (forceCheck)

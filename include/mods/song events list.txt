@@ -10,3 +10,4 @@ layout: current step:event name:variable
 
 0:replace.dad:character name:x offset:y offset
 0:replace.boyfriend:character name:x offset:y offset
+0:replace.girlfriend:character name:x offset:y offset
