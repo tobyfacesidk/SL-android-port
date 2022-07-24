@@ -334,9 +334,9 @@ class ChartingState extends MusicBeatState
 		var dadCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('dadList'));
 		var bfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('bfList'));
 		var gfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfList'));
+		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		#end
 
-		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var noteskins:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteskinList'));
 
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(bfCharacters, true), function(character:String)

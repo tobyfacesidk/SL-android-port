@@ -269,6 +269,9 @@ class Controls extends FlxActionSet
 	override function update()
 	{
 		super.update();
+
+		FlxG.save.data.volume = FlxG.sound.volume;
+		FlxG.save.data.mute = FlxG.sound.muted;
 	}
 
 	// inline
