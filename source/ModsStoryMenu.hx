@@ -176,8 +176,8 @@ class ModsStoryMenu extends MusicBeatState{
             }
             getHighscore();
         }
-	    
-	difficultyText.text = "Difficulty: " + CoolUtil.difficultyArray[curDifficulty];
+
+        difficultyText.text = "Difficulty: " + CoolUtil.difficultyArray[curDifficulty];
         difficultyText.color = Std.parseInt(diffColor[curDifficulty]);
 
         if (controls.BACK){
@@ -214,12 +214,13 @@ class ModsStoryMenu extends MusicBeatState{
 
             var diffic:String = "";
 
-            diffic = '-' + CoolUtil.difficultyArray[curDifficulty].toLowerCase();
+			diffic = '-' + CoolUtil.difficultyArray[curDifficulty].toLowerCase();
             if (CoolUtil.difficultyArray.contains('NORMAL')) {
                 if (diffic == '-normal') {
                     diffic = '';
                 }
             }
+
 			PlayState.storyDifficulty = curDifficulty;
 
             PlayState.SONG = Song.loadFromModJson(PlayState.storyPlaylist[0].toLowerCase() + "/" + PlayState.storyPlaylist[0].toLowerCase() + diffic);

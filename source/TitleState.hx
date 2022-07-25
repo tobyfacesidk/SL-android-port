@@ -394,8 +394,6 @@ class TitleState extends MusicBeatState
 				createCoolText(['SpunBlue']);
 			case 3:
 				addMoreText('presents');
-			// credTextShit.text += '\npresent...';
-			// credTextShit.addText();
 			case 4:
 				deleteCoolText();
 			// credTextShit.visible = false;

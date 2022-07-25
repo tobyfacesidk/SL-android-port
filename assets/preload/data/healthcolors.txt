@@ -1,6 +1,5 @@
 # format: character:0xAARRGGBB
 bf:0xFF31B0D1
-bf-pixel:0xFF7BD6F6
 bf-old:0xFFE9FF48
 dad:0xFFAF66CE
 gf:0xFFA5004D
