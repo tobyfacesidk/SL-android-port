@@ -23,6 +23,7 @@ class ModsStoryMenu extends MusicBeatState{
     var highScoreText:FlxText;
     
     var difficultyText:FlxText;
+    var diffColor:Array<String> = CoolUtil.coolTextFile(Paths.txt('difficultyColors'));
 
     var optionGroup = new FlxTypedGroup<FlxText>();
 
@@ -170,24 +171,14 @@ class ModsStoryMenu extends MusicBeatState{
             getHighscore();
         }
         else if (controls.RIGHT_P){
-            if (curDifficulty < 2) {
+            if (curDifficulty < CoolUtil.difficultyArray.length - 1) {
                 curDifficulty++;
             }
             getHighscore();
         }
-
-        switch(curDifficulty){
-            case 0:
-                difficultyText.text = "Difficulty: Easy";
-                difficultyText.color = FlxColor.GREEN;
-            case 1:
-                difficultyText.text = "Difficulty: Normal";
-                difficultyText.color = FlxColor.YELLOW;
-            case 2:
-                difficultyText.text = "Difficulty: Hard";
-                difficultyText.color = FlxColor.RED;
-        }
-
+	    
+	difficultyText.text = "Difficulty: " + CoolUtil.difficultyArray[curDifficulty];
+        difficultyText.color = Std.parseInt(diffColor[curDifficulty]);
 
         if (controls.BACK){
             FlxG.switchState(new StorySelectionState());
