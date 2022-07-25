@@ -710,7 +710,7 @@ class PlayState extends MusicBeatState
 					var SplitChar = char.split(":");
 
 					//trace('setting dad pos');
-	
+					
 					if (SplitChar[0] == 'posYOffset-DAD')
 						dad.y += Std.parseFloat(SplitChar[1]);
 					if (SplitChar[0] == 'posXOffset-DAD')
@@ -1943,6 +1943,8 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		var curAnim4Char:String;
+
 		if (generatedMusic && !paused)
 		{
 			notes.forEachAlive(function(daNote:Note)
@@ -1979,6 +1981,31 @@ class PlayState extends MusicBeatState
 
 					daNote.clipRect = swagRect;
 				}
+
+				if (!daNote.mustPress && daNote.wasGoodHit) {
+					var altAnim:String = "";
+
+					if (SONG.notes[Math.floor(curStep / 16)] != null)
+					{
+						if (SONG.notes[Math.floor(curStep / 16)].altAnim) {
+							altAnim = '-alt';
+						} else {
+							altAnim = '';
+						}
+
+						switch (Math.abs(daNote.noteData))
+					    {
+							case 0:
+								curAnim4Char = 'singLEFT' + altAnim;
+                            case 1:
+								curAnim4Char = 'singDOWN' + altAnim;
+							case 2:
+								curAnim4Char = 'singUP' + altAnim;
+							case 3:
+								curAnim4Char = 'singRIGHT' + altAnim;	
+					    }
+					}
+				}
 				
 				if (!daNote.mustPress && daNote.wasGoodHit)
 				{
@@ -1989,54 +2016,27 @@ class PlayState extends MusicBeatState
 
 					if (SONG.notes[Math.floor(curStep / 16)] != null)
 					{
-						if (SONG.notes[Math.floor(curStep / 16)].altAnim)
+						if (SONG.notes[Math.floor(curStep / 16)].altAnim) {
 							altAnim = '-alt';
+						} else {
+							altAnim = '';
+						}
 
 						if (!SONG.notes[Math.floor(curStep / 16)].gfSection){
-							switch (Math.abs(daNote.noteData))
-							{
-								case 0:
-									dad.playAnim('singLEFT' + altAnim, true);
-								case 1:
-									dad.playAnim('singDOWN' + altAnim, true);
-								case 2:
-									dad.playAnim('singUP' + altAnim, true);
-								case 3:
-									dad.playAnim('singRIGHT' + altAnim, true);
-							}
-						}
-						else{
-							switch (Math.abs(daNote.noteData))
-							{
-								case 0:
-									gf.playAnim('singLEFT' + altAnim, true);
-								case 1:
-									gf.playAnim('singDOWN' + altAnim, true);
-								case 2:
-									gf.playAnim('singUP' + altAnim, true);
-								case 3:
-									gf.playAnim('singRIGHT' + altAnim, true);
-							}
+							dad.playAnim(curAnim4Char, true);
+						} else {
+							gf.playAnim(curAnim4Char, true);
 						}
 					}
 					else{
-						switch (Math.abs(daNote.noteData))
-						{
-							case 0:
-								dad.playAnim('singLEFT' + altAnim, true);
-							case 1:
-								dad.playAnim('singDOWN' + altAnim, true);
-							case 2:
-								dad.playAnim('singUP' + altAnim, true);
-							case 3:
-								dad.playAnim('singRIGHT' + altAnim, true);
-						}
+						dad.playAnim(curAnim4Char, true);
 					}
 
 					dad.holdTimer = 0;
 
-					if (SONG.needsVoices)
+					if (SONG.needsVoices) {
 						vocals.volume = 1;
+					}
 
 					daNote.kill();
 					notes.remove(daNote, true);
@@ -2095,7 +2095,7 @@ class PlayState extends MusicBeatState
 			switch (curSong.toLowerCase())
 			{
 				case 'pico':
-					playEndCutscene("cock");
+					playCutscene("cock", 'end');
 			}
 		}
 
@@ -2579,11 +2579,14 @@ class PlayState extends MusicBeatState
 
 	public function calculateRating() {
 		if (misses == 0) {
-			if (goods < 1 && bads < 1 && shits < 1){
+			if (goods < 1 && bads < 1 && shits < 1 && songScore != 0){
 				return 'PERFECT! (MFC) (${calculateLetter()} | ${calcAcc()})';
-			}
-			else{
+			} else {
+			   if (songScore == 0) {
+				return 'N/A (${calculateLetter()} | ${calcAcc()})';
+			   } else {
 				return 'SICK! (FC) (${calculateLetter()} | ${calcAcc()})';
+			   }
 			}
 		}
 		else if (misses > 0 && misses <= 10) {
@@ -2618,46 +2621,44 @@ class PlayState extends MusicBeatState
 				//noteSplashes.add(recycledNote);
 		}
 	
-	function playCutscene(name:String)
+	function playCutscene(name:String, type:String = 'start')
 	{
-		#if (windows || linux)
-		inCutscene = true;
-		trace(Paths.video(name));
-		var video:VideoHandler = new VideoHandler();
-		video.finishCallback = function()
-		{
-			startCountdown();
+		if (type == 'end') {
+			inCutscene = true;
+
+			FlxG.sound.music.kill();
+			vocals.kill();
 		}
-		video.playVideo(Paths.video(name));
-		#else
-		startCountdown();
-		#end
-	}
-	
-	function playEndCutscene(name:String)
-	{
-		//Doesn't check if the song is ending sense it gets called to play WHILE the song is ending.
-		inCutscene = true;
-
-		//KILL THE MUSIC!!!
-		FlxG.sound.music.kill();
-		vocals.kill();
-
 		#if (windows || linux)
 		inCutscene = true;
-
-		var video:VideoHandler = new VideoHandler();
-		video.finishCallback = function()
-		{
+		switch (type) {
+			case 'start':
+				trace(Paths.video(name));
+				var video:VideoHandler = new VideoHandler();
+				video.finishCallback = function()
+				{
+					startCountdown();
+				}
+				video.playVideo(Paths.video(name));
+			case 'end':
+				var video:VideoHandler = new VideoHandler();
+				video.finishCallback = function()
+				{
+					inCutscene = false;
+					playedEndCutscene = true;
+					endSong();
+				}
+				video.playVideo(Paths.video(name));
+	
+		}
+		#else
+		if (type == 'start') {
+			startCountdown();
+		} else {
 			inCutscene = false;
 			playedEndCutscene = true;
 			endSong();
 		}
-		video.playVideo(Paths.video(name));
-		#else
-		inCutscene = false;
-		playedEndCutscene = true;
-		endSong();
 		#end
 	}
 
