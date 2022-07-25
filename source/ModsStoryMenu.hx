@@ -214,14 +214,12 @@ class ModsStoryMenu extends MusicBeatState{
 
             var diffic:String = "";
 
-            switch (curDifficulty)
-			{
-				case 0:
-					diffic = '-easy';
-				case 2:
-					diffic = '-hard';
-			}
-
+            diffic = '-' + CoolUtil.difficultyArray[curDifficulty].toLowerCase();
+            if (CoolUtil.difficultyArray.contains('NORMAL')) {
+                if (diffic == '-normal') {
+                    diffic = '';
+                }
+            }
 			PlayState.storyDifficulty = curDifficulty;
 
             PlayState.SONG = Song.loadFromModJson(PlayState.storyPlaylist[0].toLowerCase() + "/" + PlayState.storyPlaylist[0].toLowerCase() + diffic);
