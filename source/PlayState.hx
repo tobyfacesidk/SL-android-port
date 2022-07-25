@@ -1038,10 +1038,15 @@ class PlayState extends MusicBeatState
 				case 'tutorial':
 					schoolIntro(doof);
 				default:
-					if (!isMod || isMod && !hasDialogue)
-						startCountdown();
-					else if (isMod && hasDialogue){
-						schoolIntro(doof);
+					if (!FileSystem.exists('mods/cutscenes/' + curSong + '/start.mp4')){
+							if (!isMod || isMod && !hasDialogue)
+								startCountdown();
+							else if (isMod && hasDialogue){
+								schoolIntro(doof);
+						}
+					}
+					else{
+						playCutscene('mods/cutscenes/' + curSong + '/start.mp4', true);
 					}
 			}
 		}
@@ -2092,10 +2097,15 @@ class PlayState extends MusicBeatState
 	function endSong():Void
 	{
 		if (playedEndCutscene == false && isStoryMode == true){
-			switch (curSong.toLowerCase())
-			{
-				case 'pico':
-					playEndCutscene("cock");
+			if (!FileSystem.exists('mods/cutscenes/' + curSong + '/end.mp4')){
+				switch (curSong.toLowerCase())
+				{
+					case 'pico':
+						playEndCutscene("cock");
+				}
+			}
+			else{
+				playEndCutscene('mods/cutscenes/' + curSong + '/end.mp4', true);
 			}
 		}
 
@@ -2618,7 +2628,7 @@ class PlayState extends MusicBeatState
 				//noteSplashes.add(recycledNote);
 		}
 	
-	function playCutscene(name:String)
+	function playCutscene(name:String, isPath:Bool = false)
 	{
 		#if (windows || linux)
 		inCutscene = true;
@@ -2628,13 +2638,16 @@ class PlayState extends MusicBeatState
 		{
 			startCountdown();
 		}
-		video.playVideo(Paths.video(name));
+		if (!isPath)
+			video.playVideo(Paths.video(name));
+		else
+			video.playVideo(name);
 		#else
 		startCountdown();
 		#end
 	}
 	
-	function playEndCutscene(name:String)
+	function playEndCutscene(name:String, isPath:Bool = false)
 	{
 		//Doesn't check if the song is ending sense it gets called to play WHILE the song is ending.
 		inCutscene = true;
@@ -2653,7 +2666,10 @@ class PlayState extends MusicBeatState
 			playedEndCutscene = true;
 			endSong();
 		}
-		video.playVideo(Paths.video(name));
+		if (!isPath)
+			video.playVideo(Paths.video(name));
+		else
+			video.playVideo(name);
 		#else
 		inCutscene = false;
 		playedEndCutscene = true;
