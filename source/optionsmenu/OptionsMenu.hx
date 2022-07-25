@@ -41,8 +41,6 @@ class OptionsMenu extends MusicBeatState {
 	override function create() {
 		super.create();
 
-		checkSaveData();
-
 		background = new FlxSprite(0, 0, Paths.image('menuBGBlue'));
 		background.scrollFactor.x = 0;
 		background.scrollFactor.y = 0;
@@ -150,8 +148,6 @@ class OptionsMenu extends MusicBeatState {
 					detailText.text = "If enabled, Distractions will be disabled.";
 				case 'epilepsy':
 					detailText.text = "If enabled, The game will not give you epilepsy... Probably.";
-				case 'freeplay-music':
-					detailText.text = "If enabled, The songs in Freeplay will no longer play";
 				case 'keybinds':
 					detailText.text = "Set your Keybinds for your dirty keyboard... Seriously clean it up.";
 				case 'middlescroll':
@@ -196,12 +192,9 @@ class OptionsMenu extends MusicBeatState {
 			case 'graphics':
 				inOptionSelector = false;
 
-                options = [
-					'Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}',
-				    'Disable Distractions ${FlxG.save.data.noDistractions ? 'ON' : 'OFF'}',
-				    'Epilepsy Mode ${FlxG.save.data.epilepsyMode ? 'ON' : 'OFF'}',
-					'Freeplay-Music ${FlxG.save.data.freeplayMusic ? 'ON' : 'OFF'}'
-			    ];
+                options = ['Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}'
+				, 'Disable Distractions ${FlxG.save.data.noDistractions ? 'ON' : 'OFF'}',
+				'Epilepsy Mode ${FlxG.save.data.epilepsyMode ? 'ON' : 'OFF'}'];
 				ready = true;
 		}
 
@@ -273,8 +266,6 @@ class OptionsMenu extends MusicBeatState {
 						FlxG.save.data.noDistractions = !FlxG.save.data.noDistractions;
 					case 'epilepsy':
 						FlxG.save.data.epilepsyMode = !FlxG.save.data.epilepsyMode;
-					case 'freeplay-music':
-						FlxG.save.data.freeplayMusic = !FlxG.save.data.freeplayMusic;	
 					case 'middlescroll':
 						FlxG.save.data.middleScroll = !FlxG.save.data.middleScroll;
 				}
@@ -283,30 +274,6 @@ class OptionsMenu extends MusicBeatState {
 					updateOptions();
 				}
 			}
-		}
-	}
-
-	function checkSaveData() {
-		if (FlxG.save.data.ghostTap == null) {
-			FlxG.save.data.ghostTap = false;
-		}
-		if (FlxG.save.data.laneUnderlay == null) {
-			FlxG.save.data.laneUnderlay = false;
-		}
-		if (FlxG.save.data.downScroll == null) {
-			FlxG.save.data.downScroll = false;
-		}
-		if (FlxG.save.data.noDistractions == null) {
-			FlxG.save.data.noDistractions = false;
-		}
-		if (FlxG.save.data.epilepsyMode == null) {
-			FlxG.save.data.epilepsyMode = false;
-		}
-		if (FlxG.save.data.freeplayMusic == null) {
-			FlxG.save.data.freeplayMusic = true;
-		}
-		if (FlxG.save.data.middleScroll == null) {
-			FlxG.save.data.middleScroll = false;
 		}
 	}
 

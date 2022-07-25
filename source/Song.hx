@@ -46,63 +46,35 @@ class Song
 		this.bpm = bpm;
 	}
 
-	private static function convertJson(json:Dynamic)
-	{
-		if(json.player3 == null) //fixes some crashes
-		{
-			json.player3 = 'gf';
-		}
-		if(json.player1 == null) //fixes some crashes
-		{
-			json.player1 = 'bf';
-		}
-		if(json.player2 == null) //fixes some crashes
-		{
-			json.player2 = 'bf-pixel';
-		}
-		if(json.stage == null) //fixes some crashes
-		{
-			json.stage = 'stage';
-		}
-		if(json.song == null) //fixes some crashes
-		{
-			json.song = 'test';
-		}
-	}
-
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
-	{
-		var rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
-	
-		while (!rawJson.endsWith("}"))
 		{
-			rawJson = rawJson.substr(0, rawJson.length - 1);
-		}
-
-		var json:Dynamic = parseJSONshit(rawJson);
-		convertJson(json);
-		return json;
-	}
+			var rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
 	
-	public static function loadFromModJson(jsonInput:String, ?folder:String):SwagSong
-	{
-		// load a json from a mod folder (not the main folder)
-		var rawJson = File.getContent("mods/data/" + folder.toLowerCase() + '/' + jsonInput.toLowerCase() + '.json').trim();
+			while (!rawJson.endsWith("}"))
+			{
+				rawJson = rawJson.substr(0, rawJson.length - 1);
+			}
+	
+			return parseJSONshit(rawJson);
+		}
+	
+		public static function loadFromModJson(jsonInput:String, ?folder:String):SwagSong
+			{
+				// load a json from a mod folder (not the main folder)
+				var rawJson = File.getContent("mods/data/" + folder.toLowerCase() + '/' + jsonInput.toLowerCase() + '.json').trim();
 				
-		while (!rawJson.endsWith("}"))
-		{
-			rawJson = rawJson.substr(0, rawJson.length - 1);
-		}
-
-		var json:Dynamic = parseJSONshit(rawJson);
-		convertJson(json);
-		return json;
-	}
+				while (!rawJson.endsWith("}"))
+				{
+					rawJson = rawJson.substr(0, rawJson.length - 1);
+				}
+		
+				return parseJSONshit(rawJson);
+			}
 	
-	public static function parseJSONshit(rawJson:String):SwagSong
-	{
-		var swagShit:SwagSong = cast Json.parse(rawJson).song;
-		swagShit.validScore = true;
-		return swagShit;
+		public static function parseJSONshit(rawJson:String):SwagSong
+		{
+			var swagShit:SwagSong = cast Json.parse(rawJson).song;
+			swagShit.validScore = true;
+			return swagShit;
+		}
 	}
-}

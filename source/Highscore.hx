@@ -64,13 +64,10 @@ class Highscore
 	{
 		var daSong:String = song;
 
-		daSong += '-' + CoolUtil.difficultyArray[diff].toLowerCase(); //auto gets diff
-		if (CoolUtil.difficultyArray.contains('NORMAL')) {
-			if (daSong == song + '-normal') {
-				daSong = song;
-			}
-		}
-		trace(daSong);
+		if (diff == 0)
+			daSong += '-easy';
+		else if (diff == 2)
+			daSong += '-hard';
 
 		return daSong;
 	}
