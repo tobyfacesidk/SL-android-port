@@ -50,9 +50,6 @@ class TitleState extends MusicBeatState
 		polymod.Polymod.init({modRoot: "mods", dirs: ['introMod']});
 		#end
 
-		CoolUtil.difficultyArray = CoolUtil.coolTextFile(Paths.txt('difficultyList'));
-		trace(CoolUtil.difficultyArray);
-
 		FlxG.save.bind('funkin', 'spunblue');
 
 		if (FlxG.save.data.volume != null)
@@ -144,7 +141,6 @@ class TitleState extends MusicBeatState
 			// music.loadStream(Paths.music('freakyMenu'));
 			// FlxG.sound.list.add(music);
 			// music.play();
-			
 			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
@@ -178,7 +174,6 @@ class TitleState extends MusicBeatState
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
-		titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24, true);
 		if (FlxG.save.data.epilepsyMode) {
 			titleText.animation.addByPrefix('press', "Press Enter to Begin", 24, false);
 		}
@@ -289,7 +284,7 @@ class TitleState extends MusicBeatState
 
 		if (pressedEnter && !transitioning && skippedIntro)
 			{
-				titleText.animation.play('press', true);
+				titleText.animation.play('press');
 	
 				if (!FlxG.save.data.epilepsyMode)
 				{
@@ -391,9 +386,12 @@ class TitleState extends MusicBeatState
 		switch (curBeat)
 		{
 			case 1:
-				createCoolText(['SpunBlue']);
+				// createCoolText(['thepercentageguy']);
+			// credTextShit.visible = true;
 			case 3:
-				addMoreText('presents');
+				createCoolText(['SpunBlue', 'presents']);
+			// credTextShit.text += '\npresent...';
+			// credTextShit.addText();
 			case 4:
 				deleteCoolText();
 			// credTextShit.visible = false;

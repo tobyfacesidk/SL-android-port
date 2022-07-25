@@ -338,20 +338,22 @@ class StoryMenuState extends MusicBeatState
 		curDifficulty += change;
 
 		if (curDifficulty < 0)
-			curDifficulty = CoolUtil.difficultyArray.length - 1;
-		if (curDifficulty > CoolUtil.difficultyArray.length - 1)
+			curDifficulty = 2;
+		if (curDifficulty > 2)
 			curDifficulty = 0;
 
 		sprDifficulty.offset.x = 0;
-		sprDifficulty.animation.play(CoolUtil.difficultyArray[curDifficulty].toLowerCase());
 
 		switch (curDifficulty)
 		{
 			case 0:
+				sprDifficulty.animation.play('easy');
 				sprDifficulty.offset.x = 20;
 			case 1:
+				sprDifficulty.animation.play('normal');
 				sprDifficulty.offset.x = 70;
 			case 2:
+				sprDifficulty.animation.play('hard');
 				sprDifficulty.offset.x = 20;
 		}
 

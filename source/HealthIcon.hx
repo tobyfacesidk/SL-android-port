@@ -47,17 +47,12 @@ class HealthIcon extends FlxSprite
 			scrollFactor.set();
 		}
 		else{
-			if (!FileSystem.exists("mods/images/characters/" + char + "/icons.png")){ //If Theres No Icons Then It Will Default To Face
-				loadGraphic(Paths.image('iconGrid'), true, 150, 150);
-				animation.add('face', [10, 11], 0, false, isPlayer);
-				animation.play('face');
-			} else {
-				loadGraphic(openfl.display.BitmapData.fromFile("mods/images/characters/" + char + "/icons.png"), true, 150, 150);
-				animation.add('anim', [0, 1], 0, false, isPlayer);
-				animation.play('anim');
-			}
+			loadGraphic(openfl.display.BitmapData.fromFile("mods/images/characters/" + char + "/icons.png"), true, 150, 150);
 
 			antialiasing = true;
+
+			animation.add('anim', [0, 1], 0, false, isPlayer);
+			animation.play('anim');
 		}
 	}
 

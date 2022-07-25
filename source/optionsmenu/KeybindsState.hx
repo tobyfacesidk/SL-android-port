@@ -27,8 +27,6 @@ class KeybindsState extends MusicBeatState{
 
     override function create(){
         super.create();
-
-        checkSaveData();
         
         background = new FlxSprite(0, 0, Paths.image('menuBGBlue'));
 		background.scrollFactor.x = 0;
@@ -52,21 +50,6 @@ class KeybindsState extends MusicBeatState{
 
         camFollow = new FlxSprite(0, 0).makeGraphic(Std.int(optionGroup.members[0].width), Std.int(optionGroup.members[0].height), 0xAAFF0000);
         FlxG.camera.follow(camFollow, null, 0.06);
-    }
-
-    function checkSaveData() {
-        if (FlxG.save.data.right == null) {
-            FlxG.save.data.right = 'D';
-        }
-        if (FlxG.save.data.left == null) {
-            FlxG.save.data.left = 'A';
-        }
-        if (FlxG.save.data.up == null) {
-            FlxG.save.data.up = 'W';
-        }
-        if (FlxG.save.data.down == null) {
-            FlxG.save.data.down = 'S';
-        }
     }
 
     function addOptions(){
