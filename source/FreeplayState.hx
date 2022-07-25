@@ -147,7 +147,7 @@ class FreeplayState extends MusicBeatState
 		selector.text = ">";
 		// add(selector);
 
-		var swag:Alphabet = new Alphabet(1, 0, "swag");
+		//var swag:Alphabet = new Alphabet(1, 0, "swag");
 
 		// JUST DOIN THIS SHIT FOR TESTING!!!
 		/* 
@@ -252,7 +252,6 @@ class FreeplayState extends MusicBeatState
 
 				if (songs[curSelected].week == 69420){
 					PlayState.SONG = Song.loadFromModJson(poop, songs[curSelected].songName.toLowerCase());
-
 					PlayState.isMod = true;
 				}
 				else{
@@ -270,24 +269,18 @@ class FreeplayState extends MusicBeatState
 
 	function changeDiff(change:Int = 0)
 	{
+		var sussy = CoolUtil.coolTextFile(Paths.txt('difficultyList'));
+
 		curDifficulty += change;
 
 		if (curDifficulty < 0)
-			curDifficulty = 2;
-		if (curDifficulty > 2)
+			curDifficulty = CoolUtil.coolTextFile(Paths.txt('difficultyList')).length - 1;
+		if (curDifficulty > CoolUtil.coolTextFile(Paths.txt('difficultyList')).length - 1)
 			curDifficulty = 0;
 
 		loadScoreData();
 
-		switch (curDifficulty)
-		{
-			case 0:
-				diffText.text = "< EASY >";
-			case 1:
-				diffText.text = '< NORMAL >';
-			case 2:
-				diffText.text = "< HARD >";
-		}
+		diffText.text = "< " + sussy[curDifficulty] + " >";
 	}
 
 	function loadScoreData(){
@@ -332,11 +325,13 @@ class FreeplayState extends MusicBeatState
 		loadScoreData();
 
 		#if PRELOAD_ALL
-		if (songs[curSelected].week == 69420){
-			FlxG.sound.playMusic(Sound.fromFile("mods/songs/" + songs[curSelected].songName.toLowerCase() + "/Inst.ogg"), 0, true);
+		if (FlxG.save.data.freeplayMusic) {
+			if (songs[curSelected].week == 69420){
+				FlxG.sound.playMusic(Sound.fromFile("mods/songs/" + songs[curSelected].songName.toLowerCase() + "/Inst.ogg"), 0, true);
+			} else {
+				FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
+			}
 		}
-		else
-			FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
 		#end
 
 		var bullShit:Int = 0;
@@ -380,9 +375,10 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		// FlxTween.tween(bg, {color: tcolor}, 0.5, {ease: FlxEase.quadInOut, type: ONESHOT});
-		FlxTween.color(bg, 0.5, bg.color, tcolor, {ease: FlxEase.quadInOut, type: ONESHOT});
-		// bg.color = tcolor;	
+		FlxTween.color(bg, 1, bg.color, tcolor, {
+			ease: FlxEase.quadInOut,
+			type: ONESHOT
+		});
 	}
 }
 
