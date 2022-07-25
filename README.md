@@ -17,9 +17,6 @@ Well let me list out a few reasons why:
 * We have a pretty good Input System.
 
 If this hasn't convinced you, Then i don't mind. You really don't have to use this engine.
-
-## Important Information
-This engine was originally named "NUFNF (New Unnamed Friday Night Funkin' Engine)", We are in the process of changing the name.
  
 ## Special Thanks
 Special Thanks to ThePercentageGuy for giving me Ownership of NUFNF which started this Engine.
