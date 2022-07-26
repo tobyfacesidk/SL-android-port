@@ -563,6 +563,7 @@ class ChartingState extends MusicBeatState
 					enableHitsounds = check.checked;
 				case "Girlfriend Section (NOT FULLY WORKING)":
 					_song.notes[curSection].gfSection = check.checked;
+					updateHeads();
 			}
 		}
 		else if (id == FlxUINumericStepper.CHANGE_EVENT && (sender is FlxUINumericStepper))
@@ -1115,11 +1116,23 @@ class ChartingState extends MusicBeatState
 		if (check_mustHitSection.checked)
 		{
 			leftIcon.animation.play('bf');
-			rightIcon.animation.play('dad');
+			if (check_gfSection.checked) {
+				rightIcon.animation.play('gf'); //ADDED GF?!?!!??!??!?!??!?!
+				dadSide.color = 0xFFA5004D;
+			} else {
+				rightIcon.animation.play('dad'); //Ew boring old dad
+				dadSide.color = 0xFFFF00EA;
+			}
 		}
 		else
 		{
-			leftIcon.animation.play('dad');
+			if (check_gfSection.checked) {
+				leftIcon.animation.play('gf');
+				dadSide.color = 0xFFA5004D;
+			} else {
+				leftIcon.animation.play('dad');
+				dadSide.color = 0xFFFF00EA;
+			}
 			rightIcon.animation.play('bf');
 		}
 	}
