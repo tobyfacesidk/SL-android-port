@@ -218,15 +218,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Making difficulty text for Discord Rich Presence.
-		switch (storyDifficulty)
-		{
-			case 0:
-				storyDifficultyText = "Easy";
-			case 1:
-				storyDifficultyText = "Normal";
-			case 2:
-				storyDifficultyText = "Hard";
-		}
+		storyDifficultyText = CoolUtil.difficultyArray[storyDifficulty];
 
 		iconRPC = SONG.player2;
 
@@ -1038,10 +1030,15 @@ class PlayState extends MusicBeatState
 				case 'tutorial':
 					schoolIntro(doof);
 				default:
-					if (!isMod || isMod && !hasDialogue)
-						startCountdown();
-					else if (isMod && hasDialogue){
-						schoolIntro(doof);
+					if (!FileSystem.exists('mods/cutscenes/' + curSong + '/start.mp4')){
+							if (!isMod || isMod && !hasDialogue)
+								startCountdown();
+							else if (isMod && hasDialogue){
+								schoolIntro(doof);
+						}
+					}
+					else{
+						playCutscene('mods/cutscenes/' + curSong + '/start.mp4', true);
 					}
 			}
 		}
@@ -2092,10 +2089,15 @@ class PlayState extends MusicBeatState
 	function endSong():Void
 	{
 		if (playedEndCutscene == false && isStoryMode == true){
-			switch (curSong.toLowerCase())
-			{
-				case 'pico':
-					playEndCutscene("cock");
+			if (!FileSystem.exists('mods/cutscenes/' + curSong + '/end.mp4')){
+				switch (curSong.toLowerCase())
+				{
+					case 'pico':
+						playEndCutscene("cock");
+				}
+			}
+			else{
+				playEndCutscene('mods/cutscenes/' + curSong + '/end.mp4', true);
 			}
 		}
 
@@ -2139,11 +2141,11 @@ class PlayState extends MusicBeatState
 			{
 				var difficulty:String = "";
 
-				if (storyDifficulty == 0)
-					difficulty = '-easy';
-
-				if (storyDifficulty == 2)
-					difficulty = '-hard';
+				if (CoolUtil.difficultyArray.contains("NORMAL") && CoolUtil.difficultyArray[storyDifficulty] == 'NORMAL') {
+					difficulty = '';
+				} else {
+					difficulty = '-' + CoolUtil.difficultyArray[storyDifficulty].toLowerCase();
+				}
 
 				trace('LOADING NEXT SONG');
 				trace(PlayState.storyPlaylist[0].toLowerCase() + difficulty);
@@ -2579,11 +2581,14 @@ class PlayState extends MusicBeatState
 
 	public function calculateRating() {
 		if (misses == 0) {
-			if (goods < 1 && bads < 1 && shits < 1){
+			if (goods < 1 && bads < 1 && shits < 1 && songScore != 0){
 				return 'PERFECT! (MFC) (${calculateLetter()} | ${calcAcc()})';
-			}
-			else{
+			} else {
+			   if (songScore == 0) {
+				return 'N/A (${calculateLetter()} | ${calcAcc()})';
+			   } else {
 				return 'SICK! (FC) (${calculateLetter()} | ${calcAcc()})';
+			   }
 			}
 		}
 		else if (misses > 0 && misses <= 10) {
@@ -2618,7 +2623,7 @@ class PlayState extends MusicBeatState
 				//noteSplashes.add(recycledNote);
 		}
 	
-	function playCutscene(name:String)
+	function playCutscene(name:String, isPath:Bool = false)
 	{
 		#if (windows || linux)
 		inCutscene = true;
@@ -2628,13 +2633,16 @@ class PlayState extends MusicBeatState
 		{
 			startCountdown();
 		}
-		video.playVideo(Paths.video(name));
+		if (!isPath)
+			video.playVideo(Paths.video(name));
+		else
+			video.playVideo(name);
 		#else
 		startCountdown();
 		#end
 	}
 	
-	function playEndCutscene(name:String)
+	function playEndCutscene(name:String, isPath:Bool = false)
 	{
 		//Doesn't check if the song is ending sense it gets called to play WHILE the song is ending.
 		inCutscene = true;
@@ -2653,7 +2661,10 @@ class PlayState extends MusicBeatState
 			playedEndCutscene = true;
 			endSong();
 		}
-		video.playVideo(Paths.video(name));
+		if (!isPath)
+			video.playVideo(Paths.video(name));
+		else
+			video.playVideo(name);
 		#else
 		inCutscene = false;
 		playedEndCutscene = true;
