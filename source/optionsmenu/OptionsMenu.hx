@@ -49,6 +49,7 @@ class OptionsMenu extends MusicBeatState {
 		background.antialiasing = true;
 		add(background);
 
+		checkVariables();
 		createOptions();
 
 		detailText = new FlxText(0, 0, FlxG.width, "Options");
@@ -152,6 +153,8 @@ class OptionsMenu extends MusicBeatState {
 					detailText.text = "Set your Keybinds for your dirty keyboard... Seriously clean it up.";
 				case 'middlescroll':
 					detailText.text = "Centers the Strumline.";
+				case 'show':
+				    detailText.text = "If enabled, When the version is outdated, the outdated screen will no longer show.";
 			}
 
 			if (forceCheck)
@@ -166,6 +169,12 @@ class OptionsMenu extends MusicBeatState {
 					startListening = true;
 					endedCheck = true;
 			});
+		}
+	}
+
+	function checkVariables() {
+		if (FlxG.save.data.showOutdatedScreen == null) {
+			FlxG.save.data.showOutdatedScreen = true;
 		}
 	}
 
@@ -192,9 +201,12 @@ class OptionsMenu extends MusicBeatState {
 			case 'graphics':
 				inOptionSelector = false;
 
-                options = ['Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}'
-				, 'Disable Distractions ${FlxG.save.data.noDistractions ? 'ON' : 'OFF'}',
-				'Epilepsy Mode ${FlxG.save.data.epilepsyMode ? 'ON' : 'OFF'}'];
+                options = [
+				    'Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}',
+				    'Disable Distractions ${FlxG.save.data.noDistractions ? 'ON' : 'OFF'}',
+				    'Epilepsy Mode ${FlxG.save.data.epilepsyMode ? 'ON' : 'OFF'}',
+					'Show Outdated Screen ${FlxG.save.data.showOutdatedScreen ? 'ON' : 'OFF'}'
+			    ];
 				ready = true;
 		}
 
@@ -268,6 +280,8 @@ class OptionsMenu extends MusicBeatState {
 						FlxG.save.data.epilepsyMode = !FlxG.save.data.epilepsyMode;
 					case 'middlescroll':
 						FlxG.save.data.middleScroll = !FlxG.save.data.middleScroll;
+					case 'show':
+						FlxG.save.data.showOutdatedScreen = !FlxG.save.data.showOutdatedScreen;
 				}
 
 				if (!dontAllowUpdate){
