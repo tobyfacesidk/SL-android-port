@@ -34,6 +34,8 @@ class TitleState extends MusicBeatState
 {
 	static var initialized:Bool = false;
 
+	var starting:Bool = true;
+
 	var blackScreen:FlxSprite;
 	var credGroup:FlxGroup;
 	var credTextShit:Alphabet;
@@ -221,6 +223,8 @@ class TitleState extends MusicBeatState
 
 		FlxG.mouse.visible = false;
 
+		starting = false;
+
 		if (initialized)
 			skipIntro();
 		else
@@ -283,7 +287,7 @@ class TitleState extends MusicBeatState
 		}
 
 
-		if (pressedEnter && !transitioning && skippedIntro)
+		if (pressedEnter && !transitioning && skippedIntro && !starting)
 			{
 				titleText.animation.play('press', true);
 	
@@ -387,7 +391,7 @@ class TitleState extends MusicBeatState
 		switch (curBeat)
 		{
 			case 1:
-                                createCoolText(['SpunBlue']);
+				createCoolText(['SpunBlue']);
 				// createCoolText(['thepercentageguy']);
 			// credTextShit.visible = true;
 			case 3:
