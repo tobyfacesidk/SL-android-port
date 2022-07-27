@@ -318,7 +318,11 @@ class TitleState extends MusicBeatState
 						trace('outdated lmao! ' + returnedData[0] + ' != ' + version);
 						OutdatedSubState.needVer = returnedData[0];
 						OutdatedSubState.currChanges = returnedData[1];
-						FlxG.switchState(new OutdatedSubState());
+						if (FlxG.save.data.showOutdatedScreen) {
+							FlxG.switchState(new OutdatedSubState());
+						} else {
+							FlxG.switchState(new MainMenuState());
+						}
 					}
 					else
 					{
