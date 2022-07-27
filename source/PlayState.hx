@@ -218,15 +218,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Making difficulty text for Discord Rich Presence.
-		switch (storyDifficulty)
-		{
-			case 0:
-				storyDifficultyText = "Easy";
-			case 1:
-				storyDifficultyText = "Normal";
-			case 2:
-				storyDifficultyText = "Hard";
-		}
+		storyDifficultyText = CoolUtil.difficultyArray[storyDifficulty];
 
 		iconRPC = SONG.player2;
 
@@ -2149,11 +2141,11 @@ class PlayState extends MusicBeatState
 			{
 				var difficulty:String = "";
 
-				if (storyDifficulty == 0)
-					difficulty = '-easy';
-
-				if (storyDifficulty == 2)
-					difficulty = '-hard';
+				if (CoolUtil.difficultyArray.contains("NORMAL") && CoolUtil.difficultyArray[storyDifficulty] == 'NORMAL') {
+					difficulty = '';
+				} else {
+					difficulty = '-' + CoolUtil.difficultyArray[storyDifficulty].toLowerCase();
+				}
 
 				trace('LOADING NEXT SONG');
 				trace(PlayState.storyPlaylist[0].toLowerCase() + difficulty);
@@ -2589,11 +2581,14 @@ class PlayState extends MusicBeatState
 
 	public function calculateRating() {
 		if (misses == 0) {
-			if (goods < 1 && bads < 1 && shits < 1){
+			if (goods < 1 && bads < 1 && shits < 1 && songScore != 0){
 				return 'PERFECT! (MFC) (${calculateLetter()} | ${calcAcc()})';
-			}
-			else{
+			} else {
+			   if (songScore == 0) {
+				return 'N/A (${calculateLetter()} | ${calcAcc()})';
+			   } else {
 				return 'SICK! (FC) (${calculateLetter()} | ${calcAcc()})';
+			   }
 			}
 		}
 		else if (misses > 0 && misses <= 10) {

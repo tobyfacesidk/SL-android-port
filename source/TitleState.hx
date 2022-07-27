@@ -34,6 +34,8 @@ class TitleState extends MusicBeatState
 {
 	static var initialized:Bool = false;
 
+	var starting:Bool = true;
+
 	var blackScreen:FlxSprite;
 	var credGroup:FlxGroup;
 	var credTextShit:Alphabet;
@@ -174,6 +176,7 @@ class TitleState extends MusicBeatState
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
+		titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24, true);
 		if (FlxG.save.data.epilepsyMode) {
 			titleText.animation.addByPrefix('press', "Press Enter to Begin", 24, false);
 		}
@@ -219,6 +222,8 @@ class TitleState extends MusicBeatState
 		FlxTween.tween(credTextShit, {y: credTextShit.y + 20}, 2.9, {ease: FlxEase.quadInOut, type: PINGPONG});
 
 		FlxG.mouse.visible = false;
+
+		starting = false;
 
 		if (initialized)
 			skipIntro();
@@ -282,9 +287,9 @@ class TitleState extends MusicBeatState
 		}
 
 
-		if (pressedEnter && !transitioning && skippedIntro)
+		if (pressedEnter && !transitioning && skippedIntro && !starting)
 			{
-				titleText.animation.play('press');
+				titleText.animation.play('press', true);
 	
 				if (!FlxG.save.data.epilepsyMode)
 				{
@@ -313,7 +318,11 @@ class TitleState extends MusicBeatState
 						trace('outdated lmao! ' + returnedData[0] + ' != ' + version);
 						OutdatedSubState.needVer = returnedData[0];
 						OutdatedSubState.currChanges = returnedData[1];
-						FlxG.switchState(new OutdatedSubState());
+						if (FlxG.save.data.showOutdatedScreen) {
+							FlxG.switchState(new OutdatedSubState());
+						} else {
+							FlxG.switchState(new MainMenuState());
+						}
 					}
 					else
 					{
@@ -386,10 +395,11 @@ class TitleState extends MusicBeatState
 		switch (curBeat)
 		{
 			case 1:
+				createCoolText(['SpunBlue']);
 				// createCoolText(['thepercentageguy']);
 			// credTextShit.visible = true;
 			case 3:
-				createCoolText(['SpunBlue', 'presents']);
+				addMoreText('presents');
 			// credTextShit.text += '\npresent...';
 			// credTextShit.addText();
 			case 4:

@@ -170,21 +170,20 @@ class ModsStoryMenu extends MusicBeatState{
             getHighscore();
         }
         else if (controls.RIGHT_P){
-            if (curDifficulty < 2) {
+            if (curDifficulty < CoolUtil.difficultyArray.length - 1) {
                 curDifficulty++;
             }
             getHighscore();
         }
 
+        difficultyText.text = "Difficulty: " + CoolUtil.difficultyArray[curDifficulty];
+
         switch(curDifficulty){
             case 0:
-                difficultyText.text = "Difficulty: Easy";
                 difficultyText.color = FlxColor.GREEN;
             case 1:
-                difficultyText.text = "Difficulty: Normal";
                 difficultyText.color = FlxColor.YELLOW;
             case 2:
-                difficultyText.text = "Difficulty: Hard";
                 difficultyText.color = FlxColor.RED;
         }
 
@@ -223,13 +222,11 @@ class ModsStoryMenu extends MusicBeatState{
 
             var diffic:String = "";
 
-            switch (curDifficulty)
-			{
-				case 0:
-					diffic = '-easy';
-				case 2:
-					diffic = '-hard';
-			}
+            if (CoolUtil.difficultyArray.contains("NORMAL") && CoolUtil.difficultyArray[curDifficulty] == "NORMAL") { //HOW MANY TIMES DO I HAVE TO DO THIS AGGHHGHGAHSGAHGAHG
+                diffic = "";
+            } else {
+                diffic = '-' + CoolUtil.difficultyArray[curDifficulty].toLowerCase();
+            }
 
 			PlayState.storyDifficulty = curDifficulty;
 
