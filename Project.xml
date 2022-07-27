@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin' Sublime Engine" file="FNFSL" packageName="com.spunblue.fnfsl" package="com.spunblue.fnfsl" main="Main" company="spunblue" version="3.9.0" />
+	<app title="Friday Night Funkin' Sublime Engine" file="FNFSL" packageName="com.spunblue.fnfsl" package="com.spunblue.fnfsl" main="Main" company="spunblue" version="3.10.0" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
