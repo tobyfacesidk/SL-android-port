@@ -174,6 +174,7 @@ class TitleState extends MusicBeatState
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
+		titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24, true);
 		if (FlxG.save.data.epilepsyMode) {
 			titleText.animation.addByPrefix('press', "Press Enter to Begin", 24, false);
 		}
@@ -284,7 +285,7 @@ class TitleState extends MusicBeatState
 
 		if (pressedEnter && !transitioning && skippedIntro)
 			{
-				titleText.animation.play('press');
+				titleText.animation.play('press', true);
 	
 				if (!FlxG.save.data.epilepsyMode)
 				{
@@ -386,10 +387,11 @@ class TitleState extends MusicBeatState
 		switch (curBeat)
 		{
 			case 1:
+                                createCoolText(['SpunBlue']);
 				// createCoolText(['thepercentageguy']);
 			// credTextShit.visible = true;
 			case 3:
-				createCoolText(['SpunBlue', 'presents']);
+				addMoreText('presents');
 			// credTextShit.text += '\npresent...';
 			// credTextShit.addText();
 			case 4:
