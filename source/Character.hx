@@ -46,7 +46,7 @@ class Character extends FlxSprite
 		var tex:FlxAtlasFrames;
 		antialiasing = true;
 
-		var pathVar = "mods/images/characters/" + curCharacter;
+		var pathVar = 'mods/' + SLModding.curLoaded + '/images/characters/' + curCharacter;
 		var daPlayer = curCharacter;
 
 		trace('Attempting to load character: ' + curCharacter);

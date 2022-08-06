@@ -163,6 +163,9 @@ class PlayState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
+		if (SLModding.curLoaded != null)
+			isMod = true;
+
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -298,10 +301,10 @@ class PlayState extends MusicBeatState
 				trace('Stage & GF Changing not supported');
 		}
 
-		if (FileSystem.exists('mods/images/stages/' + SONG.stage + '/stage.txt') && !FileSystem.exists('mods/images/stages/' + SONG.stage + '/do not use')){
+		if (FileSystem.exists('mods/' + SLModding.curLoaded + '/images/stages/' + SONG.stage + '/stage.txt') && !FileSystem.exists('mods/' + SLModding.curLoaded + '/images/stages/' + SONG.stage + '/do not use')){
 			isCustomStage = true;
 
-			var daList:Array<String> = File.getContent('mods/images/stages/' + SONG.stage + '/stage.txt').trim().split('\n');
+			var daList:Array<String> = File.getContent('mods/' + SLModding.curLoaded + '/images/stages/' + SONG.stage + '/stage.txt').trim().split('\n');
 					
 			for (i in 0...daList.length){
 				daList[i] = daList[i].trim();
@@ -320,15 +323,15 @@ class PlayState extends MusicBeatState
 					var daSprite = new FlxSprite(Std.parseInt(SplitLines[1]), Std.parseInt(SplitLines[2]));
 
 					if (SplitLines[6] != 'png'){
-						var texture = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile('mods/images/stages/' + SONG.stage + '/' + SplitLines[0] + ".png"),
-						File.getContent('mods/images/stages/' + SONG.stage + '/' + SplitLines[0] + ".xml"));
+						var texture = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile('mods/' + SLModding.curLoaded + '/images/stages/' + SONG.stage + '/' + SplitLines[0] + ".png"),
+						File.getContent('mods/' + SLModding.curLoaded + '/images/stages/' + SONG.stage + '/' + SplitLines[0] + ".xml"));
 
 						daSprite.frames = texture;
 						daSprite.animation.addByPrefix('idle', SplitLines[7]);
 						daSprite.animation.play('idle');
 					}
 					else{
-						daSprite.loadGraphic(openfl.display.BitmapData.fromFile('mods/images/stages/' + SONG.stage + '/' + SplitLines[0] + ".png"));
+						daSprite.loadGraphic(openfl.display.BitmapData.fromFile('mods/' + SLModding.curLoaded + '/images/stages/' + SONG.stage + '/' + SplitLines[0] + ".png"));
 					}
 					daSprite.scrollFactor.x = Std.parseInt(SplitLines[3]);
 					daSprite.scrollFactor.y = Std.parseInt(SplitLines[4]);
@@ -837,8 +840,8 @@ class PlayState extends MusicBeatState
 
 		generateSong(SONG.song);
 
-		if (isMod && FileSystem.exists("mods/data/" + SONG.song.toLowerCase() + "/events.txt")){
-			var daList:Array<String> = File.getContent("mods/data/" + SONG.song.toLowerCase() + "/events.txt").trim().split('\n');
+		if (isMod && FileSystem.exists("mods/" + SLModding.curLoaded + "/data/" + SONG.song.toLowerCase() + "/events.txt")){
+			var daList:Array<String> = File.getContent("mods/" + SLModding.curLoaded + "/data/" + SONG.song.toLowerCase() + "/events.txt").trim().split('\n');
 	
 			for (i in 0...daList.length)
 			{
@@ -894,6 +897,35 @@ class PlayState extends MusicBeatState
 				}
 				if (boyfriend.curCharacter.toLowerCase().startsWith(eugh[0])) {
 					barColor2 = new FlxColor(Std.parseInt(eugh[1]));
+				}
+			}
+		}
+
+		// mod shit
+		if (boyfriend.isMod && FileSystem.exists('mods/' + SLModding.curLoaded + '/images/characters/' + PlayState.SONG.player1 + '/character.txt')){
+			var characterStuff:Array<String> = File.getContent('mods/' + SLModding.curLoaded + '/images/characters/' + PlayState.SONG.player1 + '/character.txt').split('\n');
+
+			for (color in characterStuff){
+				if (!color.startsWith('#')) {
+					var eugh = color.split(':');
+	
+					if (eugh[0] == 'healthColor') {
+						barColor2 = new FlxColor(Std.parseInt(eugh[1]));
+					}
+				}
+			}
+		}
+
+		if (dad.isMod && FileSystem.exists('mods/' + SLModding.curLoaded + '/images/characters/' + PlayState.SONG.player2 + '/character.txt')){
+			var characterStuff:Array<String> = File.getContent('mods/' + SLModding.curLoaded + '/images/characters/' + PlayState.SONG.player2 + '/character.txt').split('\n');
+
+			for (color in characterStuff){
+				if (!color.startsWith('#')) {
+					var eugh = color.split(':');
+	
+					if (eugh[0] == 'healthColor') {
+						barColor = new FlxColor(Std.parseInt(eugh[1]));
+					}
 				}
 			}
 		}
@@ -1030,7 +1062,7 @@ class PlayState extends MusicBeatState
 				case 'tutorial':
 					schoolIntro(doof);
 				default:
-					if (!FileSystem.exists('mods/cutscenes/' + curSong + '/start.mp4')){
+					if (!FileSystem.exists('mods/' + SLModding.curLoaded + '/cutscenes/' + curSong + '/start.mp4')){
 							if (!isMod || isMod && !hasDialogue)
 								startCountdown();
 							else if (isMod && hasDialogue){
@@ -1038,7 +1070,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 					else{
-						playCutscene('mods/cutscenes/' + curSong + '/start.mp4', true);
+						playCutscene('mods/' + SLModding.curLoaded + '/cutscenes/' + curSong + '/start.mp4', true);
 					}
 			}
 		}
@@ -1277,7 +1309,7 @@ class PlayState extends MusicBeatState
 		if (!paused && !isMod)
 			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
 		else if (!paused && isMod)
-			FlxG.sound.playMusic(Sound.fromFile("mods/songs/" + PlayState.SONG.song.toLowerCase() + "/Inst.ogg"), 1, false);
+			FlxG.sound.playMusic(Sound.fromFile("mods/" + SLModding.curLoaded + "/songs/" + PlayState.SONG.song.toLowerCase() + "/Inst.ogg"), 1, false);
 		FlxG.sound.music.onComplete = endSong;
 		vocals.play();
 
@@ -1305,7 +1337,7 @@ class PlayState extends MusicBeatState
 		if (SONG.needsVoices && inCutscene == false && !isMod)
 			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
 		else if (SONG.needsVoices && inCutscene == false && isMod)
-			vocals = new FlxSound().loadEmbedded(Sound.fromFile("mods/songs/" + PlayState.SONG.song.toLowerCase() + "/Voices.ogg"));
+			vocals = new FlxSound().loadEmbedded(Sound.fromFile("mods/" + SLModding.curLoaded + "/songs/" + PlayState.SONG.song.toLowerCase() + "/Voices.ogg"));
 		else
 			vocals = new FlxSound();
 
@@ -2048,7 +2080,9 @@ class PlayState extends MusicBeatState
 				{	
 					if (daNote.tooLate || !daNote.wasGoodHit)
 					{
-						health -= 0.0475;
+						health -= 0.1;
+						combo = 0;
+
 						vocals.volume = 0;
 
 						misses++;
@@ -2126,7 +2160,7 @@ class PlayState extends MusicBeatState
 					FlxG.switchState(new StoryMenuState());
 				else{
 					FlxG.switchState(new ModsStoryMenu());
-					isMod = false;
+					SLModding.curLoaded = null;
 				}
 
 				// if ()
@@ -2186,7 +2220,7 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			isMod = false;
+			SLModding.curLoaded = null;
 			trace('WENT BACK TO FREEPLAY??');
 			FlxG.switchState(new FreeplayState());
 		}
@@ -2467,7 +2501,7 @@ class PlayState extends MusicBeatState
 	{
 		if (!boyfriend.stunned)
 		{
-			health -= 0.04;
+			health -= 0.1;
 			if (combo > 5 && gf.animOffsets.exists('sad'))
 			{
 				gf.playAnim('sad');
@@ -2475,6 +2509,7 @@ class PlayState extends MusicBeatState
 			combo = 0;
 
 			misses++;
+			
 
 			songScore -= 10;
 
@@ -2678,7 +2713,7 @@ class PlayState extends MusicBeatState
 				var daList:Array<String>;
 
 				if (dad.isMod)
-					daList = File.getContent("mods/images/characters/" + dad.curCharacter + "/character.txt").trim().split('\n');
+					daList = File.getContent("mods/" + SLModding.curLoaded + "/images/characters/" + dad.curCharacter + "/character.txt").trim().split('\n');
 				else
 					daList = Paths.character(dad.curCharacter).trim().split('\n');
 					
@@ -2700,7 +2735,7 @@ class PlayState extends MusicBeatState
 				var daList:Array<String>;
 
 				if (boyfriend.isMod)
-					daList = File.getContent("mods/images/characters/" + boyfriend.curCharacter + "/character.txt").trim().split('\n');
+					daList = File.getContent("mods/" + SLModding.curLoaded + "/images/characters/" + boyfriend.curCharacter + "/character.txt").trim().split('\n');
 				else
 					daList = Paths.character(boyfriend.curCharacter).trim().split('\n');
 					
@@ -2871,7 +2906,7 @@ class PlayState extends MusicBeatState
 				gfCharacterArray = daList;
 			}
 			else{
-				daList = File.getContent("mods/images/characters/" + type + "/character.txt").trim().split('\n');
+				daList = File.getContent("mods/" + SLModding.curLoaded + "/images/characters/" + type + "/character.txt").trim().split('\n');
 
 				for (i in 0...daList.length){
 					daList[i] = daList[i].trim();
@@ -3018,7 +3053,7 @@ class PlayState extends MusicBeatState
 
 	var songBar:FlxBar;
 
-	public static var isMod:Bool;
+	var isMod:Bool;
 
 	var rankTxt:FlxText;
 

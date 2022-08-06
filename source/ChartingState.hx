@@ -295,48 +295,11 @@ class ChartingState extends MusicBeatState
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 
-		#if desktop
-		var tempCharacterList:String = File.getContent(Paths.txt('dadList')) + 
-		File.getContent(Paths.txt('bfList')) +
-		File.getContent(Paths.txt('gfList')) + '\n';
-
-		for (char in FileSystem.readDirectory("mods/images/characters/")){
-			tempCharacterList += char.replace('[', '').replace(']', '') + "\n";
-		}
-
-		var characterList = tempCharacterList.trim().split('\n');
-
-		for (i in 0...characterList.length)
-		{
-			characterList[i] = characterList[i].trim();
-		}
-
-		var dadCharacters:Array<String> = characterList;
-		var bfCharacters:Array<String> = characterList;
-		var gfCharacters:Array<String> = characterList;
-
-		var tempStageList:String = File.getContent(Paths.txt('stageList'));
-
-		for (stage in FileSystem.readDirectory("mods/images/stages/")){
-			if (!FileSystem.exists("mods/images/stages/" + stage + "/do not use"))
-				tempStageList += stage.replace('[', '').replace(']', '') + "\n";
-		}
-
-		var daStageList = tempStageList.trim().split('\n');
-
-		for (i in 0...daStageList.length)
-		{
-			daStageList[i] = daStageList[i].trim();
-		}
-
-		var stagelist:Array<String> = daStageList;
-		#else
 		var dadCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('dadList'));
 		var bfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('bfList'));
 		var gfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfList'));
-		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
-		#end
 
+		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var noteskins:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteskinList'));
 
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(bfCharacters, true), function(character:String)
@@ -378,7 +341,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(check_mute_inst);
 		tab_group_song.add(saveButton);
 		tab_group_song.add(reloadSong);
-		if (!PlayState.isMod)
+		if (SLModding.curLoaded == null)
 			tab_group_song.add(reloadSongJson);
 		tab_group_song.add(loadAutosaveBtn);
 		tab_group_song.add(stepperBPM);
@@ -497,15 +460,15 @@ class ChartingState extends MusicBeatState
 			// vocals.stop();
 		}
 
-		if (!PlayState.isMod)
+		if (SLModding.curLoaded == null)
 			FlxG.sound.playMusic(Paths.inst(daSong), 0.6);
 		else
-			FlxG.sound.playMusic(Sound.fromFile("mods/songs/" + PlayState.SONG.song.toLowerCase() + "/Inst.ogg"), 0.6);
+			FlxG.sound.playMusic(Sound.fromFile("mods/" + SLModding.curLoaded + "/songs/" + PlayState.SONG.song.toLowerCase() + "/Inst.ogg"), 0.6);
 
-		if (!PlayState.isMod)
+		if (SLModding.curLoaded == null)
 			vocals = new FlxSound().loadEmbedded(Paths.voices(daSong));
 		else
-			vocals = new FlxSound().loadEmbedded(Sound.fromFile("mods/songs/" + PlayState.SONG.song.toLowerCase() + "/Voices.ogg"));
+			vocals = new FlxSound().loadEmbedded(Sound.fromFile("mods/" + SLModding.curLoaded + "/songs/" + PlayState.SONG.song.toLowerCase() + "/Voices.ogg"));
 
 		FlxG.sound.list.add(vocals);
 

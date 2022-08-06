@@ -38,7 +38,18 @@ class PauseSubState extends MusicBeatSubstate
 		add(bg);
 
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
-		levelInfo.text += PlayState.SONG.song;
+
+		var dumbSongName:Array<String> = PlayState.SONG.song.split('-');
+
+		for (songshit in dumbSongName){
+			if (songshit != '' || songshit != null || songshit != ' '){
+				if (songshit == dumbSongName[0])
+					levelInfo.text += songshit;
+				else
+					levelInfo.text += ' ' + songshit;
+			}
+		}
+
 		levelInfo.scrollFactor.set();
 		levelInfo.setFormat(Paths.font("vcr.ttf"), 32);
 		levelInfo.updateHitbox();
@@ -108,7 +119,7 @@ class PauseSubState extends MusicBeatSubstate
 				case "Restart Song":
 					FlxG.resetState();
 				case "Exit to menu":
-					PlayState.isMod = false;
+					SLModding.curLoaded = null;
 					FlxG.switchState(new MainMenuState());
 			}
 		}

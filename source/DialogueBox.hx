@@ -314,7 +314,7 @@ class DialogueBox extends FlxSpriteGroup
 		switch (curCharacter)
 		{
 			case 'player2':
-				if (!PlayState.isMod){
+				if (SLModding.curLoaded == null){
 					portraitRight.visible = false;
 					portraitLeft.visible = false;
 					if (!portraitLeft.visible)
@@ -331,8 +331,8 @@ class DialogueBox extends FlxSpriteGroup
 					{
 						swagDialogue.color = FlxColor.BLACK;
 	
-						portraitLeft.frames = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile("mods/images/characters/"
-						+ PlayState.SONG.player2 + "/portrait/portrait.png"), File.getContent("mods/images/characters/"
+						portraitLeft.frames = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile("mods/" + SLModding.curLoaded + "/images/characters/"
+						+ PlayState.SONG.player2 + "/portrait/portrait.png"), File.getContent("mods/" + SLModding.curLoaded + "/images/characters/"
 						+ PlayState.SONG.player2 + "/portrait/portrait.xml"));
 						portraitLeft.animation.addByPrefix('enter', 'Portrait Enter', 24, false);
 						portraitLeft.screenCenter(X);

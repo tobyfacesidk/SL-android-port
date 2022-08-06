@@ -300,7 +300,9 @@ class TitleState extends MusicBeatState
 	
 				transitioning = true;
 				// FlxG.sound.music.stop();
-
+			#if debug
+			FlxG.switchState(new MainMenuState());
+			#else
 			new FlxTimer().start(2, function(tmr:FlxTimer)
 			{
 				// Check if version is outdated
@@ -338,6 +340,7 @@ class TitleState extends MusicBeatState
 				  
 				  http.request();
 			});
+			#end
 			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
 

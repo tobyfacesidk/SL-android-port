@@ -4,12 +4,12 @@ import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.FlxState;
 
-class EpilepsyState extends FlxState {
+class WarningState extends FlxState {
     public override function create() {
         super.create();
         
-        var text = new FlxText(0, 0, FlxG.width, "FNFSL Engine contains flashing lights.\n\nPress ENTER to turn on epilepsy mode.\nPress ESC to ignore this message.");
-        text.setFormat("VCR OSD Mono", 32, 0xffffffff, CENTER);
+        var text = new FlxText(0, 0, FlxG.width, "Please keep in mind that Friday Night Funkin' is rated for Teens (13+)\nIt is not suitable for children under the age of 13.\nPress Enter or ESC to Continue.");
+        text.setFormat("VCR OSD Mono", 24, 0xffffffff, CENTER);
         text.screenCenter();
         add(text);
 
@@ -20,19 +20,16 @@ class EpilepsyState extends FlxState {
         super.update(elapsed);
 
         if (FlxG.keys.justPressed.ENTER) {
-            FlxG.save.data.epilepsyMode = true;
             FlxG.camera.fade(0x000000, 1.5, false, function() {
-                FlxG.switchState(new WarningState());
+                FlxG.switchState(new TitleState());
             });
         } else if (FlxG.keys.justPressed.ESCAPE) {
-            FlxG.save.data.epilepsyMode = false;
             FlxG.camera.fade(0x000000, 1.5, false, function() {
-                FlxG.switchState(new WarningState());
+                FlxG.switchState(new TitleState());
             });
         }
 
         if (FlxG.keys.justPressed.F)
             FlxG.sound.play(Paths.sound('GF_2', 'shared'));
-
     }
 }

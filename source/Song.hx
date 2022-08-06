@@ -58,11 +58,16 @@ class Song
 			return parseJSONshit(rawJson);
 		}
 	
-		public static function loadFromModJson(jsonInput:String, ?folder:String):SwagSong
+		public static function loadFromModJson(jsonInput:String, ?folder:String, mod:String = ''):SwagSong
 			{
 				// load a json from a mod folder (not the main folder)
-				var rawJson = File.getContent("mods/data/" + folder.toLowerCase() + '/' + jsonInput.toLowerCase() + '.json').trim();
-				
+				//var rawJson = File.getContent("mods/data/" + folder.toLowerCase() + '/' + jsonInput.toLowerCase() + '.json').trim();
+
+				if (mod == '')
+					mod = SLModding.curLoaded;
+
+				var rawJson = File.getContent(SLModding.generatePath(mod, "data") + folder.toLowerCase() + '/' + jsonInput.toLowerCase() + '.json').trim();
+
 				while (!rawJson.endsWith("}"))
 				{
 					rawJson = rawJson.substr(0, rawJson.length - 1);

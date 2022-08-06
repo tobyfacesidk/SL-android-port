@@ -21,6 +21,8 @@ camXOffset:-32
 multiplyGraphicSize:1
 flipX:true
 
+healthColor:0xFFE9FF48
+
 custom-anim.animation name here:xml anim here:offset x:offset y
 
 NOTES !!! - You CANNOT share Character files for both the Dad and the BF i only did this for testing and as a Template,

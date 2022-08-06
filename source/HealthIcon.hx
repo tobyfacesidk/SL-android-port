@@ -10,11 +10,14 @@ class HealthIcon extends FlxSprite
 	 */
 	public var sprTracker:FlxSprite;
 
-	public function new(char:String = 'bf', isPlayer:Bool = false)
+	public function new(char:String = 'bf', isPlayer:Bool = false, mod:String = '')
 	{
 		super();
 
-		if (!FileSystem.exists("mods/images/characters/" + char + "/character.txt")){
+		if (mod == '' || mod == null)
+			mod = SLModding.curLoaded;
+
+		if (!FileSystem.exists("mods/" + mod + "/images/characters/" + char + "/character.txt")){
 			loadGraphic(Paths.image('iconGrid'), true, 150, 150);
 
 			antialiasing = true;
@@ -47,7 +50,7 @@ class HealthIcon extends FlxSprite
 			scrollFactor.set();
 		}
 		else{
-			loadGraphic(openfl.display.BitmapData.fromFile("mods/images/characters/" + char + "/icons.png"), true, 150, 150);
+			loadGraphic(openfl.display.BitmapData.fromFile("mods/" + mod + "/images/characters/" + char + "/icons.png"), true, 150, 150);
 
 			antialiasing = true;
 

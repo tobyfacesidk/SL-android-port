@@ -64,16 +64,27 @@ class FreeplayState extends MusicBeatState
 			if (Std.parseInt(tempArray[2]) == 69420)
 				tempArray[2] = "0";
 
-			addSong(tempArray[0], Std.parseInt(tempArray[2]), tempArray[1]);
+			addSong(tempArray[0], Std.parseInt(tempArray[2]), tempArray[1], false, null);
 		}
 
-		for (song in FileSystem.readDirectory("mods/data/")) {
+		/*for (song in FileSystem.readDirectory("mods/data/")) {
 			var tempArray = song.split(':');
 
 			var poop = Highscore.formatSong(tempArray[0].toLowerCase(), curDifficulty);
 			var tempSongData = Song.loadFromModJson(poop, tempArray[0].toLowerCase());
 
 			addSong(tempArray[0], 69420, tempSongData.player2); //if the week is 69420, its a mod.
+		}*/
+
+		for (mod in SLModding.modsArray){
+			for (song in FileSystem.readDirectory(SLModding.generatePath(mod, "data"))){
+				var tempArray = song.split(':');
+
+				var poop = Highscore.formatSong(tempArray[0].toLowerCase(), curDifficulty);
+				var tempSongData = Song.loadFromModJson(poop, tempArray[0].toLowerCase(), mod);
+
+				addSong(tempArray[0], 0, tempSongData.player2, true, mod);
+			}
 		}
 
 		// LOAD MUSIC
@@ -105,7 +116,7 @@ class FreeplayState extends MusicBeatState
 			songText.targetY = i;
 			grpSongs.add(songText);
 
-			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
+			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter, false, songs[i].modName);
 			icon.sprTracker = songText;
 
 			iconArray.push(icon);
@@ -165,12 +176,12 @@ class FreeplayState extends MusicBeatState
 		super.create();
 	}
 
-	public function addSong(songName:String, weekNum:Int, songCharacter:String)
+	public function addSong(songName:String, weekNum:Int, songCharacter:String, isMod:Bool, modName:String)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter));
+		songs.push(new SongMetadata(songName, weekNum, songCharacter, isMod, modName));
 	}
 
-	public function addWeek(songs:Array<String>, weekNum:Int, ?songCharacters:Array<String>)
+	public function addWeek(songs:Array<String>, weekNum:Int, ?songCharacters:Array<String>, isMod:Bool, modName:String)
 	{
 		if (songCharacters == null)
 			songCharacters = ['bf'];
@@ -178,7 +189,7 @@ class FreeplayState extends MusicBeatState
 		var num:Int = 0;
 		for (song in songs)
 		{
-			addSong(song, weekNum, songCharacters[num]);
+			addSong(song, weekNum, songCharacters[num], isMod, modName);
 
 			if (songCharacters.length != 1)
 				num++;
@@ -250,13 +261,11 @@ class FreeplayState extends MusicBeatState
 				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
 				trace(poop);
 
-				if (songs[curSelected].week == 69420){
-					PlayState.SONG = Song.loadFromModJson(poop, songs[curSelected].songName.toLowerCase());
-
-					PlayState.isMod = true;
-				}
-				else{
+				if (!songs[curSelected].isMod)
 					PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
+				else{
+					PlayState.SONG = Song.loadFromModJson(poop, songs[curSelected].songName.toLowerCase(), songs[curSelected].modName);
+					SLModding.curLoaded = songs[curSelected].modName;
 				}
 				
 				PlayState.isStoryMode = false;
@@ -297,6 +306,7 @@ class FreeplayState extends MusicBeatState
 			trace("LETS SWAGMIX");
 		}
 		else{
+			loadScoreData();
 			return;
 		}
 	} // i like putting stuff in functions xD
@@ -321,11 +331,9 @@ class FreeplayState extends MusicBeatState
 
 		// selector.y = (70 * curSelected) + 30;
 
-		loadScoreData();
-
 		#if PRELOAD_ALL
-		if (songs[curSelected].week == 69420){
-			FlxG.sound.playMusic(Sound.fromFile("mods/songs/" + songs[curSelected].songName.toLowerCase() + "/Inst.ogg"), 0, true);
+		if (songs[curSelected].isMod){
+			FlxG.sound.playMusic(Sound.fromFile("mods/" + songs[curSelected].modName + "/songs/" + songs[curSelected].songName.toLowerCase() + "/Inst.ogg"), 0, true);
 		}
 		else
 			FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
@@ -355,20 +363,53 @@ class FreeplayState extends MusicBeatState
 				// item.setGraphicSize(Std.int(item.width));
 			}
 		}
-	}
-	function updateColor() {
-		for (bruh in CoolUtil.coolTextFile(Paths.txt('healthcolors'))) {
-			if (!bruh.startsWith('#')) {
-				var eugh = bruh.split(':');
 
-				if (songs[curSelected].songCharacter.toLowerCase() != "mod"){
+		loadScoreData();
+	}
+
+	function updateColor() {
+		var useModdedBS:Bool = false;
+
+		var healthColors:Array<String> = CoolUtil.coolTextFile(Paths.txt('healthcolors'));
+		
+		if (songs[curSelected].isMod){
+			for (characters in healthColors){
+				if (!characters.startsWith('#')) {
+					var eugh = characters.split(':');
+					
+					// causes some issues if the character has an "prefix" in the name but whateva
+					if (songs[curSelected].songCharacter.toLowerCase() != eugh[0]){
+						useModdedBS = true;
+					}
+				}
+			}
+		}
+
+		if (!useModdedBS){
+			for (bruh in healthColors) {
+				if (!bruh.startsWith('#')) {
+					var eugh = bruh.split(':');
+	
 					if (songs[curSelected].songCharacter.toLowerCase().startsWith(eugh[0])) {
 						tcolor = new FlxColor(Std.parseInt(eugh[1]));
 					}
 				}
-				else{
-					tcolor = new FlxColor(FlxColor.BLUE);
+			}
+		}
+		else{
+			if (FileSystem.exists('mods/' + songs[curSelected].modName + '/images/characters/' + songs[curSelected].songCharacter + '/character.txt')){
+				var characterStuff:Array<String> = File.getContent('mods/' + songs[curSelected].modName + '/images/characters/' + songs[curSelected].songCharacter + '/character.txt').split('\n');
+
+				for (junk in characterStuff){
+					var shit = junk.split(':');
+	
+					if (shit[0] == 'healthColor'){
+						tcolor = new FlxColor(Std.parseInt(shit[1]));
+					}
 				}
+			}
+			else{
+				tcolor = new FlxColor(0xff78fa45);
 			}
 		}
 
@@ -383,11 +424,15 @@ class SongMetadata
 	public var songName:String = "";
 	public var week:Int = 0;
 	public var songCharacter:String = "";
+	public var isMod:Bool = false;
+	public var modName:String = '';
 
-	public function new(song:String, week:Int, songCharacter:String)
+	public function new(song:String, week:Int, songCharacter:String, isMod:Bool, modName:String)
 	{
 		this.songName = song;
 		this.week = week;
 		this.songCharacter = songCharacter;
+		this.isMod = isMod;
+		this.modName = modName;
 	}
 }
