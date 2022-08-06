@@ -23,4 +23,4 @@ Special Thanks to ThePercentageGuy for giving me Ownership of NUFNF which starte
 I also want to thank everyone who has helped me make this Engine better, Thank you.
 
 ## Building & Wiki
- [Build Instructions](https://github.com/SpunBlue/Friday-Night-Funkin-Sublime-Engine/wiki/Build-Instructions) | [Wiki](https://github.com/SpunBlue/Friday-Night-Funkin-Sublime-Engine/wiki) | [Discord Server](https://discord.gg/wdNrAPxcHN) | [Credits](https://github.com/SpunBlue/Friday-Night-Funkin-Sublime-Engine/credits.md)
+ [Build Instructions](https://github.com/SpunBlue/Friday-Night-Funkin-Sublime-Engine/wiki/Build-Instructions) | [Wiki](https://github.com/SpunBlue/Friday-Night-Funkin-Sublime-Engine/wiki) | [Discord Server](https://discord.gg/wdNrAPxcHN) | [Credits](https://github.com/SpunBlue/Friday-Night-Funkin-Sublime-Engine/blob/master/credits.md)
