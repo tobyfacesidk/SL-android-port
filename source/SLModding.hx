@@ -6,9 +6,11 @@ import haxe.Json;
 
 class SLModding {
 
-    public var modsArray:Array<String> = [];
+    public static var modsArray:Array<String> = [];
 
     static public function init():Void{
+        // yes i do know how to use jsons. i just like text files.
+        
         for (modFolder in FileSystem.readDirectory("mods/")){
             trace(modFolder);
 
@@ -26,6 +28,6 @@ class SLModding {
             }
         }
 
-        trace(modsArray);
+        trace('Mods loaded! ' + modsArray);
     }
 }

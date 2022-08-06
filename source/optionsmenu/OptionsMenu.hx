@@ -189,7 +189,7 @@ class OptionsMenu extends MusicBeatState {
 			default:
 				inOptionSelector = true;
 
-				options = ["Gameplay","Graphics"];
+				options = ["Gameplay","Graphics", "Modding"];
 				ready = true;
 			case 'gameplay':
 				inOptionSelector = false;
@@ -208,6 +208,8 @@ class OptionsMenu extends MusicBeatState {
 					'Show Outdated Screen ${FlxG.save.data.showOutdatedScreen ? 'ON' : 'OFF'}'
 			    ];
 				ready = true;
+			case 'modding':
+				FlxG.switchState(new ModsMenu());
 		}
 
 		lastOptionType = type.toLowerCase();
