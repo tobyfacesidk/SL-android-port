@@ -1,15 +1,9 @@
 package;
 
-import openfl.display.Window;
-import flixel.FlxGame;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxSubState;
 import flixel.text.FlxText;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import flixel.util.FlxTimer;
 import lime.app.Application;
 
 // i may or may have not slightly stole this from kade engine, maybe i didnt and im just messing wtih you? who knows.
