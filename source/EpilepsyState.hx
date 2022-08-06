@@ -21,10 +21,14 @@ class EpilepsyState extends FlxState {
 
         if (FlxG.keys.justPressed.ENTER) {
             FlxG.save.data.epilepsyMode = true;
-            FlxG.switchState(new TitleState());
+            FlxG.camera.fade(0x000000, 1.5, false, function() {
+                FlxG.switchState(new WarningState());
+            });
         } else if (FlxG.keys.justPressed.ESCAPE) {
             FlxG.save.data.epilepsyMode = false;
-            FlxG.switchState(new TitleState());
+            FlxG.camera.fade(0x000000, 1.5, false, function() {
+                FlxG.switchState(new WarningState());
+            });
         }
 
         if (FlxG.keys.justPressed.F)

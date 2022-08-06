@@ -110,7 +110,7 @@ class Paths
 		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
 	}
 
-	inline static public function getPackerAtlas(key:String, ?library:String)
+	inline static public function getPackerAtlas(key:String, ?library:String )
 	{
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
@@ -118,5 +118,11 @@ class Paths
 	inline static public function video(key:String)
 	{
 		return 'assets/videos/$key.mp4';
+	}
+
+	// find text file for character in the shared library
+	inline static public function character(character:String)
+	{
+		return getLibraryPathForce('characters/$character.txt', 'shared');
 	}
 }

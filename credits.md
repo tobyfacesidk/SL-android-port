@@ -15,4 +15,4 @@
 [MP4 Cutscenes](https://github.com/brightfyregit/Friday-Night-Funkin-Mp4-Video-Support)
 
 ## Other
-[Linux Port](https://twitter.com/PercentageGuy)
+[Old Linux Support](https://twitter.com/PercentageGuy)

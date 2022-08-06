@@ -1,0 +1,13 @@
+halloween_bg:-200:-100:1:1:1:xml:halloweem bg0
+really shitty stage:32:32:0:0:0.35:png
+
+camZoom:0.9
+
+xOffset-BF:0
+yOffset-BF:0
+
+xOffset-GF:0
+yOffset-GF:0
+
+xOffset-DAD:0
+yOffset-DAD:0

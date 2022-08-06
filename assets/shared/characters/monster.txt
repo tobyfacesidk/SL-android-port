@@ -1,0 +1,5 @@
+anim.idle:monster idle
+anim.singLEFT:Monster left note:-30
+anim.singRIGHT:Monster Right note:-51
+anim.singUP:monster up note:-20:50
+anim.singDOWN:monster down:-30:-40

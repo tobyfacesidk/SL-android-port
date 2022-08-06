@@ -49,6 +49,7 @@ class OptionsMenu extends MusicBeatState {
 		background.antialiasing = true;
 		add(background);
 
+		checkVariables();
 		createOptions();
 
 		detailText = new FlxText(0, 0, FlxG.width, "Options");
@@ -116,7 +117,6 @@ class OptionsMenu extends MusicBeatState {
 
 		for (i in 0...optionGroup.members.length) {
 			if (optionGroup.members[i] != null){
-                // special stuff here
 			}
 		}
 		
@@ -151,6 +151,10 @@ class OptionsMenu extends MusicBeatState {
 					detailText.text = "If enabled, The game will not give you epilepsy... Probably.";
 				case 'keybinds':
 					detailText.text = "Set your Keybinds for your dirty keyboard... Seriously clean it up.";
+				case 'middlescroll':
+					detailText.text = "Centers the Strumline.";
+				case 'show':
+				    detailText.text = "If enabled, When the version is outdated, the outdated screen will no longer show.";
 			}
 
 			if (forceCheck)
@@ -168,6 +172,12 @@ class OptionsMenu extends MusicBeatState {
 		}
 	}
 
+	function checkVariables() {
+		if (FlxG.save.data.showOutdatedScreen == null) {
+			FlxG.save.data.showOutdatedScreen = true;
+		}
+	}
+
 	function createOptions(type:String = 'default') {
 		var ready:Bool = false;
 		lastOptionY = 0;
@@ -179,21 +189,30 @@ class OptionsMenu extends MusicBeatState {
 			default:
 				inOptionSelector = true;
 
-				options = ["Gameplay","Graphics"];
+				if (SLModding.isInitialized)
+					options = ["Gameplay","Graphics", "Modding"];
+				else
+					options = ["Gameplay","Graphics"];
 				ready = true;
 			case 'gameplay':
 				inOptionSelector = false;
 
                 options = ["Keybinds", 'Ghost-tapping ${FlxG.save.data.ghostTap ? 'ON' : 'OFF'}'
-				, 'Downscroll ${FlxG.save.data.downScroll ? 'ON' : 'OFF'}'];
+				, 'Downscroll ${FlxG.save.data.downScroll ? 'ON' : 'OFF'}',
+				'Middlescroll ${FlxG.save.data.middleScroll ? 'ON' : 'OFF'}'];
 				ready = true;
 			case 'graphics':
 				inOptionSelector = false;
 
-                options = ['Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}'
-				, 'Disable Distractions ${FlxG.save.data.noDistractions ? 'ON' : 'OFF'}',
-				'Epilepsy Mode ${FlxG.save.data.epilepsyMode ? 'ON' : 'OFF'}'];
+                options = [
+				    'Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}',
+				    'Disable Distractions ${FlxG.save.data.noDistractions ? 'ON' : 'OFF'}',
+				    'Epilepsy Mode ${FlxG.save.data.epilepsyMode ? 'ON' : 'OFF'}',
+					'Show Outdated Screen ${FlxG.save.data.showOutdatedScreen ? 'ON' : 'OFF'}'
+			    ];
 				ready = true;
+			case 'modding':
+				FlxG.switchState(new ModsMenu());
 		}
 
 		lastOptionType = type.toLowerCase();
@@ -264,6 +283,10 @@ class OptionsMenu extends MusicBeatState {
 						FlxG.save.data.noDistractions = !FlxG.save.data.noDistractions;
 					case 'epilepsy':
 						FlxG.save.data.epilepsyMode = !FlxG.save.data.epilepsyMode;
+					case 'middlescroll':
+						FlxG.save.data.middleScroll = !FlxG.save.data.middleScroll;
+					case 'show':
+						FlxG.save.data.showOutdatedScreen = !FlxG.save.data.showOutdatedScreen;
 				}
 
 				if (!dontAllowUpdate){

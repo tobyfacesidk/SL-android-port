@@ -1,3 +1,0 @@
-week number:song 1:song 2:song 3
-
-Information: You can add more songs than 3, Also, Do NOT add a new line to the end of a Song (aka don't press enter at all.) It fucks up everything and i tried to make it ignore the new lines but it doesn't work.

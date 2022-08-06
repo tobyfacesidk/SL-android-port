@@ -33,6 +33,8 @@ class TitleState extends MusicBeatState
 {
 	static var initialized:Bool = false;
 
+	var starting:Bool = true;
+
 	var blackScreen:FlxSprite;
 	var credGroup:FlxGroup;
 	var credTextShit:Alphabet;
@@ -43,13 +45,21 @@ class TitleState extends MusicBeatState
 
 	var wackyImage:FlxSprite;
 
+	var bruh:Array<String> = [];
+
 	override public function create():Void
 	{
-		#if polymod
-		polymod.Polymod.init({modRoot: "mods", dirs: ['introMod']});
-		#end
+		FlxG.save.bind('funkin', 'spunblue');
+		
+		if (FlxG.save.data.volume != null)
+			FlxG.sound.volume = FlxG.save.data.volume;
+		if (FlxG.save.data.mute != null)
+			FlxG.sound.muted = FlxG.save.data.mute;
 
 		PlayerSettings.init();
+
+		if (FlxG.save.data.allowMods == null || FlxG.save.data.allowMods)
+			SLModding.init();
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
@@ -60,7 +70,6 @@ class TitleState extends MusicBeatState
 		FlxG.save.bind('funkin', 'spunblue');
 
 		Highscore.load();
-		
 
 		if (FlxG.save.data.weekUnlocked != null)
 		{
@@ -162,6 +171,7 @@ class TitleState extends MusicBeatState
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
+		titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24, true);
 		if (FlxG.save.data.epilepsyMode) {
 			titleText.animation.addByPrefix('press', "Press Enter to Begin", 24, false);
 		}
@@ -207,6 +217,8 @@ class TitleState extends MusicBeatState
 		FlxTween.tween(credTextShit, {y: credTextShit.y + 20}, 2.9, {ease: FlxEase.quadInOut, type: PINGPONG});
 
 		FlxG.mouse.visible = false;
+
+		starting = false;
 
 		if (initialized)
 			skipIntro();
@@ -270,9 +282,9 @@ class TitleState extends MusicBeatState
 		}
 
 
-		if (pressedEnter && !transitioning && skippedIntro)
+		if (pressedEnter && !transitioning && skippedIntro && !starting)
 			{
-				titleText.animation.play('press');
+				titleText.animation.play('press', true);
 	
 				if (!FlxG.save.data.epilepsyMode)
 				{
@@ -282,7 +294,9 @@ class TitleState extends MusicBeatState
 	
 				transitioning = true;
 				// FlxG.sound.music.stop();
-
+			#if debug
+			FlxG.switchState(new MainMenuState());
+			#else
 			new FlxTimer().start(2, function(tmr:FlxTimer)
 			{
 				// Check if version is outdated
@@ -301,7 +315,11 @@ class TitleState extends MusicBeatState
 						trace('outdated lmao! ' + returnedData[0] + ' != ' + version);
 						OutdatedSubState.needVer = returnedData[0];
 						OutdatedSubState.currChanges = returnedData[1];
-						FlxG.switchState(new OutdatedSubState());
+						if (FlxG.save.data.showOutdatedScreen) {
+							FlxG.switchState(new OutdatedSubState());
+						} else {
+							FlxG.switchState(new MainMenuState());
+						}
 					}
 					else
 					{
@@ -316,6 +334,7 @@ class TitleState extends MusicBeatState
 				  
 				  http.request();
 			});
+			#end
 			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
 
@@ -374,10 +393,11 @@ class TitleState extends MusicBeatState
 		switch (curBeat)
 		{
 			case 1:
+				createCoolText(['SpunBlue']);
 				// createCoolText(['thepercentageguy']);
 			// credTextShit.visible = true;
 			case 3:
-				createCoolText(['SpunBlue', 'presents']);
+				addMoreText('presents');
 			// credTextShit.text += '\npresent...';
 			// credTextShit.addText();
 			case 4:

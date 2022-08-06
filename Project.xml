@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin' Sublime Engine" file="FNFSL" packageName="com.spunblue.fnfsl" package="com.spunblue.fnfsl" main="Main" company="spunblue" version="3.4.1" />
+	<app title="Friday Night Funkin' Sublime Engine" file="FNFSL" packageName="com.spunblue.fnfsl" package="com.spunblue.fnfsl" main="Main" company="spunblue" version="4.0.0"/>
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
@@ -42,23 +42,21 @@
 	<assets path="assets/preload/videos" exclude="*.mp4" unless="web"/>
 
 	<!--compatability things-->
-	<section if="mac">
+	<!--<section if="mac">
 		<assets path="plugins/" exclude="*"/>
 		<assets path="dlls/" exclude="*"/>
 		<assets path="source/vlc/" exclude="*"/>
 		<assets path="assets/preload/videos" exclude="*"/>
-	</section>
+	</section>-->
 
-	<assets path="plugins/" rename='' if="linux"/>
-	<assets path="dlls/" rename='' if="linux"/>
-	<assets path="plugins/" rename='' if="windows"/>
-	<assets path="dlls/" rename='' if="windows"/>
+	<assets path="plugins/win" rename='' if="linux"/>
+	<assets path="plugins/win" rename='' if="windows"/>
+	<assets path="plugins/mac" rename='' if="mac"/>
 
 	<assets path="include/" rename='' embed="false"/>
 
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
 	<assets path="assets/preload" rename="assets" exclude="*.mp3" unless="web"/>
-
 	
 	<!-- <define name="PRELOAD_ALL" /> -->
 	<define name="PRELOAD_ALL" unless="web" />

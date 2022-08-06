@@ -1,15 +1,15 @@
 package vlc;
 
-#if !(windows || linux || android)
-	#error "The current target platform isn't supported by hxCodec. If you're targeting Windows/Linux/Android and getting this message, please contact us.";
+#if !(desktop || android)
+#error "The current target platform isn't supported by hxCodec. If you're targeting Windows/Mac/Linux/Android and getting this message, please contact us.";
 #end
-
 import cpp.NativeArray;
 import cpp.UInt8;
 import openfl.Lib;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
+import openfl.utils.ByteArray;
 import openfl.errors.Error;
 import openfl.events.Event;
 import openfl.geom.Rectangle;
@@ -20,26 +20,29 @@ import vlc.LibVLC;
  * ...
  * @author Tommy Svensson
  */
-
 /** 
-	This class lets you to use libvlc as a bitmap then you can displaylist along other items.
-	`Bitmap` extend this class. Because without it we cant display the video.
-**/
-
+ * This class lets you to use libvlc as a bitmap then you can displaylist along other items.
+ * `Bitmap` extend this class. Because without it we cant display the video.
+ */
 /**
-	We need to inject the cpp code to the bitmap
-**/
+ * We need to inject the cpp code to the bitmap
+ */
 @:cppFileCode("#include <LibVLC.cpp>")
 class VLCBitmap extends Bitmap
 {
+	public var volume(default, set):Float;
+
 	public var videoHeight(get, never):Int;
 	public var videoWidth(get, never):Int;
 
-	public var volume(default, set):Float;
+	private var _width:Null<Float>;
+	private var _height:Null<Float>;
+
+	private var libvlc:LibVLC = LibVLC.create();
+	private var bufferMemory:Array<UInt8> = [];
 
 	public var initComplete:Bool = false;
 	public var isDisposed:Bool = false;
-
 	public var onReady:Void->Void = null;
 	public var onPlay:Void->Void = null;
 	public var onStop:Void->Void = null;
@@ -55,18 +58,11 @@ class VLCBitmap extends Bitmap
 	public var onForward:Void->Void = null;
 	public var onBackward:Void->Void = null;
 
-	private var bufferMemory:Array<UInt8>;
-	private var libvlc:LibVLC;
-
-	private var _width:Null<Float>;
-	private var _height:Null<Float>;
-
 	public function new():Void
 	{
-		super(bitmapData, PixelSnapping.AUTO, true);
+		super(bitmapData, PixelSnapping.AUTO, false);
 
-		if (stage != null)
-			init();
+		if (stage != null) init();
 		else
 			addEventListener(Event.ADDED_TO_STAGE, init);
 	}
@@ -95,8 +91,7 @@ class VLCBitmap extends Bitmap
 	**/
 	public function play():Void
 	{
-		if (libvlc != null && !libvlc.isPlaying())
-			libvlc.play();
+		if (libvlc != null && !libvlc.isPlaying()) libvlc.play();
 	}
 
 	/**
@@ -104,8 +99,7 @@ class VLCBitmap extends Bitmap
 	**/
 	public function stop():Void
 	{
-		if (libvlc != null && libvlc.isPlaying())
-			libvlc.stop();
+		if (libvlc != null && libvlc.isPlaying()) libvlc.stop();
 	}
 
 	/**
@@ -117,8 +111,7 @@ class VLCBitmap extends Bitmap
 		{
 			libvlc.pause();
 
-			if (onPause != null)
-				onPause();
+			if (onPause != null) onPause();
 		}
 	}
 
@@ -131,8 +124,7 @@ class VLCBitmap extends Bitmap
 		{
 			libvlc.resume();
 
-			if (onResume != null)
-				onResume();
+			if (onResume != null) onResume();
 		}
 	}
 
@@ -141,8 +133,7 @@ class VLCBitmap extends Bitmap
 	**/
 	public function togglePause():Void
 	{
-		if (libvlc != null && !libvlc.isPlaying())
-			libvlc.togglePause();
+		if (libvlc != null && !libvlc.isPlaying()) libvlc.togglePause();
 	}
 
 	/**
@@ -152,8 +143,7 @@ class VLCBitmap extends Bitmap
 	**/
 	public function seek(seekProcent:Float):Void
 	{
-		if (libvlc != null && (libvlc.isPlaying() && libvlc.isSeekable()))
-			libvlc.setPosition(seekProcent);
+		if (libvlc != null && (libvlc.isPlaying() && libvlc.isSeekable())) libvlc.setPosition(seekProcent);
 	}
 
 	/**
@@ -163,8 +153,7 @@ class VLCBitmap extends Bitmap
 	**/
 	public function setTime(time:Int):Void
 	{
-		if (libvlc != null && libvlc.isPlaying())
-			libvlc.setTime(time);
+		if (libvlc != null && libvlc.isPlaying()) libvlc.setTime(time);
 	}
 
 	/**
@@ -172,8 +161,7 @@ class VLCBitmap extends Bitmap
 	**/
 	public function getTime():Int
 	{
-		if (libvlc != null && libvlc.isPlaying())
-			return libvlc.getTime();
+		if (libvlc != null && libvlc.isPlaying()) return libvlc.getTime();
 		else
 			return 0;
 	}
@@ -185,8 +173,7 @@ class VLCBitmap extends Bitmap
 	**/
 	public function setVolume(vol:Float):Void
 	{
-		if (libvlc != null && libvlc.isPlaying())
-			libvlc.setVolume(vol * 100);
+		if (libvlc != null && libvlc.isPlaying()) libvlc.setVolume(vol * 100);
 	}
 
 	/**
@@ -194,8 +181,7 @@ class VLCBitmap extends Bitmap
 	**/
 	public function getVolume():Float
 	{
-		if (libvlc != null && libvlc.isPlaying())
-			return libvlc.getVolume();
+		if (libvlc != null && libvlc.isPlaying()) return libvlc.getVolume();
 		else
 			return 0;
 	}
@@ -205,8 +191,17 @@ class VLCBitmap extends Bitmap
 	**/
 	public function getDuration():Float
 	{
-		if (libvlc != null && libvlc.isPlaying())
-			return libvlc.getDuration();
+		if (libvlc != null && libvlc.isPlaying()) return libvlc.getDuration();
+		else
+			return 0;
+	}
+
+	/**
+		Returns the frame per second of the video.
+	**/
+	public function getFPS():Float
+	{
+		if (libvlc != null && libvlc.isPlaying()) return libvlc.getFPS();
 		else
 			return 0;
 	}
@@ -216,120 +211,113 @@ class VLCBitmap extends Bitmap
 	**/
 	public function getLength():Float
 	{
-		if (libvlc != null && libvlc.isPlaying())
-			return libvlc.getLength();
+		if (libvlc != null && libvlc.isPlaying()) return libvlc.getLength();
 		else
 			return 0;
 	}
 
-	private function checkFlags():Void 
+	private function checkFlags():Void
 	{
-		if (untyped __cpp__('libvlc -> flags[1]') == 1){
+		if (untyped __cpp__('libvlc -> flags[1]') == 1)
+		{
 			untyped __cpp__('libvlc -> flags[1] = -1');
-
-			if (!initComplete)
-				videoInitComplete();
-
-			if (onPlay != null)
-				onPlay();
+			if (onPlay != null) onPlay();
 		}
-		if (untyped __cpp__('libvlc -> flags[2]') == 1){
+		if (untyped __cpp__('libvlc -> flags[2]') == 1)
+		{
 			untyped __cpp__('libvlc -> flags[2] = -1');
-			if (onStop != null)
-				onStop();
+			if (onStop != null) onStop();
 		}
-		if (untyped __cpp__('libvlc -> flags[3]') == 1){
+		if (untyped __cpp__('libvlc -> flags[3]') == 1)
+		{
 			untyped __cpp__('libvlc -> flags[3] = -1');
 
 			#if HXC_DEBUG_TRACE
 			trace("The Video got done!");
 			#end
 
-			if (onComplete != null)
-				onComplete();
+			if (onComplete != null) onComplete();
 		}
-		if (untyped __cpp__('libvlc -> flags[4]') != -1){
+		if (untyped __cpp__('libvlc -> flags[4]') != -1)
+		{
 			var newTime:Int = untyped __cpp__('libvlc -> flags[4]');
 
 			#if HXC_DEBUG_TRACE
 			trace("video time now is: " + newTime);
 			#end
 
-			if (onTimeChanged != null)
-				onTimeChanged(newTime);
+			if (onTimeChanged != null) onTimeChanged(newTime);
 		}
-		if (untyped __cpp__('libvlc -> flags[5]') != -1){
+		if (untyped __cpp__('libvlc -> flags[5]') != -1)
+		{
 			var newPos:Int = untyped __cpp__('libvlc -> flags[5]');
 
 			#if HXC_DEBUG_TRACE
 			trace("the position of the video now is: " + newPos);
 			#end
 
-			if (onPositionChanged != null)
-				onPositionChanged(newPos);
+			if (onPositionChanged != null) onPositionChanged(newPos);
 		}
-		if (untyped __cpp__('libvlc -> flags[6]') != -1){
+		if (untyped __cpp__('libvlc -> flags[6]') != -1)
+		{
 			var newPos:Int = untyped __cpp__('libvlc -> flags[6]');
 
 			#if HXC_DEBUG_TRACE
 			trace("the seeked pos of the video now is: " + newPos);
 			#end
 
-			if (onSeekableChanged != null)
-				onSeekableChanged(newPos);
+			if (onSeekableChanged != null) onSeekableChanged(newPos);
 		}
-		if (untyped __cpp__('libvlc -> flags[7]') == 1){
+		if (untyped __cpp__('libvlc -> flags[7]') == 1)
+		{
 			untyped __cpp__('libvlc -> flags[7] = -1');
-			if (onError != null)
-				onError(libvlc.getLastError());
+			if (onError != null) onError(libvlc.getLastError());
 		}
-		if (untyped __cpp__('libvlc -> flags[8]') == 1){
+		if (untyped __cpp__('libvlc -> flags[8]') == 1)
+		{
 			untyped __cpp__('libvlc -> flags[8] = -1');
-			if (onOpening != null)
-				onOpening();
+
+			if (!initComplete) videoInitComplete();
+
+			if (onOpening != null) onOpening();
 		}
-		if (untyped __cpp__('libvlc -> flags[9]') == 1){
+		if (untyped __cpp__('libvlc -> flags[9]') == 1)
+		{
 			untyped __cpp__('libvlc -> flags[9] = -1');
-			if (onBuffer != null)
-				onBuffer();
+			if (onBuffer != null) onBuffer();
 		}
-		if (untyped __cpp__('libvlc -> flags[10]') == 1){
+		if (untyped __cpp__('libvlc -> flags[10]') == 1)
+		{
 			untyped __cpp__('libvlc -> flags[10] = -1');
-			if (onForward != null)
-				onForward();
+			if (onForward != null) onForward();
 		}
-		if (untyped __cpp__('libvlc -> flags[11]') == 1){
+		if (untyped __cpp__('libvlc -> flags[11]') == 1)
+		{
 			untyped __cpp__('libvlc -> flags[11] = -1');
-			if (onBackward != null)
-				onBackward();
+			if (onBackward != null) onBackward();
 		}
 	}
 
 	private function videoInitComplete():Void
 	{
-		if (bitmapData != null)
-			bitmapData.dispose();
+		if (bitmapData != null) bitmapData.dispose();
 
 		bitmapData = new BitmapData(libvlc.getWidth(), libvlc.getHeight(), true, 0);
 
-		smoothing = true;
+		if (bufferMemory != []) bufferMemory = [];
 
-		if (_width != null)
-			width = _width;
+		if (_width != null) width = _width;
 		else
 			width = libvlc.getWidth();
 
-		if (_height != null)
-			height = _height;
+		if (_height != null) height = _height;
 		else
 			height = libvlc.getHeight();
 
-		bufferMemory = [];
-
+		isDisposed = false;
 		initComplete = true;
 
-		if (onReady != null)
-			onReady();
+		if (onReady != null) onReady();
 
 		#if HXC_DEBUG_TRACE
 		trace("Video Loaded!");
@@ -338,41 +326,38 @@ class VLCBitmap extends Bitmap
 
 	private function init(?e:Event):Void
 	{
-		if (hasEventListener(Event.ADDED_TO_STAGE))
-			removeEventListener(Event.ADDED_TO_STAGE, init);
-
-		libvlc = LibVLC.create();
+		if (hasEventListener(Event.ADDED_TO_STAGE)) removeEventListener(Event.ADDED_TO_STAGE, init);
 
 		stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	}
 
 	private function onEnterFrame(?e:Event):Void
 	{
-		render();
 		checkFlags();
+
+		// libvlc.getPixelData() sometimes is null and the app hangs ...
+		if ((libvlc.isPlaying() && initComplete && !isDisposed) && libvlc.getPixelData() != null) render();
 	}
 
-	private var oldTime:Int = 0;
+	/**
+	 * This is a rewrite for the original render function.
+	 * Im sure theres a better way to do this but i'll let anyone to moddify it because this buffer isn't the best.
+	 * 
+	 * Cya -saw
+	**/
 	private function render():Void
 	{
-		if (libvlc.isPlaying() && initComplete && !isDisposed)
+		#if HXC_DEBUG_TRACE
+		trace("rendering...");
+		#end
+
+		NativeArray.setUnmanagedData(bufferMemory, libvlc.getPixelData(), (libvlc.getWidth() * libvlc.getHeight() * 4));
+
+		if (bitmapData != null && (bufferMemory != null && bufferMemory != []))
 		{
-			var cTime = Lib.getTimer();
-
-			if ((cTime - oldTime) > 28) // min 28 ms between renders, but this is not a good way to do it...
-			{
-				oldTime = cTime;
-
-				#if HXC_DEBUG_TRACE
-				trace("rendering...");
-				#end
-
-				if (libvlc.getPixelData() != null) // libvlc.getPixelData() sometimes is null and the app hangs ...
-					NativeArray.setUnmanagedData(bufferMemory, libvlc.getPixelData(), libvlc.getWidth() * libvlc.getHeight() * 4);
-
-				if (bufferMemory != null && bitmapData != null)
-					bitmapData.setPixels(new Rectangle(0, 0, libvlc.getWidth(), libvlc.getHeight()), Bytes.ofData(cast(bufferMemory)));
-			}
+			bitmapData.image.buffer.data.buffer = Bytes.ofData(cast(bufferMemory));
+			bitmapData.image.buffer.format = ARGB32;
+			bitmapData.image.version++;
 		}
 	}
 
@@ -385,10 +370,20 @@ class VLCBitmap extends Bitmap
 		trace("Disposing the bitmap!");
 		#end
 
-		libvlc.stop();
+		if (libvlc.isPlaying()) libvlc.stop();
 
-		if (stage.hasEventListener(Event.ENTER_FRAME))
-			stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+		if (stage.hasEventListener(Event.ENTER_FRAME)) stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+
+		if (bitmapData != null)
+		{
+			bitmapData.dispose();
+			bitmapData = null;
+		}
+
+		if (bufferMemory != null && bufferMemory != []) bufferMemory = null;
+
+		initComplete = false;
+		isDisposed = true;
 
 		onReady = null;
 		onComplete = null;
@@ -404,32 +399,18 @@ class VLCBitmap extends Bitmap
 		onForward = null;
 		onBackward = null;
 		onError = null;
-
-		if (bitmapData != null)
-		{
-			bitmapData.dispose();
-			bitmapData = null;
-		}
-
-		if (bufferMemory != null)
-			bufferMemory = null;
-
-		initComplete = false;
-		isDisposed = true;
 	}
 
 	@:noCompletion private function get_videoHeight():Int
 	{
-		if (libvlc != null && initComplete)
-			return libvlc.getHeight();
+		if (libvlc != null && initComplete) return libvlc.getHeight();
 
 		return 0;
 	}
 
 	@:noCompletion private function get_videoWidth():Int
 	{
-		if (libvlc != null && initComplete)
-			return libvlc.getWidth();
+		if (libvlc != null && initComplete) return libvlc.getWidth();
 
 		return 0;
 	}

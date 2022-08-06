@@ -1,0 +1,5 @@
+anim.idle:Mom Idle
+anim.singLEFT:Mom Left Pose:250:-23
+anim.singRIGHT:Mom Pose Left:10:-60
+anim.singUP:Mom Up Pose:14:71
+anim.singDOWN:MOM DOWN POSE:20:-160

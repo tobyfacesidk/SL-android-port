@@ -11,7 +11,7 @@ class DiscordClient
 	{
 		trace("Discord Client starting...");
 		DiscordRpc.start({
-			clientID: "814588678700924999",
+			clientID: "981092696775086080",
 			onReady: onReady,
 			onError: onError,
 			onDisconnected: onDisconnected
@@ -36,10 +36,10 @@ class DiscordClient
 	static function onReady()
 	{
 		DiscordRpc.presence({
-			details: "In the Menus",
+			details: "In the Menus, Sublime Engine by SpunBlue.",
 			state: null,
-			largeImageKey: 'icon',
-			largeImageText: "Friday Night Funkin'"
+			largeImageKey: 'sublime_logo',
+			largeImageText: "Friday Night Funkin' Sublime Engine"
 		});
 	}
 
@@ -74,8 +74,8 @@ class DiscordClient
 		DiscordRpc.presence({
 			details: details,
 			state: state,
-			largeImageKey: 'icon',
-			largeImageText: "Friday Night Funkin'",
+			largeImageKey: 'sublime_logo',
+			largeImageText: "Friday Night Funkin' Sublime Engine",
 			smallImageKey : smallImageKey,
 			// Obtained times are in milliseconds so they are divided so Discord can use it
 			startTimestamp : Std.int(startTimestamp / 1000),

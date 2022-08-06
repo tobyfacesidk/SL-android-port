@@ -2,9 +2,6 @@ package;
 
 import flixel.FlxSprite;
 
-/**
- * Compared to `VideoHandler`. This loads slower!!
- */
 class VideoSprite extends FlxSprite
 {
 	public var readyCallback:Void->Void = null;
@@ -12,12 +9,12 @@ class VideoSprite extends FlxSprite
 
 	public var bitmap:VideoHandler;
 
-	public function new(x:Float = 0, y:Float = 0)
+	public function new(X:Float = 0, Y:Float = 0)
 	{
-		super(x, y);
+		super(X, Y);
 
 		bitmap = new VideoHandler();
-		bitmap.alpha = 0;
+		bitmap.visible = false;
 
 		bitmap.readyCallback = function()
 		{
@@ -38,13 +35,13 @@ class VideoSprite extends FlxSprite
 
 	/**
 	 * Native video support for Flixel & OpenFL
-	 * @param path Example: `your/video/here.mp4`
-	 * @param loop Loop the video.
-	 * @param haccelerated if you want the hardware to accelerated for the video.
-	 * @param pauseMusic Pause music until done video.
+	 * @param Path Example: `your/video/here.mp4`
+	 * @param Loop Loop the video.
+	 * @param Haccelerated if you want the hardware to accelerated for the video.
+	 * @param PauseMusic Pause music until done video.
 	 */
-	public function playVideo(path:String, loop:Bool = false, haccelerated:Bool = true, pauseMusic:Bool = false):Void
+	public function playVideo(Path:String, Loop:Bool = false, Haccelerated:Bool = true, PauseMusic:Bool = false):Void
 	{
-		bitmap.playVideo(path, loop, haccelerated, pauseMusic);
+		bitmap.playVideo(Path, Loop, Haccelerated, PauseMusic);
 	}
 }
