@@ -1,2 +1,0 @@
-"start.mp4" is the Cutscene before the song starts.
-"end.mp4" is the End Cutscene.

@@ -46,6 +46,8 @@ class TitleState extends MusicBeatState
 
 	var wackyImage:FlxSprite;
 
+	var bruh:Array<String> = [];
+
 	override public function create():Void
 	{
 		#if polymod
@@ -60,6 +62,9 @@ class TitleState extends MusicBeatState
 			FlxG.sound.muted = FlxG.save.data.mute;
 
 		PlayerSettings.init();
+
+		if (FlxG.save.data.allowMods == null || FlxG.save.data.allowMods)
+			SLModding.init();
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
