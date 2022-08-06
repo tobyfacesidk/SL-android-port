@@ -39,6 +39,7 @@ class ModsMenu extends MusicBeatState
         modStuff = new FlxGroup();
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+        bg.color = bgColorArray[0];
 		uiGroup.add(bg);
 
         reloadButton = new FlxButton(0, 0, "Reload Mods", function() {
@@ -135,7 +136,7 @@ class ModsMenu extends MusicBeatState
 
         modCounter.text = (selectedMod + 1) + " / " + SLModding.modsArray.length;
 
-        if (!inColorTimer) { // dumb way to do this but i don't care lol
+        if (!inColorTimer) {
             var timer:FlxTimer = new FlxTimer();
             timer.start(0.5, function(timer) {
                 if (curColor < bgColorArray.length - 1) {
@@ -148,6 +149,8 @@ class ModsMenu extends MusicBeatState
                 daBGcolor = bgColorArray[curColor];
 
                 FlxTween.color(bg, 0.5, bg.color, daBGcolor, {ease: FlxEase.quadInOut, type: ONESHOT});
+                bg.color = daBGcolor;
+                
                 inColorTimer = false;
             });
 
