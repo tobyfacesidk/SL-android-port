@@ -1,10 +1,11 @@
 package;
 
 #if android
-import android.Tools;
+import android.net.Uri;
 #end
 import flixel.FlxG;
 import openfl.events.Event;
+import lime.app.Application;
 import vlc.VLCBitmap;
 
 /**
@@ -13,12 +14,11 @@ import vlc.VLCBitmap;
  */
 class VideoHandler extends VLCBitmap
 {
-	public var readyCallback:Void->Void = null;
-	public var finishCallback:Void->Void = null;
-
 	public var canSkip:Bool = true;
 	public var canUseSound:Bool = true;
 	public var canUseAutoResize:Bool = true;
+	public var readyCallback:Void->Void = null;
+	public var finishCallback:Void->Void = null;
 
 	private var pauseMusic:Bool = false;
 
@@ -33,9 +33,12 @@ class VideoHandler extends VLCBitmap
 		FlxG.addChildBelowMouse(this);
 	}
 
-	private function update(?e:Event):Void
+	private function update(?E:Event):Void
 	{
-		if (canSkip && ((FlxG.keys.justPressed.ENTER && !FlxG.keys.pressed.ALT) || FlxG.keys.justPressed.SPACE #if android || FlxG.android.justReleased.BACK #end) && initComplete)
+		if (canSkip
+			&& ((FlxG.keys.justPressed.ENTER && !FlxG.keys.pressed.ALT)
+				|| FlxG.keys.justPressed.SPACE #if android || FlxG.android.justReleased.BACK #end)
+			&& initComplete)
 			onVLCComplete();
 
 		if (FlxG.sound.muted || FlxG.sound.volume <= 0)
@@ -44,7 +47,7 @@ class VideoHandler extends VLCBitmap
 			volume = FlxG.sound.volume;
 	}
 
-	private function resize(?e:Event):Void
+	private function resize(?E:Event):Void
 	{
 		if (canUseAutoResize)
 		{
@@ -53,17 +56,14 @@ class VideoHandler extends VLCBitmap
 		}
 	}
 
-	private function createUrl(fileName:String):String
+	private function createUrl(FileName:String):String
 	{
 		#if android
-		var filePath:String = Tools.getFileUrl(fileName);
-		return filePath;
+		return Uri.fromFile(FileName);
 		#elseif linux
-		var filePath:String = 'file://' + Sys.getCwd() + fileName;
-		return filePath;
-		#elseif windows
-		var filePath:String = 'file:///' + Sys.getCwd() + fileName;
-		return filePath;
+		return 'file://' + Sys.getCwd() + FileName;
+		#elseif (windows || mac)
+		return 'file:///' + Sys.getCwd() + FileName;
 		#end
 	}
 
@@ -73,9 +73,10 @@ class VideoHandler extends VLCBitmap
 			readyCallback();
 	}
 
-	private function onVLCError(e:String):Void
+	private function onVLCError(E:String):Void
 	{
-		throw "VLC caught an error: " + e;
+		Application.current.window.alert(E, "VLC caught an error");
+		onVLCComplete();
 	}
 
 	private function onVLCComplete()
@@ -88,6 +89,15 @@ class VideoHandler extends VLCBitmap
 
 		if (FlxG.stage.hasEventListener(Event.RESIZE))
 			FlxG.stage.removeEventListener(Event.RESIZE, resize);
+
+		if (FlxG.autoPause)
+		{
+			if (FlxG.signals.focusGained.has(resume))
+				FlxG.signals.focusGained.remove(resume);
+
+			if (FlxG.signals.focusLost.has(pause))
+				FlxG.signals.focusLost.remove(pause);
+		}
 
 		dispose();
 
@@ -102,45 +112,43 @@ class VideoHandler extends VLCBitmap
 
 	/**
 	 * Native video support for Flixel & OpenFL
-	 * @param path Example: `your/video/here.mp4`
-	 * @param loop Loop the video.
-	 * @param haccelerated if you want the hardware to accelerated for the video.
-	 * @param pauseMusic Pause music until done video.
+	 * @param Path Example: `your/video/here.mp4`
+	 * @param Loop Loop the video.
+	 * @param Haccelerated if you want the hardware to accelerated for the video.
+	 * @param PauseMusic Pause music until done video.
 	 */
-	public function playVideo(path:String, loop:Bool = false, haccelerated:Bool = true, pauseMusic:Bool = false):Void
+	public function playVideo(Path:String, Loop:Bool = false, Haccelerated:Bool = true, PauseMusic:Bool = false):Void
 	{
-		this.pauseMusic = pauseMusic;
+		pauseMusic = PauseMusic;
 
-		if (FlxG.sound.music != null && pauseMusic)
+		if (FlxG.sound.music != null && PauseMusic)
 			FlxG.sound.music.pause();
 
 		resize();
-		playFile(createUrl(path), loop, haccelerated);
+		playFile(createUrl(Path), Loop, Haccelerated);
 
 		FlxG.stage.addEventListener(Event.ENTER_FRAME, update);
 		FlxG.stage.addEventListener(Event.RESIZE, resize);
-		FlxG.signals.focusGained.add(function()
+
+		if (FlxG.autoPause)
 		{
-			resume();
-		});
-		FlxG.signals.focusLost.add(function()
-		{
-			pause();
-		});
+			FlxG.signals.focusGained.add(resume);
+			FlxG.signals.focusLost.add(pause);
+		}
 	}
 
-	private function calc(ind:Int):Float
+	private function calc(Ind:Int):Float
 	{
 		var appliedWidth:Float = FlxG.stage.stageHeight * (FlxG.width / FlxG.height);
 		var appliedHeight:Float = FlxG.stage.stageWidth * (FlxG.height / FlxG.width);
 
 		if (appliedHeight > FlxG.stage.stageHeight)
 			appliedHeight = FlxG.stage.stageHeight;
-		
+
 		if (appliedWidth > FlxG.stage.stageWidth)
 			appliedWidth = FlxG.stage.stageWidth;
 
-		switch(ind)
+		switch (Ind)
 		{
 			case 0:
 				return appliedWidth;

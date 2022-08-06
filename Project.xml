@@ -49,10 +49,9 @@
 		<assets path="assets/preload/videos" exclude="*"/>
 	</section>-->
 
-	<assets path="plugins/" rename='' if="linux"/>
-	<assets path="dlls/" rename='' if="linux"/>
-	<assets path="plugins/" rename='' if="windows"/>
-	<assets path="dlls/" rename='' if="windows"/>
+	<assets path="plugins/win" rename='' if="linux"/>
+	<assets path="plugins/win" rename='' if="windows"/>
+	<assets path="plugins/mac" rename='' if="mac"/>
 
 	<assets path="include/" rename='' embed="false"/>
 
