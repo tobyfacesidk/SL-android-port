@@ -473,7 +473,7 @@ class ChartingState extends MusicBeatState
 		FlxG.sound.list.add(vocals);
 
 		FlxG.sound.music.pause();
-		vocals.pause();
+		vocals.pause();//a
 
 		FlxG.sound.music.onComplete = function()
 		{
