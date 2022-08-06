@@ -17,6 +17,7 @@ class ModsStoryMenu extends MusicBeatState{
     var curDifficulty:Int = 1;
 
     var optionsArray = [];
+    var modLocationArray = [];
 
     var option:FlxText;
     var songTextList:FlxText;
@@ -34,11 +35,16 @@ class ModsStoryMenu extends MusicBeatState{
     {
         super.create();
 
-        for (week in FileSystem.readDirectory("mods/weeks/").filter(function(file:String):Bool{return file.indexOf(".txt") != -1;}))
-        {
-            var weekShit = week.toString();
-            optionsArray.push(weekShit.substring(0, weekShit.length - 4));
-            trace('weekshit');
+        for (mods in SLModding.modsArray){
+            if (mods != '' || mods != null){
+                for (week in FileSystem.readDirectory("mods/" + mods +"/weeks/").filter(function(file:String):Bool{return file.indexOf(".txt") != -1;}))
+                    {
+                        var weekShit = week.toString();
+                        optionsArray.push(weekShit.substring(0, weekShit.length - 4));
+                        modLocationArray.push(mods);
+                        trace('weekshit');
+                    }
+            }
         }
 
         if (optionsArray.length == 0)
@@ -123,7 +129,7 @@ class ModsStoryMenu extends MusicBeatState{
     }
 
     function getHighscore(){
-        var songTXT = File.getContent("mods/weeks/" + optionsArray[curSelected] + ".txt");
+        var songTXT = File.getContent("mods/" + modLocationArray[curSelected] + "/weeks/" + optionsArray[curSelected] + ".txt");
         var songList = songTXT.split(':');
 
         var weekNumber:Int = Std.parseInt(songList[0]);
@@ -146,7 +152,7 @@ class ModsStoryMenu extends MusicBeatState{
             getHighscore();
         }
 
-        if (controls.UP_P){
+        if (controls.UP_P && !loadingWeek){
             curSelected--;
             if (curSelected < 0) {
                 curSelected = optionGroup.length - 1;
@@ -154,7 +160,7 @@ class ModsStoryMenu extends MusicBeatState{
             optionAlpha();
             getHighscore();
         }
-        else if (controls.DOWN_P){
+        else if (controls.DOWN_P && !loadingWeek){
             curSelected++;
             if (curSelected >= optionGroup.length) {
                 curSelected = 0;
@@ -163,13 +169,13 @@ class ModsStoryMenu extends MusicBeatState{
             getHighscore();
         }
 
-        if (controls.LEFT_P){
+        if (controls.LEFT_P && !loadingWeek){
             if (curDifficulty > 0) {
                 curDifficulty--;
             }
             getHighscore();
         }
-        else if (controls.RIGHT_P){
+        else if (controls.RIGHT_P && !loadingWeek){
             if (curDifficulty < CoolUtil.difficultyArray.length - 1) {
                 curDifficulty++;
             }
@@ -188,21 +194,22 @@ class ModsStoryMenu extends MusicBeatState{
         }
 
 
-        if (controls.BACK){
+        if (controls.BACK && !loadingWeek){
             FlxG.switchState(new StorySelectionState());
         }
-
+        
         if (controls.ACCEPT && !loadingWeek){
             loadingWeek = true;
 
             FlxG.sound.play(Paths.sound('confirmMenu'));
 
-            var songTXT = File.getContent("mods/weeks/" + optionsArray[curSelected] + ".txt");
+            var songTXT = File.getContent("mods/" + modLocationArray[curSelected] + "/weeks/" + optionsArray[curSelected] + ".txt");
             var songList = songTXT.split(':');
 
             var weekNumber:Int = Std.parseInt(songList[0]);
             songList.shift();
 
+            
             // if songList has a empty string at the end, remove it
             if (songList[songList.length - 1] == "" || songList[songList.length - 1] == null) {
                 songList.pop();
@@ -230,15 +237,16 @@ class ModsStoryMenu extends MusicBeatState{
 
 			PlayState.storyDifficulty = curDifficulty;
 
-            PlayState.SONG = Song.loadFromModJson(PlayState.storyPlaylist[0].toLowerCase() + "/" + PlayState.storyPlaylist[0].toLowerCase() + diffic);
+            PlayState.SONG = Song.loadFromModJson(PlayState.storyPlaylist[0].toLowerCase() + "/" + PlayState.storyPlaylist[0].toLowerCase() + diffic, null, modLocationArray[curSelected]);
 			PlayState.storyWeek = weekNumber;
 			PlayState.campaignScore = 0;
 
-            //PlayState.isMod = true;
-			new FlxTimer().start(1, function(tmr:FlxTimer)
-			{
-				LoadingState.loadAndSwitchState(new PlayState(), true);
-			});
+            SLModding.curLoaded = modLocationArray[curSelected];
+
+            new FlxTimer().start(1, function(tmr:FlxTimer)
+                {
+                    LoadingState.loadAndSwitchState(new PlayState(), true);
+                });
         }
     }
 }

@@ -27,6 +27,7 @@ class ModsMenu extends MusicBeatState
 	var bg:FlxSprite;
 
     var modBG:FlxSprite;
+    var modCounter:FlxText;
 
     var selectedMod:Int = 0;
 
@@ -52,6 +53,12 @@ class ModsMenu extends MusicBeatState
         modBG.alpha = 0.6;
         modBG.screenCenter(XY);
         uiGroup.add(modBG);
+
+        modCounter = new FlxText(0, 0, FlxG.width, "1 / 1");
+        modCounter.setFormat("PhantomMuff 1.5", 64, FlxColor.WHITE, "center");
+        modCounter.screenCenter(X);
+        modCounter.y = 24;
+        uiGroup.add(modCounter);
 
         for (members in uiGroup){
             members.scrollFactor.set(0, 0);
@@ -81,19 +88,28 @@ class ModsMenu extends MusicBeatState
         modIcon.updateHitbox();
         modIcon.antialiasing = true;
         modIcon.setPosition(modBG.x + 24, modBG.y + 24);
+        modIcon.antialiasing = true;
         modStuff.add(modIcon);
 
         var modTitle:FlxText = new FlxText((modBG.x + 256) + 48, modBG.y + 24, SLModding.parseModValue('name', mod));
         modTitle.setFormat("PhantomMuff 1.5", 64, FlxColor.WHITE, "center");
+        modTitle.antialiasing = true;
         modStuff.add(modTitle);
 
         var modDescription:FlxText = new FlxText((modBG.x + 256) + 48, modTitle.y + modTitle.height + 24, modBG.width * 0.7, SLModding.parseModValue('description', mod));
         modDescription.setFormat("PhantomMuff 1.5", 32, FlxColor.WHITE, "left");
+        modDescription.antialiasing = true;
         modStuff.add(modDescription);
 
         var modAuthor:FlxText = new FlxText(modIcon.x, (modIcon.y + modIcon.height) + 72, 256, SLModding.parseModValue('author', mod));
         modAuthor.setFormat("PhantomMuff 1.5", 32, FlxColor.WHITE, "center");
+        modAuthor.antialiasing = true;
         modStuff.add(modAuthor);
+
+        var modVersion:FlxText = new FlxText(modIcon.x, (modAuthor.y + modAuthor.height) + 24, 256, SLModding.parseModValue('version', mod));
+        modVersion.setFormat("PhantomMuff 1.5", 32, FlxColor.WHITE, "center");
+        modVersion.antialiasing = true;
+        modStuff.add(modVersion);
     }
 
     override public function update(elapsed:Float)
@@ -116,6 +132,8 @@ class ModsMenu extends MusicBeatState
             generateModShit(SLModding.modsArray[selectedMod]);
             FlxG.sound.play(Paths.sound('scrollMenu'));
         }
+
+        modCounter.text = (selectedMod + 1) + " / " + SLModding.modsArray.length;
 
         if (!inColorTimer) { // dumb way to do this but i don't care lol
             var timer:FlxTimer = new FlxTimer();

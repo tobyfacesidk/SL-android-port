@@ -77,6 +77,7 @@ class FreeplayState extends MusicBeatState
 		}*/
 
 		for (mod in SLModding.modsArray){
+			
 			for (song in FileSystem.readDirectory(SLModding.generatePath(mod, "data"))){
 				var tempArray = song.split(':');
 

@@ -2123,7 +2123,7 @@ class PlayState extends MusicBeatState
 	function endSong():Void
 	{
 		if (playedEndCutscene == false && isStoryMode == true){
-			if (!FileSystem.exists('mods/cutscenes/' + curSong + '/end.mp4')){
+			if (!FileSystem.exists('mods/' + SLModding.curLoaded + '/cutscenes/' + curSong + '/end.mp4')){
 				switch (curSong.toLowerCase())
 				{
 					case 'pico':
@@ -2131,7 +2131,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 			else{
-				playEndCutscene('mods/cutscenes/' + curSong + '/end.mp4', true);
+				playEndCutscene('mods/' + SLModding.curLoaded + '/cutscenes/' + curSong + '/end.mp4', true);
 			}
 		}
 
