@@ -42,12 +42,12 @@
 	<assets path="assets/preload/videos" exclude="*.mp4" unless="web"/>
 
 	<!--compatability things-->
-	<section if="mac">
+	<!--<section if="mac">
 		<assets path="plugins/" exclude="*"/>
 		<assets path="dlls/" exclude="*"/>
 		<assets path="source/vlc/" exclude="*"/>
 		<assets path="assets/preload/videos" exclude="*"/>
-	</section>
+	</section>-->
 
 	<assets path="plugins/" rename='' if="linux"/>
 	<assets path="dlls/" rename='' if="linux"/>

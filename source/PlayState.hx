@@ -2660,7 +2660,6 @@ class PlayState extends MusicBeatState
 	
 	function playCutscene(name:String, isPath:Bool = false)
 	{
-		#if (windows || linux)
 		inCutscene = true;
 		trace(Paths.video(name));
 		var video:VideoHandler = new VideoHandler();
@@ -2672,9 +2671,6 @@ class PlayState extends MusicBeatState
 			video.playVideo(Paths.video(name));
 		else
 			video.playVideo(name);
-		#else
-		startCountdown();
-		#end
 	}
 	
 	function playEndCutscene(name:String, isPath:Bool = false)
@@ -2686,7 +2682,6 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.kill();
 		vocals.kill();
 
-		#if (windows || linux)
 		inCutscene = true;
 
 		var video:VideoHandler = new VideoHandler();
@@ -2700,11 +2695,6 @@ class PlayState extends MusicBeatState
 			video.playVideo(Paths.video(name));
 		else
 			video.playVideo(name);
-		#else
-		inCutscene = false;
-		playedEndCutscene = true;
-		endSong();
-		#end
 	}
 
 	function updateCharacter(isBF:Bool = false){
