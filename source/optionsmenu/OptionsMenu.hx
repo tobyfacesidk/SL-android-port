@@ -189,7 +189,10 @@ class OptionsMenu extends MusicBeatState {
 			default:
 				inOptionSelector = true;
 
-				options = ["Gameplay","Graphics", "Modding"];
+				if (SLModding.isInitialized)
+					options = ["Gameplay","Graphics", "Modding"];
+				else
+					options = ["Gameplay","Graphics"];
 				ready = true;
 			case 'gameplay':
 				inOptionSelector = false;
