@@ -295,12 +295,46 @@ class ChartingState extends MusicBeatState
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
 
-		var dadCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('dadList'));
-		var bfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('bfList'));
-		var gfCharacters:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfList'));
+		var dadCharacters:Array<String>;
+		var bfCharacters:Array<String>;
+		var gfCharacters:Array<String>;
 
-		var stagelist:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
-		var noteskins:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteskinList'));
+		var stagelist:Array<String>;
+		var noteskins:Array<String>;
+		
+		if (SLModding.curLoaded != '' || SLModding.curLoaded != null){
+			var tempChararcters = File.getContent(Paths.txt('dadList')) + File.getContent(Paths.txt('bfList')) + File.getContent(Paths.txt('gfList'));
+			
+			for (character in FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/characters/")){
+				tempChararcters += character + "\n";
+			}
+			tempChararcters = tempChararcters.substring(0, tempChararcters.length - 1);
+
+			var allCharacters:Array<String> = tempChararcters.split('\n');
+
+			dadCharacters = allCharacters;
+			bfCharacters = allCharacters;
+			gfCharacters = allCharacters;
+
+			var tempStageList = File.getContent(Paths.txt('stageList'));
+			
+			for (stage in FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/stages/")){
+				tempStageList += stage + "\n";
+			}
+			tempStageList = tempStageList.substring(0, tempStageList.length - 1);
+
+			stagelist = tempStageList.split('\n');
+
+			noteskins = CoolUtil.coolTextFile(Paths.txt('noteskinList'));
+		}
+		else{
+			dadCharacters= CoolUtil.coolTextFile(Paths.txt('dadList'));
+			bfCharacters = CoolUtil.coolTextFile(Paths.txt('bfList'));
+			gfCharacters = CoolUtil.coolTextFile(Paths.txt('gfList'));
+
+			stagelist = CoolUtil.coolTextFile(Paths.txt('stageList'));
+			noteskins = CoolUtil.coolTextFile(Paths.txt('noteskinList'));
+		}
 
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(bfCharacters, true), function(character:String)
 		{
@@ -473,7 +507,7 @@ class ChartingState extends MusicBeatState
 		FlxG.sound.list.add(vocals);
 
 		FlxG.sound.music.pause();
-		vocals.pause();//a
+		vocals.pause();
 
 		FlxG.sound.music.onComplete = function()
 		{
