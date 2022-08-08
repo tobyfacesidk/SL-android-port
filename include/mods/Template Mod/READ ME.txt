@@ -1,3 +1,5 @@
 mod.json & icon.png is required!!!
 
 Keep in mind, Mods can only load what is in them. You cannot load other assets from other mods.
+
+The songList.txt file is Optional, This does not need to be included.

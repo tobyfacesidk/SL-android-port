@@ -77,14 +77,32 @@ class FreeplayState extends MusicBeatState
 		}*/
 
 		for (mod in SLModding.modsArray){
-			
-			for (song in FileSystem.readDirectory(SLModding.generatePath(mod, "data"))){
-				var tempArray = song.split(':');
+			if (!FileSystem.exists(SLModding.generatePath(mod, "data") + "songList.txt")){
+				for (song in FileSystem.readDirectory(SLModding.generatePath(mod, "data"))){
+					var tempArray = song.split(':');
+	
+					var poop = Highscore.formatSong(tempArray[0].toLowerCase(), curDifficulty);
+					var tempSongData = Song.loadFromModJson(poop, tempArray[0].toLowerCase(), mod);
+	
+					addSong(tempArray[0], 0, tempSongData.player2, true, mod);
+				}
+			}
+			else{
+				var daList:Array<String> = File.getContent(SLModding.generatePath(mod, "data") + "songList.txt").trim().split('\n');
 
-				var poop = Highscore.formatSong(tempArray[0].toLowerCase(), curDifficulty);
-				var tempSongData = Song.loadFromModJson(poop, tempArray[0].toLowerCase(), mod);
+				for (i in 0...daList.length)
+				{
+					daList[i] = daList[i].trim();
+				}
+	
+				var moddedSongList = daList;
 
-				addSong(tempArray[0], 0, tempSongData.player2, true, mod);
+				for (song in moddedSongList){
+					var poop = Highscore.formatSong(song, curDifficulty);
+					var tempSongData = Song.loadFromModJson(poop, song.toLowerCase(), mod);
+	
+					addSong(song, 0, tempSongData.player2, true, mod);
+				}
 			}
 		}
 
