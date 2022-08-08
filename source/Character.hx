@@ -22,6 +22,8 @@ class Character extends FlxSprite
 	public var isTxt:Bool = false;
 	public var isMod:Bool = false;
 
+	public var useAltIdle:Bool = false;
+
 	var characterArray = [];
 
 	var isLoaded:Bool = false;
@@ -561,24 +563,31 @@ class Character extends FlxSprite
 	 */
 	public function dance()
 	{
+		FlxG.log.warn('Dancing, useAltIdle is currently: $useAltIdle');
+
 		if (!debugMode)
 		{
 			// why the fuck did ninjamuffin not code it like this??
 			if (animation.exists('danceLeft') && animation.exists('danceRight'))
-			{
-				if (!animation.curAnim.name.startsWith('hair'))
-					{
-						danced = !danced;
-
-						if (danced)
-							playAnim('danceRight');
-						else
-							playAnim('danceLeft');
+				{
+					if (!animation.curAnim.name.startsWith('hair'))
+						{
+							danced = !danced;
+		
+							if (danced)
+								playAnim('danceRight');
+							else
+								playAnim('danceLeft');
+						}
 					}
-			}
-			else{
-				playAnim('idle');
-			}
+				else{
+					if (useAltIdle && animation.exists('idle-alt')){
+						playAnim('idle-alt');
+						//FlxG.log.add('using alternative idle');
+					}
+					else
+						playAnim('idle');
+				}
 		}
 	}
 

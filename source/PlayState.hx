@@ -2007,9 +2007,10 @@ class PlayState extends MusicBeatState
 
 					if (SONG.notes[Math.floor(curStep / 16)] != null)
 					{
-						if (SONG.notes[Math.floor(curStep / 16)].altAnim)
-							altAnim = '-alt';
-
+						if (SONG.notes[Math.floor(curStep / 16)].altAnim){
+							if (dad.animation.exists('singLEFT-alt'))
+								altAnim = '-alt';
+						}
 						if (!SONG.notes[Math.floor(curStep / 16)].gfSection){
 							switch (Math.abs(daNote.noteData))
 							{
@@ -2868,6 +2869,13 @@ class PlayState extends MusicBeatState
 						add(gf);
 				}
 			}
+		}
+		
+		if (SONG.notes[Math.floor(curStep / 16)] != null){
+			if (SONG.notes[Math.floor(curStep / 16)].altAnim)
+				dad.useAltIdle = true;
+			else
+				dad.useAltIdle = false;
 		}
 	}
 
