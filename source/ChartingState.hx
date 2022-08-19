@@ -305,25 +305,36 @@ class ChartingState extends MusicBeatState
 		if (SLModding.curLoaded != '' || SLModding.curLoaded != null){
 			var tempChararcters = File.getContent(Paths.txt('dadList')) + File.getContent(Paths.txt('bfList')) + File.getContent(Paths.txt('gfList'));
 			
-			for (character in FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/characters/")){
-				tempChararcters += character + "\n";
+			// untested
+			if (FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/characters/") != null){
+				for (character in FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/characters/")){
+					tempChararcters += character + "\n";
+				}
+				tempChararcters = tempChararcters.substring(0, tempChararcters.length - 1);
+	
+				var allCharacters:Array<String> = tempChararcters.split('\n');
+	
+				dadCharacters = allCharacters;
+				bfCharacters = allCharacters;
+				gfCharacters = allCharacters;
 			}
-			tempChararcters = tempChararcters.substring(0, tempChararcters.length - 1);
+			else{
+				dadCharacters= CoolUtil.coolTextFile(Paths.txt('dadList'));
+				bfCharacters = CoolUtil.coolTextFile(Paths.txt('bfList'));
+				gfCharacters = CoolUtil.coolTextFile(Paths.txt('gfList'));
+			}
 
-			var allCharacters:Array<String> = tempChararcters.split('\n');
-
-			dadCharacters = allCharacters;
-			bfCharacters = allCharacters;
-			gfCharacters = allCharacters;
 
 			var tempStageList = File.getContent(Paths.txt('stageList'));
 			
-			for (stage in FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/stages/")){
-				tempStageList += stage + "\n";
+			if (FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/stages/") != null){
+				for (stage in FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/stages/")){
+					tempStageList += stage + "\n";
+				}
+				tempStageList = tempStageList.substring(0, tempStageList.length - 1);
+	
+				stagelist = tempStageList.split('\n');
 			}
-			tempStageList = tempStageList.substring(0, tempStageList.length - 1);
-
-			stagelist = tempStageList.split('\n');
 
 			noteskins = CoolUtil.coolTextFile(Paths.txt('noteskinList'));
 		}
