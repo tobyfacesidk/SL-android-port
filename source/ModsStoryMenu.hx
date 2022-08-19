@@ -36,13 +36,15 @@ class ModsStoryMenu extends MusicBeatState{
         super.create();
 
         for (mods in SLModding.modsArray){
-            if (mods != '' || mods != null){
+            if (mods != '' && mods != null && FileSystem.readDirectory("mods/" + mods +"/weeks/") != null){
                 for (week in FileSystem.readDirectory("mods/" + mods +"/weeks/").filter(function(file:String):Bool{return file.indexOf(".txt") != -1;}))
                     {
-                        var weekShit = week.toString();
-                        optionsArray.push(weekShit.substring(0, weekShit.length - 4));
-                        modLocationArray.push(mods);
-                        trace('weekshit');
+                        if (week != null){
+                            var weekShit = week.toString();
+                            optionsArray.push(weekShit.substring(0, weekShit.length - 4));
+                            modLocationArray.push(mods);
+                            trace('weekshit');
+                        }
                     }
             }
         }
