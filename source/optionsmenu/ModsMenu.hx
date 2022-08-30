@@ -31,6 +31,12 @@ class ModsMenu extends MusicBeatState
 
     var selectedMod:Int = 0;
 
+    var modIcon:FlxSprite;
+    var modTitle:FlxText;
+    var modDescription:FlxText;
+    var modAuthor:FlxText;
+    var modVersion:FlxText;
+
     override public function create()
     {
         FlxG.mouse.visible = true;
@@ -84,7 +90,7 @@ class ModsMenu extends MusicBeatState
             }
         }
 
-        var modIcon:FlxSprite = new FlxSprite().loadGraphic(openfl.display.BitmapData.fromFile(SLModding.generatePath(mod) + 'icon.png'));
+        modIcon = new FlxSprite().loadGraphic(openfl.display.BitmapData.fromFile(SLModding.generatePath(mod) + 'icon.png'));
         modIcon.setGraphicSize(256, 256);
         modIcon.updateHitbox();
         modIcon.antialiasing = true;
@@ -92,25 +98,33 @@ class ModsMenu extends MusicBeatState
         modIcon.antialiasing = true;
         modStuff.add(modIcon);
 
-        var modTitle:FlxText = new FlxText((modBG.x + 256) + 48, modBG.y + 24, SLModding.parseModValue('name', mod));
+        modTitle = new FlxText((modBG.x + 256) + 48, modBG.y + 24, SLModding.parseModValue('name', mod));
         modTitle.setFormat("PhantomMuff 1.5", 64, FlxColor.WHITE, "center");
         modTitle.antialiasing = true;
         modStuff.add(modTitle);
 
-        var modDescription:FlxText = new FlxText((modBG.x + 256) + 48, modTitle.y + modTitle.height + 24, modBG.width * 0.7, SLModding.parseModValue('description', mod));
+        modDescription = new FlxText((modBG.x + 256) + 48, modTitle.y + modTitle.height + 24, modBG.width * 0.7, SLModding.parseModValue('description', mod));
         modDescription.setFormat("PhantomMuff 1.5", 32, FlxColor.WHITE, "left");
         modDescription.antialiasing = true;
         modStuff.add(modDescription);
 
-        var modAuthor:FlxText = new FlxText(modIcon.x, (modIcon.y + modIcon.height) + 72, 256, SLModding.parseModValue('author', mod));
+        modAuthor = new FlxText(modIcon.x, (modIcon.y + modIcon.height) + 72, 256, SLModding.parseModValue('author', mod));
         modAuthor.setFormat("PhantomMuff 1.5", 32, FlxColor.WHITE, "center");
         modAuthor.antialiasing = true;
         modStuff.add(modAuthor);
 
-        var modVersion:FlxText = new FlxText(modIcon.x, (modAuthor.y + modAuthor.height) + 24, 256, SLModding.parseModValue('version', mod));
+        modVersion = new FlxText(modIcon.x, (modAuthor.y + modAuthor.height) + 24, 256, SLModding.parseModValue('version', mod));
         modVersion.setFormat("PhantomMuff 1.5", 32, FlxColor.WHITE, "center");
         modVersion.antialiasing = true;
         modStuff.add(modVersion);
+
+        if (modTitle.text.length > 16){
+            modTitle.setFormat("PhantomMuff 1.5", 24, FlxColor.WHITE, "center");
+        }
+
+        if (modVersion.text.length > 8){
+            modVersion.setFormat("PhantomMuff 1.5", 24, FlxColor.WHITE, "center");
+        }
     }
 
     override public function update(elapsed:Float)

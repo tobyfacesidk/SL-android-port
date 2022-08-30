@@ -299,17 +299,13 @@ class ChartingState extends MusicBeatState
 		var bfCharacters:Array<String>;
 		var gfCharacters:Array<String>;
 
-		var stagelist:Array<String>;
+		var stagelist:Array<String> = [];
 		var noteskins:Array<String>;
 		
 		if (SLModding.curLoaded != '' || SLModding.curLoaded != null){
 			var tempChararcters = File.getContent(Paths.txt('dadList')) + File.getContent(Paths.txt('bfList')) + File.getContent(Paths.txt('gfList'));
 			
-			// untested
 			if (FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/characters/") != null){
-				for (character in FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/characters/")){
-					tempChararcters += character + "\n";
-				}
 				tempChararcters = tempChararcters.substring(0, tempChararcters.length - 1);
 	
 				var allCharacters:Array<String> = tempChararcters.split('\n');
@@ -328,9 +324,6 @@ class ChartingState extends MusicBeatState
 			var tempStageList = File.getContent(Paths.txt('stageList'));
 			
 			if (FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/stages/") != null){
-				for (stage in FileSystem.readDirectory("mods/" + SLModding.curLoaded + "/images/stages/")){
-					tempStageList += stage + "\n";
-				}
 				tempStageList = tempStageList.substring(0, tempStageList.length - 1);
 	
 				stagelist = tempStageList.split('\n');

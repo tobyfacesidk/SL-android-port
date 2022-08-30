@@ -34,6 +34,9 @@ import lime.utils.Assets;
 import openfl.display.BlendMode;
 import openfl.filters.ShaderFilter;
 
+// shaders
+import shaders.CRT;
+
 using StringTools;
 
 class PlayState extends MusicBeatState
@@ -66,6 +69,7 @@ class PlayState extends MusicBeatState
 
 	private var strumLineNotes:FlxTypedGroup<FlxSprite>;
 	private var playerStrums:FlxTypedGroup<FlxSprite>;
+	private var cpuStrums:FlxTypedGroup<FlxSprite>;
 
 	var specialNoteXOffset:Int = 0;
 
@@ -147,6 +151,11 @@ class PlayState extends MusicBeatState
 
 	var hasDialogue:Bool = false;
 
+	// shaders
+	var curShader:String = '';
+
+	var crt:CRT = new CRT();
+
 	override public function create()
 	{
 		if (FlxG.sound.music != null)
@@ -167,6 +176,17 @@ class PlayState extends MusicBeatState
 
 		persistentUpdate = true;
 		persistentDraw = true;
+
+		if (Paths.txt(SONG.song + "/shader") != null)
+			curShader = Paths.txt(SONG.song + "/shader");
+
+		if (FileSystem.exists(SLModding.generatePath(SLModding.curLoaded, "data/" + SONG.song) + "shader.txt"))
+			curShader = File.getContent(SLModding.generatePath(SLModding.curLoaded, "data/" + SONG.song) + "shader.txt");
+
+		switch(curShader.toLowerCase()){
+			case 'crt':
+				camGame.setFilters([new ShaderFilter(crt.shader)]);
+		}
 
 		if (FlxG.save.data.downScroll == null)
 			FlxG.save.data.downScroll = false;
@@ -821,6 +841,9 @@ class PlayState extends MusicBeatState
 		strumLineNotes = new FlxTypedGroup<FlxSprite>();
 		add(strumLineNotes);
 
+		cpuStrums = new FlxTypedGroup<FlxSprite>();
+		add(cpuStrums);
+
 		add(noteSplashes);
 
 		playerStrums = new FlxTypedGroup<FlxSprite>();
@@ -983,6 +1006,7 @@ class PlayState extends MusicBeatState
 		add(rankTxt);
 		
 		noteSplashes.cameras = [camHUD];
+		cpuStrums.cameras = [camHUD];
 		strumLineNotes.cameras = [camHUD];
 		notes.cameras = [camHUD];
 		underlay.cameras = [camHUD];
@@ -1517,6 +1541,19 @@ class PlayState extends MusicBeatState
 
 			babyArrow.ID = i;
 
+			switch (player)
+			{
+				case 0:
+					cpuStrums.add(babyArrow);
+				case 1:
+					playerStrums.add(babyArrow);
+			}
+
+			cpuStrums.forEach(function(spr:FlxSprite)
+			{
+				spr.centerOffsets();
+			});
+
 			if (player == 1)
 			{
 				playerStrums.add(babyArrow);
@@ -1661,6 +1698,9 @@ class PlayState extends MusicBeatState
 		}
 
 		super.update(elapsed);
+
+		if (curShader.toLowerCase() == 'crt')
+				crt.shader.uTime.value = [elapsed];
 
 		scoreTxt.text = 'Score: $songScore • Misses: $misses • Accuracy: ${calculateRating()} • Combo: $combo';
 		rankTxt.text = 'Sicks • $sicks\nGoods • $goods\nBads • $bads\nShits • $shits';
@@ -1961,6 +2001,13 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		if (generatedMusic){
+			// interpolation
+			notes.forEachAlive(function(daNote:Note){
+				daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * songScrollSpeed));
+			});
+		}
+
 		if (generatedMusic && !paused)
 		{
 			notes.forEachAlive(function(daNote:Note)
@@ -1998,7 +2045,7 @@ class PlayState extends MusicBeatState
 					daNote.clipRect = swagRect;
 				}
 				
-				if (!daNote.mustPress && daNote.wasGoodHit)
+				if (FlxG.save.data.downScroll == false ? !daNote.mustPress && daNote.y <= strumLine.y : !daNote.mustPress && daNote.y >= strumLine.y)
 				{
 					if (SONG.song != 'Tutorial')
 						camZooming = true;
@@ -2057,13 +2104,41 @@ class PlayState extends MusicBeatState
 					if (SONG.needsVoices)
 						vocals.volume = 1;
 
+					//CPUSTRUM CONFIRM ANIMATION
+					cpuStrums.forEach(function(spr:FlxSprite)
+						{
+							
+							if (Math.abs(daNote.noteData) == spr.ID)
+							{	
+								spr.animation.play('confirm', true);
+								
+								if (!daNote.isSustainNote)
+									noteSplash(daNote.x, daNote.y, daNote.noteData, true);										
+							}
+
+							//CPUSTRUM NoteSkin Confirm Offsets
+							if (spr.animation.curAnim.name == 'confirm')
+							{
+								switch (SONG.noteskin){
+									default:
+										spr.centerOffsets();
+										spr.offset.x -= 13;
+										spr.offset.y -= 13;
+									case 'pixel':
+										// not needed
+									case 'circle':
+										spr.centerOffsets();
+								}
+							}
+							else{
+								spr.centerOffsets();
+							}
+						});
+
 					daNote.kill();
 					notes.remove(daNote, true);
 					daNote.destroy();
 				}
-
-				// cool funkin' interpolation, but it's not working correctly ):
-				//daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * songScrollSpeed));
 
 				// if the player is late, miss.
 				if ((FlxG.save.data.downScroll == false) ? daNote.y < -daNote.height : daNote.y > FlxG.height + daNote.height)
@@ -2100,6 +2175,16 @@ class PlayState extends MusicBeatState
 				}
 			});
 		}
+
+		cpuStrums.forEach(function(spr:FlxSprite)
+			{
+				if (spr.animation.finished && spr.animation.curAnim.name == 'confirm')
+				{
+					spr.animation.play('static');
+					spr.centerOffsets();
+					// trace('confirm animation finished');
+				}
+			});
 
 		if (!inCutscene)
 			keyShit();
@@ -2412,7 +2497,7 @@ class PlayState extends MusicBeatState
 			{
 				notes.forEachAlive(function(daNote:Note)
 				{
-					if (daNote.canBeHit && daNote.mustPress && daNote.isSustainNote)
+					if (daNote.canBeHit && daNote.mustPress && daNote.isSustainNote && !daNote.isIgnored)
 					{
 						switch (daNote.noteData)
 						{
@@ -2643,9 +2728,9 @@ class PlayState extends MusicBeatState
 			var recycledNote = noteSplashes.recycle(NoteSplash);
 			if (!isDad)    
 				recycledNote.makeSplash(playerStrums.members[nData].x, playerStrums.members[nData].y, nData);
-			//else
-				//recycledNote.makeSplash(cpuStrums.members[nData].x, cpuStrums.members[nData].y, nData);
-				//noteSplashes.add(recycledNote);
+			else
+				recycledNote.makeSplash(cpuStrums.members[nData].x, cpuStrums.members[nData].y, nData);
+				noteSplashes.add(recycledNote);
 		}
 	
 	function playCutscene(name:String, isPath:Bool = false)

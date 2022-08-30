@@ -12,35 +12,21 @@ import flixel.text.FlxText;
 import flixel.FlxG;
 import flixel.group.FlxGroup;
 import flixel.FlxSubState;
+import optionsmenu.TextOption;
 
 using StringTools;
 
 class OptionsMenu extends MusicBeatState {
-	var options:Array<String> = ["option shit"];
-	var lastOptionType:String = "default";
-
-	var optionGroup = new FlxTypedGroup<FlxText>();
-	
-	var inOptionSelector:Bool = true;
-	var startListening:Bool = true;
-	var endedCheck:Bool = true;
-	var forceCheck:Bool = false;
-
-	var curSelected:Int = 0;
-	var curOptionSelected:String = 'Gameplay';
-
-	var lastOptionY:Float = 0;
-
-	var selected:FlxText;
-
+	var funnyOption:TextOption;
 	var background:FlxSprite;
-	var text:FlxText;
-	var detailText:FlxText;
 	var camFollow:FlxSprite;
 
-	override function create() {
-		super.create();
+	var curSelected:Int = 0;
+	var curMenu:String = '';
+	
+	var optionsGroup:FlxTypedGroup<TextOption>;
 
+	override function create() {
 		background = new FlxSprite(0, 0, Paths.image('menuBGBlue'));
 		background.scrollFactor.x = 0;
 		background.scrollFactor.y = 0;
@@ -49,278 +35,146 @@ class OptionsMenu extends MusicBeatState {
 		background.antialiasing = true;
 		add(background);
 
-		checkVariables();
-		createOptions();
+		optionsGroup = new FlxTypedGroup<TextOption>();
 
-		detailText = new FlxText(0, 0, FlxG.width, "Options");
-		detailText.scrollFactor.x = 0;
-		detailText.scrollFactor.y = 0;
-		detailText.setFormat("PhantomMuff 1.5", 16, FlxColor.LIME, "center");
-		detailText.screenCenter(X);
-		add(detailText);
+		generateOptions();
 
-		camFollow = new FlxSprite(0, 0).makeGraphic(Std.int(optionGroup.members[0].width), Std.int(optionGroup.members[0].height), 0xAAFF0000);
+		add(optionsGroup);
+
+		camFollow = new FlxSprite(0, 0).makeGraphic(Std.int(optionsGroup.members[0].width), Std.int(optionsGroup.members[0].height), 0xAAFF0000);
+		camFollow.y = optionsGroup.members[0].y;
 		FlxG.camera.follow(camFollow, null, 0.06);
+
+		super.create();
 	}
 
 	override function update(elapsed:Float) {
-		super.update(elapsed);
-
-		curOptionSelected = options[curSelected].split(" ")[0];
-		
-		camFollow.screenCenter();
-		if (optionGroup.members[curSelected] != null) {
-			camFollow.y = optionGroup.members[curSelected].y - camFollow.height / 2;
+		if (optionsGroup.members[curSelected] != null){
+			camFollow.y = optionsGroup.members[curSelected].y;
 		}
 
-		if (controls.UP_P) {
-			curSelected--;
-
-			FlxG.sound.play(Paths.sound('scrollMenu'));
-			changeTextAlpha();
-
-			if (curSelected < 0) {
-				curSelected = 0;
-			}
-			else{
-				changeTextAlpha();
+		for (option in optionsGroup){
+			if (option != null){
+				if (optionsGroup.members[curSelected] != option)
+					option.alpha = 0.6;
+				else
+					option.alpha = 1;
 			}
 		}
-		else if (controls.DOWN_P){
+
+		if (controls.DOWN_P && curSelected < optionsGroup.members.length - 1 || controls.UP_P && curSelected > 0)
+			FlxG.sound.play(Paths.sound('scrollMenu', 'preload'));
+
+		if (controls.DOWN_P && curSelected < optionsGroup.members.length - 1)
 			curSelected++;
-
-			FlxG.sound.play(Paths.sound('scrollMenu'));
-
-			if (curSelected > options.length - 1) {
-				curSelected = options.length - 1;
-			}
-			else{
-				changeTextAlpha();
-			}
-		}
-
-		if (controls.ACCEPT) {
+		if (controls.UP_P && curSelected > 0)
+			curSelected--;
+		if (controls.ACCEPT)
 			optionSelected();
-		}
+		if (controls.BACK){
+			curSelected = 0;
 
-		if (controls.LEFT && curOptionSelected.toLowerCase() == 'gameplay')
-			FlxG.save.erase();
-
-		if (controls.BACK) {
-			if (!inOptionSelector)
-				optionSelected(true);
+			if (curMenu != 'default')
+				generateOptions();
 			else
 				FlxG.switchState(new MainMenuState());
 
-			FlxG.sound.play(Paths.sound('cancelMenu'));
-		}
-
-		for (i in 0...optionGroup.members.length) {
-			if (optionGroup.members[i] != null){
-			}
-		}
-		
-		if (options[curSelected].startsWith("null")){
-			updateOptions();
-		}
-
-		if (curSelected > 3)
-			detailText.y = FlxG.height - detailText.height;
-		else
-			detailText.y = 0;
-
-		if (controls.DOWN_P || controls.UP_P || forceCheck){
-			if (options[curSelected] == null){
-				return;
-			}
-
-			switch(curOptionSelected.toLowerCase()){
-				case "gameplay":
-					detailText.text = "Gameplay Settings";
-				case 'graphics':
-					detailText.text = "Graphics Settings";
-				case 'ghost-tapping':
-					detailText.text = "If enabled, You won't miss unless you don't hit a note.";
-				case 'downscroll':
-					detailText.text = "If enabled, The notes will scroll down.";
-				case 'lane':
-					detailText.text = "Puts a transparent underlay on the notes.";
-				case 'disable':
-					detailText.text = "If enabled, Distractions will be disabled.";
-				case 'epilepsy':
-					detailText.text = "If enabled, The game will not give you epilepsy... Probably.";
-				case 'keybinds':
-					detailText.text = "Set your Keybinds for your dirty keyboard... Seriously clean it up.";
-				case 'middlescroll':
-					detailText.text = "Centers the Strumline.";
-				case 'show':
-				    detailText.text = "If enabled, When the version is outdated, the outdated screen will no longer show.";
-			}
-
-			if (forceCheck)
-				!forceCheck;
-		}
-
-		if (!startListening && endedCheck){
-			endedCheck = false;
-
-			new FlxTimer().start(0.1, function(tmr:FlxTimer)
-				{
-					startListening = true;
-					endedCheck = true;
-			});
+			FlxG.sound.play(Paths.sound('cancelMenu', 'preload'));
 		}
 	}
 
-	function checkVariables() {
-		if (FlxG.save.data.showOutdatedScreen == null) {
-			FlxG.save.data.showOutdatedScreen = true;
+	function generateOptions(theOptionGroup:String = null){
+		var optionArray:Array<String> = [];
+		var optionSelectionProperties:Array<Int> = []; // 0 - on/off | 1 - New Menu | 2 - Switch State
+
+		for (option in optionsGroup){
+			if (option != null){
+				option.destroy();
+			}
 		}
-	}
 
-	function createOptions(type:String = 'default') {
-		var ready:Bool = false;
-		lastOptionY = 0;
+		optionsGroup.clear();
 
-		if (inOptionSelector)
-			curSelected = 0;
-
-		switch(type.toLowerCase()) {
+		switch (theOptionGroup.toLowerCase()){
 			default:
-				inOptionSelector = true;
+				optionArray = [
+					'Gameplay',
+					'Graphics',
+					'Modding'
+				];
 
-				if (SLModding.isInitialized)
-					options = ["Gameplay","Graphics", "Modding"];
-				else
-					options = ["Gameplay","Graphics"];
-				ready = true;
+				optionSelectionProperties = [1, 1, 2];
+				curMenu = 'default';
 			case 'gameplay':
-				inOptionSelector = false;
+				optionArray = [
+					"Keybinds",
+					'Ghost-tapping ${FlxG.save.data.ghostTap ? 'ON' : 'OFF'}',
+					'Downscroll ${FlxG.save.data.downScroll ? 'ON' : 'OFF'}',
+					'Middlescroll ${FlxG.save.data.middleScroll ? 'ON' : 'OFF'}'
+				];
 
-                options = ["Keybinds", 'Ghost-tapping ${FlxG.save.data.ghostTap ? 'ON' : 'OFF'}'
-				, 'Downscroll ${FlxG.save.data.downScroll ? 'ON' : 'OFF'}',
-				'Middlescroll ${FlxG.save.data.middleScroll ? 'ON' : 'OFF'}'];
-				ready = true;
+				optionSelectionProperties = [2, 0, 0, 0];
+				curMenu = 'gameplay';
 			case 'graphics':
-				inOptionSelector = false;
-
-                options = [
-				    'Lane Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}',
-				    'Disable Distractions ${FlxG.save.data.noDistractions ? 'ON' : 'OFF'}',
+				optionArray = [
+				    'Lane-Underlay ${FlxG.save.data.laneUnderlay ? 'ON' : 'OFF'}',
+				    'Distractions ${FlxG.save.data.noDistractions ? 'OFF' : 'ON'}',
 				    'Epilepsy Mode ${FlxG.save.data.epilepsyMode ? 'ON' : 'OFF'}',
 					'Show Outdated Screen ${FlxG.save.data.showOutdatedScreen ? 'ON' : 'OFF'}'
-			    ];
-				ready = true;
-			case 'modding':
-				FlxG.switchState(new ModsMenu());
+				];
+
+				optionSelectionProperties = [0, 0, 0, 0];
+				curMenu = 'graphics';
 		}
 
-		lastOptionType = type.toLowerCase();
-
-		if (ready){
-			for (i in 0...options.length) {
-				text = new FlxText(0, lastOptionY, FlxG.width, options[i]);
-				text.setFormat("PhantomMuff 1.5", 72, FlxColor.WHITE, "center");
-                text.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0xFF000000, 5, 1);
-				text.alpha = 0.6;
-				text.screenCenter(Y);
-				text.y += lastOptionY - (curSelected * text.height);
-                text.antialiasing = true;
-				optionGroup.add(text);
-				add(text);
-				lastOptionY += text.height;
-			}
-		}
-
-		changeTextAlpha();
-		forceCheck = true;
-	}
-
-	function updateOptions() {
-		
-		if (optionGroup.members.length > 0) {
-			for (i in 0...optionGroup.members.length) {
-				if (optionGroup.members[i] != null){
-					optionGroup.members[i].kill();
-					optionGroup.remove(optionGroup.members[i]);
-				}
-			}
-		}
-
-		if (!inOptionSelector){
-			createOptions(lastOptionType);
+		for (num in 0...optionArray.length){
+			funnyOption = new TextOption(0, 0, optionArray[num], optionSelectionProperties[num]);
+			funnyOption.screenCenter(Y);
+			funnyOption.y = 78 * num;
+			optionsGroup.add(funnyOption);
 		}
 	}
 
-	function optionSelected(goingBack:Bool = false) {
-		var dontAllowUpdate = false;
+	function optionSelected(){
+		trace('option type: ' + optionsGroup.members[curSelected].funnyOptionType + ' option text: '+ optionsGroup.members[curSelected].text);
 
-		if (goingBack){
-			inOptionSelector = true;
-			updateOptions();
-			createOptions('default');
-		}
-		else{
-			if (inOptionSelector) {
-				trace('entering options ' + options[curSelected]);
-				updateOptions();
-				
-				createOptions(options[curSelected]);
-			}
-			else{
-				trace('already in options');
-
-				switch(curOptionSelected.toLowerCase()) {
-                    case 'keybinds':
-                        FlxG.switchState(new KeybindsState());
-                    case 'ghost-tapping':
-                        FlxG.save.data.ghostTap = !FlxG.save.data.ghostTap;
-                    case 'lane':
-                        FlxG.save.data.laneUnderlay = !FlxG.save.data.laneUnderlay;
+		switch (optionsGroup.members[curSelected].funnyOptionType){ // messy but in my opinion it works better than the old system
+			case 0:
+				switch(optionsGroup.members[curSelected].text.toLowerCase().substr(0, optionsGroup.members[curSelected].text.toLowerCase().indexOf(" ", 0))){
+					// gameplay
+					case 'ghost-tapping':
+						FlxG.save.data.ghostTap = !FlxG.save.data.ghostTap;
 					case 'downscroll':
 						FlxG.save.data.downScroll = !FlxG.save.data.downScroll;
-					case 'disable':
+					case 'middlescroll':
+						FlxG.save.data.middleScroll = !FlxG.save.data.middleScroll;
+					// graphics
+					case 'lane-underlay':
+						FlxG.save.data.laneUnderlay = !FlxG.save.data.laneUnderlay;
+					case 'distractions':
 						FlxG.save.data.noDistractions = !FlxG.save.data.noDistractions;
 					case 'epilepsy':
 						FlxG.save.data.epilepsyMode = !FlxG.save.data.epilepsyMode;
-					case 'middlescroll':
-						FlxG.save.data.middleScroll = !FlxG.save.data.middleScroll;
-					case 'show':
-						FlxG.save.data.showOutdatedScreen = !FlxG.save.data.showOutdatedScreen;
+					case 'show': // show outdated screen
+					FlxG.save.data.showOutdatedScreen = !FlxG.save.data.showOutdatedScreen;
 				}
 
-				if (!dontAllowUpdate){
-					updateOptions();
+				generateOptions(curMenu); //reload the current menu
+			case 1:
+				generateOptions(optionsGroup.members[curSelected].text.toLowerCase());
+				curSelected = 0;
+			case 2:
+				switch(optionsGroup.members[curSelected].text.toLowerCase()){
+					case 'keybinds':
+						FlxG.switchState(new KeybindsState());
+					case 'modding':
+						if (SLModding.isInitialized)
+							FlxG.switchState(new ModsMenu());
+						else 
+							FlxG.sound.play(Paths.sound('badnoise3', 'shared'));
 				}
-			}
+			default:
+				trace('error lmao');
 		}
-	}
-
-	function changeTextAlpha(){
-		if (curSelected == -1 || curSelected >= options.length) { // why do i have to do it like this???
-			return;
-		}
-		else{
-			for (text in 0...optionGroup.members.length) {
-				if (text == curSelected && optionGroup.members[text] != null) {
-					optionGroup.members[text].alpha = 1;
-				}
-	
-				if (text != curSelected && optionGroup.members[text] != null) {
-					optionGroup.members[text].alpha = 0.6;
-				}
-			}
-		}
-	}
-
-	function updateFPS() {
-		/*if (FlxG.save.data.frameRate > FlxG.drawFramerate){
-			FlxG.updateFramerate = FlxG.save.data.frameRate;
-			FlxG.drawFramerate = FlxG.save.data.frameRate;
-		}
-		else{
-			FlxG.drawFramerate = FlxG.save.data.frameRate;
-			FlxG.updateFramerate = FlxG.save.data.frameRate;
-		}*/
 	}
 }
